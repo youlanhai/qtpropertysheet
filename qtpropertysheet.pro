@@ -13,8 +13,20 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    qtproperty.cpp \
+    qtpropertymanager.cpp \
+    qtpropertyeditor.cpp \
+    qtpropertyeditorfactory.cpp \
+    qtpropertybrowser.cpp \
+    qttreepropertybrowser.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    qtproperty.h \
+    qtpropertymanager.h \
+    qtpropertyeditor.h \
+    qtpropertyeditorfactory.h \
+    qtpropertybrowser.h \
+    qttreepropertybrowser.h
 
 FORMS    += mainwindow.ui
