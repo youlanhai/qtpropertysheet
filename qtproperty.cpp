@@ -5,6 +5,7 @@
 
 QtProperty::QtProperty(int type, QObject *parent)
     : QObject(parent)
+    , type_(type)
 {
 
 }
