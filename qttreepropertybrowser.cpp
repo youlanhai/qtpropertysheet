@@ -2,6 +2,7 @@
 #include "qtproperty.h"
 #include "qtpropertytreeview.h"
 #include "qtpropertytreedelegate.h"
+#include "qtpropertyeditorfactory.h"
 
 #include <cassert>
 #include <QTreeWidget>
@@ -12,17 +13,12 @@
 #include <QKeyEvent>
 #include <QMouseEvent>
 #include <QHeaderView>
+#include <QLineEdit>
 
 namespace
 {
 
 const int PropertyDataIndex = Qt::UserRole + 1;
-
-bool isItemEditable(int flags)
-{
-    return (flags & Qt::ItemIsEditable) && (flags & Qt::ItemIsEnabled);
-}
-
 
 // Draw an icon indicating opened/closing branches
 QIcon drawIndicatorIcon(const QPalette &palette, QStyle *style)
@@ -64,6 +60,9 @@ QIcon drawIndicatorIcon(const QPalette &palette, QStyle *style)
 
 QtTreePropertyBrowser::QtTreePropertyBrowser(QObject *parent)
     : QObject(parent)
+    , editorFactory_(NULL)
+    , m_treeWidget(NULL)
+    , m_delegate(NULL)
 {
 
 }
@@ -108,6 +107,11 @@ bool QtTreePropertyBrowser::init(QWidget *parent)
     return true;
 }
 
+void QtTreePropertyBrowser::setEditorFactory(QtPropertyEditorFactory *factory)
+{
+    editorFactory_ = factory;
+}
+
 bool QtTreePropertyBrowser::lastColumn(int column)
 {
     return m_treeWidget->header()->visualIndex(column) == m_treeWidget->columnCount() - 1;
@@ -115,7 +119,11 @@ bool QtTreePropertyBrowser::lastColumn(int column)
 
 QWidget* QtTreePropertyBrowser::createEditor(QtProperty *property, QWidget *parent)
 {
-    return 0;
+    if(editorFactory_ != NULL)
+    {
+        return editorFactory_->createEditor(property, parent);
+    }
+    return NULL;
 }
 
 QTreeWidgetItem* QtTreePropertyBrowser::editedItem()
@@ -174,6 +182,7 @@ void QtTreePropertyBrowser::addProperty(QtProperty *property, QTreeWidgetItem *p
     item->setText(0, property->getTitle());
     item->setData(0, PropertyDataIndex, QVariant::fromValue<quintptr>(reinterpret_cast<quintptr>(property)));
     item->setText(1, property->getValueString());
+    item->setFlags(item->flags() | Qt::ItemIsEditable);
 
     connect(property, SIGNAL(signalPropertyInserted(QtProperty*,QtProperty*)), this, SLOT(slotPropertyInsert(QtProperty*,QtProperty*)));
     connect(property, SIGNAL(signalPropertyRemoved(QtProperty*,QtProperty*)), this, SLOT(slotPropertyRemove(QtProperty*,QtProperty*)));
@@ -237,7 +246,7 @@ void QtTreePropertyBrowser::slotPropertyInsert(QtProperty *property, QtProperty 
     addProperty(property, parentItem);
 }
 
-void QtTreePropertyBrowser::slotPropertyRemove(QtProperty *property, QtProperty *parent)
+void QtTreePropertyBrowser::slotPropertyRemove(QtProperty *property, QtProperty * /*parent*/)
 {
     removeProperty(property);
 }

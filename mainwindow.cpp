@@ -3,6 +3,7 @@
 #include "qttreepropertybrowser.h"
 #include "qtproperty.h"
 #include "qtpropertymanager.h"
+#include "qtpropertyeditorfactory.h"
 
 #include <QTreeWidget>
 #include <QHBoxLayout>
@@ -32,6 +33,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     QtTreePropertyBrowser *browser = new QtTreePropertyBrowser(this);
     browser->init(ui->centralWidget);
+    browser->setEditorFactory(new QtPropertyEditorFactory(this));
 
     {
         QtProperty *property = manager->createProperty(QtProperty::TYPE_STRING, manager);

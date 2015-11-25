@@ -1,11 +1,29 @@
 #ifndef QTPROPERTYEDITORFACTORY_H
 #define QTPROPERTYEDITORFACTORY_H
 
+#include <QObject>
+#include <QMap>
 
-class QtPropertyEditorFactory
+class QWidget;
+class QtProperty;
+class QtPropertyEditor;
+
+typedef QtPropertyEditor* (*QtPropertyEditorCreator)(QtProperty *property);
+
+class QtPropertyEditorFactory : public QObject
 {
+    Q_OBJECT
 public:
-    QtPropertyEditorFactory();
+    explicit QtPropertyEditorFactory(QObject *parent);
+
+    QtPropertyEditor* createPropertyEditor(QtProperty *property);
+
+    QWidget* createEditor(QtProperty *property, QWidget *parent);
+    void registerCreator(int type, QtPropertyEditorCreator method);
+
+private:
+    typedef QMap<int, QtPropertyEditorCreator> CreatorMap;
+    CreatorMap      creators_;
 };
 
 #endif // QTPROPERTYEDITORFACTORY_H

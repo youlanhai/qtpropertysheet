@@ -11,6 +11,7 @@ class QTreeWidgetItem;
 class QtPropertyTreeView;
 class QtPropertyTreeDelegate;
 class QtProperty;
+class QtPropertyEditorFactory;
 
 class QtTreePropertyBrowser : public QObject
 {
@@ -20,6 +21,8 @@ public:
     ~QtTreePropertyBrowser();
 
     bool init(QWidget *parent);
+
+    void setEditorFactory(QtPropertyEditorFactory *factory);
 
     bool markPropertiesWithoutValue(){ return true; }
     bool lastColumn(int column);
@@ -55,6 +58,7 @@ private:
     void addProperty(QtProperty *property, QTreeWidgetItem *parentItem);
     void deleteTreeItem(QTreeWidgetItem *item);
 
+    QtPropertyEditorFactory*    editorFactory_;
     QtPropertyTreeView*         m_treeWidget;
     QtPropertyTreeDelegate*     m_delegate;
     QIcon       m_expandIcon;
