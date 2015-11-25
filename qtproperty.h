@@ -61,6 +61,9 @@ public:
     void setManager(QtPropertyManager *manager);
     QtPropertyManager* getManager() { return manager_; }
 
+    bool hasValue() const { return true; }
+    bool isModified() const { return false; }
+
     void notifyPropertyChange();
     virtual void onChildPopertyChange(QtProperty *property);
     virtual void setChildPropertyValue(const QString &name, const QVariant &value);

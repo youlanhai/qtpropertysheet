@@ -19,7 +19,9 @@ SOURCES += main.cpp\
     qtpropertyeditor.cpp \
     qtpropertyeditorfactory.cpp \
     qtpropertybrowser.cpp \
-    qttreepropertybrowser.cpp
+    qttreepropertybrowser.cpp \
+    qtpropertytreeview.cpp \
+    qtpropertytreedelegate.cpp
 
 HEADERS  += mainwindow.h \
     qtproperty.h \
@@ -27,6 +29,8 @@ HEADERS  += mainwindow.h \
     qtpropertyeditor.h \
     qtpropertyeditorfactory.h \
     qtpropertybrowser.h \
-    qttreepropertybrowser.h
+    qttreepropertybrowser.h \
+    qtpropertytreeview.h \
+    qtpropertytreedelegate.h
 
 FORMS    += mainwindow.ui
