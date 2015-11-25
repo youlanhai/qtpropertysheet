@@ -20,9 +20,9 @@ public:
         TYPE_INT,
         TYPE_FLOAT,
         TYPE_STRING,
-        TYPE_LIST,
-        TYPE_MAP,
         TYPE_GROUP,
+        TYPE_LIST,
+        TYPE_DICT,
         TYPE_ENUM,
         TYPE_FLAG,
         TYPE_COLOR,
@@ -43,6 +43,8 @@ public:
 
     virtual void setValue(const QVariant &value);
     const QVariant& getValue() const { return value_; }
+
+    virtual QString getValueString() const;
 
     virtual void setAttribute(const QString &name, const QVariant &value);
     QVariant getAttribute(const QString &name) const;
@@ -108,6 +110,7 @@ public:
     QtListProperty(int type, QObject *parent);
 
     virtual void setValue(const QVariant &value);
+    virtual QString getValueString() const;
 
 protected slots:
     virtual void slotChildValueChange(QtProperty *property);

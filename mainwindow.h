@@ -7,6 +7,8 @@ namespace Ui {
 class MainWindow;
 }
 
+class QtProperty;
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -14,6 +16,9 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+
+private slots:
+    void onValueChanged(QtProperty *property);
 
 private:
     Ui::MainWindow *ui;

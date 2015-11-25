@@ -173,7 +173,7 @@ void QtTreePropertyBrowser::addProperty(QtProperty *property, QTreeWidgetItem *p
     QTreeWidgetItem *item = new QTreeWidgetItem();
     item->setText(0, property->getTitle());
     item->setData(0, PropertyDataIndex, QVariant::fromValue<quintptr>(reinterpret_cast<quintptr>(property)));
-    item->setText(1, property->getValue().toString());
+    item->setText(1, property->getValueString());
 
     connect(property, SIGNAL(signalPropertyInserted(QtProperty*,QtProperty*)), this, SLOT(slotPropertyInsert(QtProperty*,QtProperty*)));
     connect(property, SIGNAL(signalPropertyRemoved(QtProperty*,QtProperty*)), this, SLOT(slotPropertyRemove(QtProperty*,QtProperty*)));
@@ -247,7 +247,7 @@ void QtTreePropertyBrowser::slotPropertyValueChange(QtProperty *property)
     QTreeWidgetItem *item = m_property2items.value(property);
     if(item != NULL)
     {
-        item->setText(1, property->getValue().toString());
+        item->setText(1, property->getValueString());
     }
 }
 

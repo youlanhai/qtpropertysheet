@@ -33,20 +33,62 @@ MainWindow::MainWindow(QWidget *parent) :
     QtTreePropertyBrowser *browser = new QtTreePropertyBrowser(this);
     browser->init(ui->centralWidget);
 
-    QtProperty *property = manager->createProperty(QtProperty::TYPE_STRING, manager);
-    property->setName("test");
-    property->setValue(QString("test value"));
-    browser->addProperty(property);
+    {
+        QtProperty *property = manager->createProperty(QtProperty::TYPE_STRING, manager);
+        property->setName("test");
+        property->setValue(QString("test value"));
+        browser->addProperty(property);
 
-    QtProperty *property2 = manager->createProperty(QtProperty::TYPE_STRING, manager);
-    property2->setName("test2");
-    property->addChild(property2);
+        QtProperty *property2 = manager->createProperty(QtProperty::TYPE_STRING, manager);
+        property2->setName("test2");
+        property->addChild(property2);
 
-    property2->setValue(QString("test value2"));
+        property2->setValue(QString("test value2"));
+    }
+    {
+        QtProperty *rect = manager->createProperty(QtProperty::TYPE_LIST, manager);
+        rect->setName("list");
+        connect(rect, SIGNAL(signalValueChange(QtProperty*)), this, SLOT(onValueChanged(QtProperty*)));
+
+        QtProperty *x = manager->createProperty(QtProperty::TYPE_FLOAT, manager);
+        x->setName("x");
+        rect->addChild(x);
+
+        QtProperty *y = manager->createProperty(QtProperty::TYPE_FLOAT, manager);
+        y->setName("y");
+        rect->addChild(y);
+
+        QtProperty *width = manager->createProperty(QtProperty::TYPE_FLOAT, manager);
+        width->setName("width");
+        rect->addChild(width);
+
+        QtProperty *height = manager->createProperty(QtProperty::TYPE_FLOAT, manager);
+        height->setName("height");
+        rect->addChild(height);
+
+        browser->addProperty(rect);
+
+        QVariantList values;
+        values.push_back(QVariant(8.0f));
+        values.push_back(QVariant(9.0f));
+        values.push_back(QVariant(200.0f));
+        values.push_back(QVariant(100.0f));
+        rect->setValue(values);
+    }
+
 #endif
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::onValueChanged(QtProperty *property)
+{
+    printf("property change: %s = %s\n",
+           property->getName().toUtf8().data(),
+           property->getValueString().toUtf8().data());
+
+    fflush(stdout);
 }

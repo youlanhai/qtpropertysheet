@@ -43,6 +43,11 @@ void QtProperty::setValue(const QVariant &value)
     }
 }
 
+QString QtProperty::getValueString() const
+{
+    return value_.toString();
+}
+
 void QtProperty::setAttribute(const QString &name, const QVariant &value)
 {
     attributes_[name] = value;
@@ -174,6 +179,19 @@ void QtListProperty::setValue(const QVariant &value)
     }
 
     emit signalValueChange(this);
+}
+
+QString QtListProperty::getValueString() const
+{
+    QString text;
+    text += "(";
+    foreach(QtProperty *child, children_)
+    {
+        text += child->getValueString();
+        text += ", ";
+    }
+    text += ")";
+    return text;
 }
 
 void QtListProperty::slotChildValueChange(QtProperty *child)
