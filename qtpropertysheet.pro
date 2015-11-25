@@ -11,26 +11,6 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = qtpropertysheet
 TEMPLATE = app
 
+include(src/qtpropertysheet.pri)
+include(simple/simple.pri)
 
-SOURCES += main.cpp\
-        mainwindow.cpp \
-    qtproperty.cpp \
-    qtpropertymanager.cpp \
-    qtpropertyeditor.cpp \
-    qtpropertyeditorfactory.cpp \
-    qtpropertybrowser.cpp \
-    qttreepropertybrowser.cpp \
-    qtpropertytreeview.cpp \
-    qtpropertytreedelegate.cpp
-
-HEADERS  += mainwindow.h \
-    qtproperty.h \
-    qtpropertymanager.h \
-    qtpropertyeditor.h \
-    qtpropertyeditorfactory.h \
-    qtpropertybrowser.h \
-    qttreepropertybrowser.h \
-    qtpropertytreeview.h \
-    qtpropertytreedelegate.h
-
-FORMS    += mainwindow.ui
