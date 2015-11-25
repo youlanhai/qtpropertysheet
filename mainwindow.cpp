@@ -35,12 +35,14 @@ MainWindow::MainWindow(QWidget *parent) :
 
     QtProperty *property = manager->createProperty(QtProperty::TYPE_STRING, manager);
     property->setName("test");
+    property->setValue(QString("test value"));
     browser->addProperty(property);
 
     QtProperty *property2 = manager->createProperty(QtProperty::TYPE_STRING, manager);
     property2->setName("test2");
-    browser->addProperty(property2);
+    property->addChild(property2);
 
+    property2->setValue(QString("test value2"));
 #endif
 }
 

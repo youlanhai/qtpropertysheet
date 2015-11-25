@@ -6,12 +6,17 @@
 QtProperty::QtProperty(int type, QObject *parent)
     : QObject(parent)
     , type_(type)
+    , parent_(NULL)
 {
 
 }
 
 QtProperty::~QtProperty()
 {
+    emit signalPropertyRemoved(this, parent_);
+
+    removeAllChildren();
+    removeFromParent();
 }
 
 void QtProperty::setName(const QString &name)
@@ -60,7 +65,7 @@ void QtProperty::addChild(QtProperty *child)
     child->parent_ = this;
 
     onChildAdd(child);
-    emit signalAddChild(this, child);
+    emit signalPropertyInserted(child, this);
 }
 
 void QtProperty::removeChild(QtProperty *child)
@@ -73,7 +78,7 @@ void QtProperty::removeChild(QtProperty *child)
         children_.erase(it);
 
         onChildRemove(child);
-        emit signalRemoveChild(this, child);
+        emit signalPropertyRemoved(child, this);
     }
 }
 
@@ -87,7 +92,8 @@ void QtProperty::removeFromParent()
 
 void QtProperty::removeAllChildren()
 {
-    foreach(QtProperty *child, children_)
+    QtPropertyList temp = children_;
+    foreach(QtProperty *child, temp)
     {
         removeChild(child);
     }

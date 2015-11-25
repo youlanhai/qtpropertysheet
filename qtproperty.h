@@ -62,8 +62,8 @@ public:
 
 signals:
     void signalValueChange(QtProperty *property);
-    void signalAddChild(QtProperty *property, QtProperty *child);
-    void signalRemoveChild(QtProperty *property, QtProperty *child);
+    void signalPropertyInserted(QtProperty *property, QtProperty *parent);
+    void signalPropertyRemoved(QtProperty *property, QtProperty *parent);
 
 protected:
     virtual void onChildAdd(QtProperty *child);

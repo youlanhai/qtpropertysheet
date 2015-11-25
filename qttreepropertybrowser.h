@@ -17,6 +17,7 @@ class QtTreePropertyBrowser : public QObject
     Q_OBJECT
 public:
     explicit QtTreePropertyBrowser(QObject *parent = 0);
+    ~QtTreePropertyBrowser();
 
     bool init(QWidget *parent);
 
@@ -44,10 +45,16 @@ public slots:
     void slotExpanded(const QModelIndex &);
     void slotCurrentTreeItemChanged(QTreeWidgetItem*, QTreeWidgetItem*);
 
-    //void slotPropertyInsert(QtProperty *property);
-    //void slotPropertyRemove(QtProperty *property);
+    void slotPropertyInsert(QtProperty *property, QtProperty *parent);
+    void slotPropertyRemove(QtProperty *property, QtProperty *parent);
+    void slotPropertyValueChange(QtProperty *property);
+
+    void slotTreeViewDestroy(QObject *p);
 
 private:
+    void addProperty(QtProperty *property, QTreeWidgetItem *parentItem);
+    void deleteTreeItem(QTreeWidgetItem *item);
+
     QtPropertyTreeView*         m_treeWidget;
     QtPropertyTreeDelegate*     m_delegate;
     QIcon       m_expandIcon;
