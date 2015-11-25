@@ -3,6 +3,7 @@
 #include "qtpropertytreeview.h"
 #include "qtpropertytreedelegate.h"
 
+#include <cassert>
 #include <QTreeWidget>
 #include <QApplication>
 #include <QItemDelegate>
@@ -138,21 +139,26 @@ void QtTreePropertyBrowser::slotCurrentTreeItemChanged(QTreeWidgetItem*, QTreeWi
 
 QtProperty* QtTreePropertyBrowser::indexToProperty(const QModelIndex &index)
 {
-    quintptr ptr = index.data(PropertyDataIndex).value<quintptr>();
-    return reinterpret_cast<QtProperty*>(ptr);
+    return itemToProperty(m_treeWidget->indexToItem(index));
 }
 
 QtProperty* QtTreePropertyBrowser::itemToProperty(QTreeWidgetItem* item)
 {
-    quintptr ptr = item->data(0, PropertyDataIndex).value<quintptr>();
-    return reinterpret_cast<QtProperty*>(ptr);
+    if(item != NULL)
+    {
+        quintptr ptr = item->data(0, PropertyDataIndex).value<quintptr>();
+        return reinterpret_cast<QtProperty*>(ptr);
+    }
+    return NULL;
 }
 
 void QtTreePropertyBrowser::addProperty(QtProperty *property)
 {
+    assert(!m_property2items.contains(property));
+
     QTreeWidgetItem *item = new QTreeWidgetItem();
     item->setText(0, property->getTitle());
-    item->setData(0, PropertyDataIndex, QVariant::fromValue<quintptr>(reinterpret_cast<quintptr>(item)));
+    item->setData(0, PropertyDataIndex, QVariant::fromValue<quintptr>(reinterpret_cast<quintptr>(property)));
     m_treeWidget->addTopLevelItem(item);
 
     m_property2items[property] = item;

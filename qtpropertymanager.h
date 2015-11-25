@@ -2,8 +2,11 @@
 #define QTPROPERTYMANAGER_H
 
 #include <QObject>
+#include <QMap>
 
 class QtProperty;
+
+typedef QtProperty*(*QtPropertyCreator)(int type, QObject *parent);
 
 class QtPropertyManager : public QObject
 {
@@ -11,18 +14,13 @@ class QtPropertyManager : public QObject
 public:
     explicit QtPropertyManager(QObject *parent = 0);
 
-    virtual QtProperty* addProperty(int type);
-    virtual QtProperty* createProperty(int type);
+    virtual QtProperty* createProperty(int type, QObject *parent);
 
-    void setValue(const QString &name, const QVariant &value);
+    void registerCreator(int type, QtPropertyCreator method);
 
-signals:
-    void propertyInserted(QtProperty *property, QtProperty *parent, QtProperty *after);
-    void propertyChanged(QtProperty *property);
-    void propertyRemoved(QtProperty *property, QtProperty *parent);
-    void propertyDestroyed(QtProperty *property);
-
-public slots:
+private:
+    typedef QMap<int, QtPropertyCreator> CreatorMap;
+    CreatorMap      propertyCreator_;
 };
 
 #endif // QTPROPERTYMANAGER_H

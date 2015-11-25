@@ -4,20 +4,19 @@
 QtPropertyManager::QtPropertyManager(QObject *parent)
     : QObject(parent)
 {
-
 }
 
-QtProperty* QtPropertyManager::addProperty(int type)
+QtProperty* QtPropertyManager::createProperty(int type, QObject *parent)
 {
-    QtProperty *property = createProperty(type);
-    if(property != NULL)
+    QtPropertyCreator method = propertyCreator_.value(type);
+    if(method != NULL)
     {
-
+        return method(type, parent);
     }
-    return property;
+    return new QtProperty(type, parent);
 }
 
-QtProperty* QtPropertyManager::createProperty(int type)
+void QtPropertyManager::registerCreator(int type, QtPropertyCreator method)
 {
-    return new QtProperty(type, this);
+    propertyCreator_[type] = method;
 }

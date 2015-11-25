@@ -33,11 +33,11 @@ MainWindow::MainWindow(QWidget *parent) :
     QtTreePropertyBrowser *browser = new QtTreePropertyBrowser(this);
     browser->init(ui->centralWidget);
 
-    QtProperty *property = manager->addProperty(QtProperty::TYPE_STRING);
+    QtProperty *property = manager->createProperty(QtProperty::TYPE_STRING, manager);
     property->setName("test");
     browser->addProperty(property);
 
-    QtProperty *property2 = manager->addProperty(QtProperty::TYPE_STRING);
+    QtProperty *property2 = manager->createProperty(QtProperty::TYPE_STRING, manager);
     property2->setName("test2");
     browser->addProperty(property2);
 
