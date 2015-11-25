@@ -131,7 +131,7 @@ void QtPropertyTreeDelegate::paint(QPainter *painter, const QStyleOptionViewItem
     }
     else
     {
-        c = QColor(180, 180, 180); //m_editorPrivate->calculatedBackgroundColor(m_editorPrivate->indexToBrowserItem(index));
+        c = QColor(255, 255, 255); //m_editorPrivate->calculatedBackgroundColor(m_editorPrivate->indexToBrowserItem(index));
         if (c.isValid() && (opt.features & QStyleOptionViewItemV2::Alternate))
             c = c.lighter(112);
     }
