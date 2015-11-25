@@ -6,7 +6,7 @@ QtPropertyEditor::QtPropertyEditor(QtProperty *property, QObject *parent)
     : QObject(parent)
     , property_(property)
 {
-    connect(property_, SIGNAL(signalValueChange()), this, SLOT(onValueChange()));
+
 }
 
 void QtPropertyEditor::onPropertyValueChange()
@@ -54,7 +54,6 @@ void QtSpinBoxEditor::slotEditorValueChange(int value)
     if(property_ != 0)
     {
         property_->setValue(value);
-        property_->notifyPropertyChange();
     }
 }
 

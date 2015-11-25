@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "qttreepropertybrowser.h"
+#include "qtproperty.h"
+#include "qtpropertymanager.h"
 
 #include <QTreeWidget>
 #include <QHBoxLayout>
@@ -26,8 +28,18 @@ MainWindow::MainWindow(QWidget *parent) :
 
 #else
 
+    QtPropertyManager *manager = new QtPropertyManager(this);
+
     QtTreePropertyBrowser *browser = new QtTreePropertyBrowser(this);
     browser->init(ui->centralWidget);
+
+    QtProperty *property = manager->addProperty(QtProperty::TYPE_STRING);
+    property->setName("test");
+    browser->addProperty(property);
+
+    QtProperty *property2 = manager->addProperty(QtProperty::TYPE_STRING);
+    property2->setName("test2");
+    browser->addProperty(property2);
 
 #endif
 }

@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QIcon>
+#include <QMap>
 
 class QWidget;
 class QModelIndex;
@@ -32,6 +33,10 @@ public:
 
     QtPropertyTreeView* treeWidget(){ return m_treeWidget; }
 
+    void addProperty(QtProperty *property);
+    void removeProperty(QtProperty *property);
+    void removeAllProperties();
+
 signals:
 
 public slots:
@@ -39,10 +44,16 @@ public slots:
     void slotExpanded(const QModelIndex &);
     void slotCurrentTreeItemChanged(QTreeWidgetItem*, QTreeWidgetItem*);
 
+    //void slotPropertyInsert(QtProperty *property);
+    //void slotPropertyRemove(QtProperty *property);
+
 private:
     QtPropertyTreeView*         m_treeWidget;
     QtPropertyTreeDelegate*     m_delegate;
     QIcon       m_expandIcon;
+
+    typedef QMap<QtProperty*, QTreeWidgetItem*> Property2ItemMap;
+    Property2ItemMap            m_property2items;
 };
 
 #endif // QTTREEPROPERTYBROWSER_H

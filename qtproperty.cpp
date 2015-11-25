@@ -10,9 +10,18 @@ QtProperty::QtProperty(int type, QObject *parent)
 
 }
 
+QtProperty::~QtProperty()
+{
+}
+
 void QtProperty::setName(const QString &name)
 {
     name_ = name;
+}
+
+const QString& QtProperty::getTitle() const
+{
+    return title_.isEmpty() ? name_ : title_;
 }
 
 void QtProperty::setTitle(const QString &title)
@@ -25,7 +34,7 @@ void QtProperty::setValue(const QVariant &value)
     if(value_ != value)
     {
         value_ = value;
-        emit signalValueChange();
+        emit signalValueChange(this);
     }
 }
 
@@ -44,17 +53,14 @@ QVariant QtProperty::getAttribute(const QString &name) const
     return QVariant();
 }
 
-QtPropertyAttributes& QtProperty::getAttributes()
-{
-    return attributes_;
-}
-
 void QtProperty::addChild(QtProperty *child)
 {
     assert(child->getParent() == NULL);
     children_.push_back(child);
     child->parent_ = this;
-    child->manager_ = manager_;
+
+    onChildAdd(child);
+    emit signalAddChild(this, child);
 }
 
 void QtProperty::removeChild(QtProperty *child)
@@ -64,8 +70,10 @@ void QtProperty::removeChild(QtProperty *child)
     if(it != children_.end())
     {
         child->parent_ = NULL;
-        child->manager_ = NULL;
         children_.erase(it);
+
+        onChildRemove(child);
+        emit signalRemoveChild(this, child);
     }
 }
 
@@ -75,6 +83,19 @@ void QtProperty::removeFromParent()
     {
         parent_->removeChild(this);
     }
+}
+
+void QtProperty::removeAllChildren()
+{
+    foreach(QtProperty *child, children_)
+    {
+        removeChild(child);
+    }
+}
+
+int QtProperty::indexChild(const QtProperty *child) const
+{
+    return children_.indexOf(const_cast<QtProperty*>(child));
 }
 
 QtProperty* QtProperty::findChild(const QString &name)
@@ -89,37 +110,118 @@ QtProperty* QtProperty::findChild(const QString &name)
     return NULL;
 }
 
-QtPropertyList& QtProperty::getChildren()
+void QtProperty::onChildAdd(QtProperty *child)
 {
-    return children_;
+
 }
 
-void QtProperty::setManager(QtPropertyManager *manager)
+void QtProperty::onChildRemove(QtProperty *child)
 {
-    manager_ = manager;
+
 }
 
-void QtProperty::notifyPropertyChange()
+/********************************************************************/
+QtGroupProperty::QtGroupProperty(int type, QObject *parent)
+    : QtProperty(type, parent)
 {
-    if(parent_ == NULL)
+
+}
+
+void QtGroupProperty::onChildAdd(QtProperty *child)
+{
+    connect(child, SIGNAL(signalValueChange(QtProperty*)), this, SLOT(slotChildValueChange(QtProperty*)));
+}
+
+void QtGroupProperty::onChildRemove(QtProperty *child)
+{
+    disconnect(child, SIGNAL(signalValueChange(QtProperty*)), this, SLOT(slotChildValueChange(QtProperty*)));
+}
+
+/********************************************************************/
+static void ensureSize(QVariantList &list, int size)
+{
+    while(list.size() < size)
     {
-        if(manager_ != NULL)
+        list.push_back(QVariant());
+    }
+}
+
+QtListProperty::QtListProperty(int type, QObject *parent)
+    : QtGroupProperty(type, parent)
+{
+
+}
+
+void QtListProperty::setValue(const QVariant &value)
+{
+    if(value_ == value)
+    {
+        return;
+    }
+    value_ = value;
+
+    QVariantList valueList = value.toList();
+    ensureSize(valueList, children_.size());
+    for(int i = 0; i < children_.size(); ++i)
+    {
+        children_[i]->setValue(valueList[i]);
+    }
+
+    emit signalValueChange(this);
+}
+
+void QtListProperty::slotChildValueChange(QtProperty *child)
+{
+    int i = indexChild(child);
+    if(i >= 0)
+    {
+        QVariantList valueList = value_.toList();
+        ensureSize(valueList, i + 1);
+
+        if(valueList[i] != child->getValue())
         {
-            emit manager_->signalPropertyChange(this);
+            valueList[i] = child->getValue();
+
+            value_ = valueList;
+            emit signalValueChange(this);
         }
     }
-    else
+}
+
+/********************************************************************/
+QtDictProperty::QtDictProperty(int type, QObject *parent)
+    : QtGroupProperty(type, parent)
+{
+
+}
+
+void QtDictProperty::setValue(const QVariant &value)
+{
+    if(value_ == value)
     {
-        parent_->onChildPopertyChange(this);
+        return;
     }
+    value_ = value;
+
+    QVariantMap valueMap = value_.toMap();
+    foreach (QtProperty *child, children_)
+    {
+        QVariant value = valueMap.value(child->getName());
+        child->setValue(value);
+    }
+
+    emit signalValueChange(this);
 }
 
-void QtProperty::onChildPopertyChange(QtProperty *property)
+void QtDictProperty::slotChildValueChange(QtProperty *property)
 {
+    QVariantMap valueMap = value_.toMap();
+    QVariant oldValue = valueMap.value(property->getName());
+    if(property->getValue() != oldValue)
+    {
+        valueMap[property->getName()] = property->getValue();
 
-}
-
-void QtProperty::setChildPropertyValue(const QString &name, const QVariant &value)
-{
-
+        value_ = valueMap;
+        emit signalValueChange(this);
+    }
 }

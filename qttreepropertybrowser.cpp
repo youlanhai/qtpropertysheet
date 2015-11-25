@@ -147,3 +147,29 @@ QtProperty* QtTreePropertyBrowser::itemToProperty(QTreeWidgetItem* item)
     quintptr ptr = item->data(0, PropertyDataIndex).value<quintptr>();
     return reinterpret_cast<QtProperty*>(ptr);
 }
+
+void QtTreePropertyBrowser::addProperty(QtProperty *property)
+{
+    QTreeWidgetItem *item = new QTreeWidgetItem();
+    item->setText(0, property->getTitle());
+    item->setData(0, PropertyDataIndex, QVariant::fromValue<quintptr>(reinterpret_cast<quintptr>(item)));
+    m_treeWidget->addTopLevelItem(item);
+
+    m_property2items[property] = item;
+}
+
+void QtTreePropertyBrowser::removeProperty(QtProperty *property)
+{
+    Property2ItemMap::iterator it = m_property2items.find(property);
+    if(it != m_property2items.end())
+    {
+        m_property2items.erase(it);
+        delete it.value();
+    }
+}
+
+void QtTreePropertyBrowser::removeAllProperties()
+{
+    m_treeWidget->clear();
+    m_property2items.clear();
+}
