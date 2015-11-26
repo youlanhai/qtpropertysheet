@@ -235,6 +235,54 @@ void QtEnumEditor::slotEditorValueChange(int index)
 }
 
 /********************************************************************/
+QtFlagEditor::QtFlagEditor(QtProperty *property)
+    : QtPropertyEditor(property)
+    , editor_(NULL)
+{
+
+}
+
+#include "qxtcheckcombobox.h"
+
+QWidget* QtFlagEditor::createEditor(QWidget *parent)
+{
+    if(NULL == editor_)
+    {
+        editor_ = new QxtCheckComboBox(parent);
+        editor_->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
+        editor_->setMinimumContentsLength(1);
+        editor_->view()->setTextElideMode(Qt::ElideRight);
+
+        QStringList enumNames = property_->getAttribute("flagNames").toStringList();
+        editor_->addItems(enumNames);
+
+        editor_->setCurrentIndex(value_);
+
+        connect(editor_, SIGNAL(currentIndexChanged(int)), this, SLOT(slotEditorValueChange(int)));
+        connect(editor_, SIGNAL(destroyed(QObject*)), this, SLOT(slotEditorDestory(QObject*)));
+        connect(editor_, SIGNAL(checkedItemsChanged(QStringList)), this, SLOT(checkedItemsChanged(QStringList)));
+    }
+    return editor_;
+}
+
+void QtFlagEditor::onPropertyValueChange(QtProperty *property)
+{
+
+}
+
+void QtFlagEditor::slotEditorValueChange(int index)
+{
+    printf("value changed: %d\n", index);
+    fflush(stdout);
+}
+
+void QtFlagEditor::checkedItemsChanged(const QStringList& items)
+{
+    printf("value changed.\n");
+    fflush(stdout);
+}
+
+/********************************************************************/
 QtBoolEditor::QtBoolEditor(QtProperty *property)
     : QtPropertyEditor(property)
     , editor_(NULL)

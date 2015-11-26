@@ -13,6 +13,7 @@ class QComboBox;
 class QCheckBox;
 class QtColorEditWidget;
 class QtBoolEdit;
+class QxtCheckComboBox;
 
 // QtPropertyEditor will be destroied when QtEditor destroied.
 class QtPropertyEditor : public QObject
@@ -100,6 +101,24 @@ public slots:
 private:
     int                 value_;
     QComboBox*          editor_;
+};
+
+class QStandardItem;
+class QtFlagEditor : public QtPropertyEditor
+{
+    Q_OBJECT
+public:
+    explicit QtFlagEditor(QtProperty *property);
+    virtual QWidget* createEditor(QWidget *parent);
+
+public slots:
+    virtual void onPropertyValueChange(QtProperty *property);
+    virtual void slotEditorValueChange(int index);
+    void checkedItemsChanged(const QStringList& items);
+
+private:
+    int                 value_;
+    QxtCheckComboBox*   editor_;
 };
 
 class QtBoolEditor : public QtPropertyEditor

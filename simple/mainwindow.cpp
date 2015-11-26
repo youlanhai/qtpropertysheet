@@ -75,6 +75,14 @@ MainWindow::MainWindow(QWidget *parent) :
         property6->setValue(QColor(255, 0, 0));
         group->addChild(property6);
 
+        QtProperty *property7 = manager->createProperty(QtProperty::TYPE_FLAG, manager);
+        property7->setName("hobby");
+        property7->setValue(1);
+        QStringList hobby;
+        hobby << "running" << "walking" << "swimming";
+        property7->setAttribute("flagNames", hobby);
+        group->addChild(property7);
+
         root->addChild(group);
     }
     {
