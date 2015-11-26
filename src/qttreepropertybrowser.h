@@ -51,6 +51,7 @@ public slots:
     void slotPropertyInsert(QtProperty *property, QtProperty *parent);
     void slotPropertyRemove(QtProperty *property, QtProperty *parent);
     void slotPropertyValueChange(QtProperty *property);
+    void slotPropertyPropertyChange(QtProperty *property);
 
     void slotTreeViewDestroy(QObject *p);
 

@@ -10,7 +10,8 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    root_(NULL)
 {
     ui->setupUi(this);
 
@@ -77,6 +78,11 @@ MainWindow::MainWindow(QWidget *parent) :
         root->addChild(group);
     }
     {
+        QtProperty *hideRect = manager->createProperty(QtProperty::TYPE_BOOL, manager);
+        hideRect->setName("show geometry");
+        hideRect->setValue(true);
+        root->addChild(hideRect);
+
         QtProperty *rect = manager->createProperty(QtProperty::TYPE_LIST, manager);
         rect->setName("geometry");
 
@@ -133,6 +139,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //test delete
     // delete root
 
+    root_ = root;
 #endif
 }
 
@@ -148,4 +155,13 @@ void MainWindow::onValueChanged(QtProperty *property)
            property->getValueString().toUtf8().data());
 
     fflush(stdout);
+
+    if(property->getName() == "show geometry")
+    {
+        QtProperty *geometry = root_->findChild("geometry");
+        if(geometry != NULL)
+        {
+            geometry->setVisible(property->getValue().toBool());
+        }
+    }
 }

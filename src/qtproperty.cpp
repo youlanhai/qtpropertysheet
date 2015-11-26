@@ -25,7 +25,11 @@ QtProperty::~QtProperty()
 
 void QtProperty::setName(const QString &name)
 {
-    name_ = name;
+    if(name != name_)
+    {
+        name_ = name;
+        emit signalPropertyChange(this);
+    }
 }
 
 const QString& QtProperty::getTitle() const
@@ -35,7 +39,11 @@ const QString& QtProperty::getTitle() const
 
 void QtProperty::setTitle(const QString &title)
 {
-    title_ = title;
+    if(title != title_)
+    {
+        title_ = title;
+        emit signalPropertyChange(this);
+    }
 }
 
 void QtProperty::setValue(const QVariant &value)
@@ -44,6 +52,15 @@ void QtProperty::setValue(const QVariant &value)
     {
         value_ = value;
         emit signalValueChange(this);
+    }
+}
+
+void QtProperty::setVisible(bool visible)
+{
+    if(visible != visible_)
+    {
+        visible_ = visible;
+        emit signalPropertyChange(this);
     }
 }
 

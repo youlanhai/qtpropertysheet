@@ -21,7 +21,8 @@ private slots:
     void onValueChanged(QtProperty *property);
 
 private:
-    Ui::MainWindow *ui;
+    Ui::MainWindow*     ui;
+    QtProperty*         root_;
 };
 
 #endif // MAINWINDOW_H

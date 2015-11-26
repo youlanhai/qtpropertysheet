@@ -207,6 +207,7 @@ void QtTreePropertyBrowser::addProperty(QtProperty *property, QTreeWidgetItem *p
     connect(property, SIGNAL(signalPropertyInserted(QtProperty*,QtProperty*)), this, SLOT(slotPropertyInsert(QtProperty*,QtProperty*)));
     connect(property, SIGNAL(signalPropertyRemoved(QtProperty*,QtProperty*)), this, SLOT(slotPropertyRemove(QtProperty*,QtProperty*)));
     connect(property, SIGNAL(signalValueChange(QtProperty*)), this, SLOT(slotPropertyValueChange(QtProperty*)));
+    connect(property, SIGNAL(signalPropertyChange(QtProperty*)), this, SLOT(slotPropertyPropertyChange(QtProperty*)));
 
     // add it's children finaly.
     foreach(QtProperty *child, property->getChildren())
@@ -263,6 +264,16 @@ void QtTreePropertyBrowser::slotPropertyValueChange(QtProperty *property)
     {
         item->setText(1, property->getValueString());
         item->setIcon(1, property->getValueIcon());
+    }
+}
+
+void QtTreePropertyBrowser::slotPropertyPropertyChange(QtProperty *property)
+{
+    QTreeWidgetItem *item = m_property2items.value(property);
+    if(item != NULL)
+    {
+        item->setText(0, property->getTitle());
+        item->setHidden(!property->isVisible());
     }
 }
 

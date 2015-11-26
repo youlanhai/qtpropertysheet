@@ -66,7 +66,7 @@ public:
     virtual bool hasValue() const { return true; }
     virtual bool isModified() const { return false; }
 
-    void setVisible(bool visible){ visible_ = visible; }
+    void setVisible(bool visible);
     bool isVisible() const { return visible_; }
 
     void setSelfVisible(bool visible){ selfVisible_ = visible; }
@@ -77,6 +77,7 @@ signals:
     void signalPropertyInserted(QtProperty *property, QtProperty *parent);
     void signalPropertyRemoved(QtProperty *property, QtProperty *parent);
     void signalAttributeChange(QtProperty *property, const QString &name);
+    void signalPropertyChange(QtProperty *property);
 
 protected:
     virtual void onChildAdd(QtProperty *child);
