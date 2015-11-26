@@ -8,6 +8,7 @@ class QSpinBox;
 class QDoubleSpinBox;
 class QLineEdit;
 class QComboBox;
+class QCheckBox;
 
 // QtPropertyEditor will be destroied when QtEditor destroied.
 class QtPropertyEditor : public QObject
@@ -95,6 +96,22 @@ public slots:
 private:
     int                 value_;
     QComboBox*          editor_;
+};
+
+class QtBoolEditor : public QtPropertyEditor
+{
+    Q_OBJECT
+public:
+    explicit QtBoolEditor(QtProperty *property);
+    virtual QWidget* createEditor(QWidget *parent);
+
+public slots:
+    virtual void onPropertyValueChange(QtProperty *property);
+    virtual void slotEditorValueChange(int state);
+
+protected:
+    bool                value_;
+    QCheckBox*          editor_;
 };
 
 #endif // QTPROPERTYEDITOR_H

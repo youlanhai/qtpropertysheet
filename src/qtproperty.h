@@ -176,4 +176,13 @@ public:
     virtual QString getValueString() const;
 };
 
+/********************************************************************/
+class QtBoolProperty : public QtProperty
+{
+    Q_OBJECT
+public:
+    QtBoolProperty(int type, QObject *parent);
+    virtual QString getValueString() const;
+};
+
 #endif // QTPROPERTY_H

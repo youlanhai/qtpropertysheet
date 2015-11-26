@@ -64,6 +64,11 @@ MainWindow::MainWindow(QWidget *parent) :
         property4->setAttribute("enumNames", countries);
         group->addChild(property4);
 
+        QtProperty *property5 = manager->createProperty(QtProperty::TYPE_BOOL, manager);
+        property5->setName("married");
+        property5->setValue(true);
+        group->addChild(property5);
+
         root->addChild(group);
     }
     {

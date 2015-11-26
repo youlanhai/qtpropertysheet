@@ -336,3 +336,15 @@ QString QtEnumProperty::getValueString() const
     }
     return QString();
 }
+
+/********************************************************************/
+QtBoolProperty::QtBoolProperty(int type, QObject *parent)
+    : QtProperty(type, parent)
+{
+
+}
+
+QString QtBoolProperty::getValueString() const
+{
+    return value_.toBool() ? "True" : "False";
+}

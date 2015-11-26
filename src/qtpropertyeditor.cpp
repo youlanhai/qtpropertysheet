@@ -6,6 +6,7 @@
 #include <QLineEdit>
 #include <QComboBox>
 #include <QAbstractItemView>
+#include <QCheckBox>
 
 #include <limits>
 
@@ -228,6 +229,52 @@ void QtEnumEditor::slotEditorValueChange(int index)
     if(index != value_)
     {
         value_ = index;
+        property_->setValue(value_);
+    }
+}
+
+/********************************************************************/
+QtBoolEditor::QtBoolEditor(QtProperty *property)
+    : QtPropertyEditor(property)
+    , editor_(NULL)
+{
+    value_ = property_->getValue().toBool();
+}
+
+QWidget* QtBoolEditor::createEditor(QWidget *parent)
+{
+    if(NULL == editor_)
+    {
+        editor_ = new QCheckBox(parent);
+        editor_->setCheckState(value_ ? Qt::Checked : Qt::Unchecked);
+
+        connect(editor_, SIGNAL(stateChanged(int)), this, SLOT(slotEditorValueChange(int)));
+        connect(editor_, SIGNAL(destroyed(QObject*)), this, SLOT(slotEditorDestory(QObject*)));
+    }
+    return editor_;
+}
+
+void QtBoolEditor::onPropertyValueChange(QtProperty * /*property*/)
+{
+    bool value = property_->getValue().toBool();
+    if(value == value_)
+    {
+        return;
+    }
+
+    value_ = value;
+    if(NULL != editor_)
+    {
+        editor_->setCheckState(value_ ? Qt::Checked : Qt::Unchecked);
+    }
+}
+
+void QtBoolEditor::slotEditorValueChange(int state)
+{
+    bool value = state == Qt::Checked;
+    if(value != value_)
+    {
+        value_ = value;
         property_->setValue(value_);
     }
 }
