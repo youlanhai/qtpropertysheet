@@ -10,15 +10,10 @@ QtPropertyEditor::QtPropertyEditor(QtProperty *property)
 {
     connect(property, SIGNAL(signalValueChange(QtProperty*)), this, SLOT(onPropertyValueChange(QtProperty*)));
     connect(property, SIGNAL(destroyed(QObject*)), this, SLOT(onPropertyDestory(QObject*)));
-
-    printf("QtPropertyEditor construct: %ld\n", size_t(this));
-    fflush(stdout);
 }
 
 QtPropertyEditor::~QtPropertyEditor()
 {
-    printf("QtPropertyEditor destruct: %ld\n", size_t(this));
-    fflush(stdout);
 }
 
 void QtPropertyEditor::onPropertyDestory(QObject * /*object*/)

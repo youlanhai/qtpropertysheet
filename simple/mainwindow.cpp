@@ -77,25 +77,39 @@ MainWindow::MainWindow(QWidget *parent) :
         root->addChild(rect);
     }
 
-    browser->addProperty(root);
     connect(root, SIGNAL(signalValueChange(QtProperty*)), this, SLOT(onValueChanged(QtProperty*)));
+    browser->addProperty(root);
 
-    // set property value
+#if 1
+    // test set property value
 
+    //1. set child value by name.
     root->setChildValue("name", "Jack");
 
+    //2. find property, then set value directly.
     QtProperty *addressProperty = root->findChild("adress");
     if(addressProperty != NULL)
     {
         addressProperty->setValue("Beijing");
     }
 
+    //3. set list value
     QVariantList values;
     values.push_back(QVariant(8.0f));
     values.push_back(QVariant(9.0f));
     values.push_back(QVariant(200.0f));
     values.push_back(QVariant(100.0f));
     root->setChildValue("geometry", values);
+#endif
+
+#if 0
+    // test remove and add
+    browser->removeProperty(root);
+    browser->addProperty(root);
+#endif
+
+    //test delete
+    // delete root
 
 #endif
 }
