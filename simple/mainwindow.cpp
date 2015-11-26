@@ -52,19 +52,19 @@ MainWindow::MainWindow(QWidget *parent) :
         rect->setName("list");
         connect(rect, SIGNAL(signalValueChange(QtProperty*)), this, SLOT(onValueChanged(QtProperty*)));
 
-        QtProperty *x = manager->createProperty(QtProperty::TYPE_FLOAT, manager);
+        QtProperty *x = manager->createProperty(QtProperty::TYPE_DOUBLE, manager);
         x->setName("x");
         rect->addChild(x);
 
-        QtProperty *y = manager->createProperty(QtProperty::TYPE_FLOAT, manager);
+        QtProperty *y = manager->createProperty(QtProperty::TYPE_DOUBLE, manager);
         y->setName("y");
         rect->addChild(y);
 
-        QtProperty *width = manager->createProperty(QtProperty::TYPE_FLOAT, manager);
+        QtProperty *width = manager->createProperty(QtProperty::TYPE_DOUBLE, manager);
         width->setName("width");
         rect->addChild(width);
 
-        QtProperty *height = manager->createProperty(QtProperty::TYPE_FLOAT, manager);
+        QtProperty *height = manager->createProperty(QtProperty::TYPE_DOUBLE, manager);
         height->setName("height");
         rect->addChild(height);
 
