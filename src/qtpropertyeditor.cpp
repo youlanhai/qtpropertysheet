@@ -1,8 +1,12 @@
 #include "qtpropertyeditor.h"
 #include "qtproperty.h"
+
 #include <QSpinBox>
 #include <QDoubleSpinBox>
 #include <QLineEdit>
+#include <QComboBox>
+#include <QAbstractItemView>
+
 #include <limits>
 
 QtPropertyEditor::QtPropertyEditor(QtProperty *property)
@@ -174,5 +178,56 @@ void QtStringEditor::slotEditFinished()
         {
             property_->setValue(value_);
         }
+    }
+}
+
+/********************************************************************/
+QtEnumEditor::QtEnumEditor(QtProperty *property)
+    : QtPropertyEditor(property)
+    , editor_(NULL)
+{
+    value_ = property_->getValue().toInt();
+}
+
+QWidget* QtEnumEditor::createEditor(QWidget *parent)
+{
+    if(editor_ == NULL)
+    {
+        editor_ = new QComboBox(parent);
+        editor_->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
+        editor_->setMinimumContentsLength(1);
+        editor_->view()->setTextElideMode(Qt::ElideRight);
+
+        QStringList enumNames = property_->getAttribute("enumNames").toStringList();
+        editor_->addItems(enumNames);
+        editor_->setCurrentIndex(value_);
+
+        connect(editor_, SIGNAL(currentIndexChanged(int)), this, SLOT(slotEditorValueChange(int)));
+        connect(editor_, SIGNAL(destroyed(QObject*)), this, SLOT(slotEditorDestory(QObject*)));
+    }
+    return editor_;
+}
+
+void QtEnumEditor::onPropertyValueChange(QtProperty *property)
+{
+    int value = property->getValue().toInt();
+    if(value == value_)
+    {
+        return;
+    }
+
+    value_ = value;
+    if(editor_ != NULL)
+    {
+        editor_->setCurrentIndex(value_);
+    }
+}
+
+void QtEnumEditor::slotEditorValueChange(int index)
+{
+    if(index != value_)
+    {
+        value_ = index;
+        property_->setValue(value_);
     }
 }

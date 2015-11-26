@@ -74,6 +74,7 @@ signals:
     void signalValueChange(QtProperty *property);
     void signalPropertyInserted(QtProperty *property, QtProperty *parent);
     void signalPropertyRemoved(QtProperty *property, QtProperty *parent);
+    void signalAttributeChange(QtProperty *property, const QString &name);
 
 protected:
     virtual void onChildAdd(QtProperty *child);
@@ -93,7 +94,6 @@ protected:
     bool                visible_;
     bool                selfVisible_;
 };
-
 
 /********************************************************************/
 class QtContainerProperty : public QtProperty
@@ -165,5 +165,15 @@ protected slots:
     virtual void slotChildValueChange(QtProperty *property);
 };
 
+
+
+/********************************************************************/
+class QtEnumProperty : public QtProperty
+{
+    Q_OBJECT
+public:
+    QtEnumProperty(int type, QObject *parent);
+    virtual QString getValueString() const;
+};
 
 #endif // QTPROPERTY_H

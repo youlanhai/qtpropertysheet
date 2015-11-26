@@ -48,9 +48,21 @@ MainWindow::MainWindow(QWidget *parent) :
         property->setValue(QString("no name"));
         group->addChild(property);
 
-        QtProperty *property2 = manager->createProperty(QtProperty::TYPE_STRING, manager);
-        property2->setName("adress");
+        QtProperty *property2 = manager->createProperty(QtProperty::TYPE_INT, manager);
+        property2->setName("age");
         group->addChild(property2);
+
+        QtProperty *property3 = manager->createProperty(QtProperty::TYPE_DOUBLE, manager);
+        property3->setName("weight");
+        property3->setValue(60.5);
+        group->addChild(property3);
+
+        QtProperty *property4 = manager->createProperty(QtProperty::TYPE_ENUM, manager);
+        property4->setName("country");
+        QStringList countries;
+        countries << "China" << "America" << "England";
+        property4->setAttribute("enumNames", countries);
+        group->addChild(property4);
 
         root->addChild(group);
     }
@@ -87,10 +99,10 @@ MainWindow::MainWindow(QWidget *parent) :
     root->setChildValue("name", "Jack");
 
     //2. find property, then set value directly.
-    QtProperty *addressProperty = root->findChild("adress");
+    QtProperty *addressProperty = root->findChild("age");
     if(addressProperty != NULL)
     {
-        addressProperty->setValue("Beijing");
+        addressProperty->setValue(18);
     }
 
     //3. set list value

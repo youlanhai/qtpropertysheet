@@ -7,6 +7,7 @@ class QWidget;
 class QSpinBox;
 class QDoubleSpinBox;
 class QLineEdit;
+class QComboBox;
 
 // QtPropertyEditor will be destroied when QtEditor destroied.
 class QtPropertyEditor : public QObject
@@ -76,8 +77,24 @@ public slots:
 
 private:
     QString             value_;
-    QLineEdit*        editor_;
+    QLineEdit*          editor_;
 
+};
+
+class QtEnumEditor : public QtPropertyEditor
+{
+    Q_OBJECT
+public:
+    explicit QtEnumEditor(QtProperty *property);
+    virtual QWidget* createEditor(QWidget *parent);
+
+public slots:
+    virtual void onPropertyValueChange(QtProperty *property);
+    virtual void slotEditorValueChange(int index);
+
+private:
+    int                 value_;
+    QComboBox*          editor_;
 };
 
 #endif // QTPROPERTYEDITOR_H

@@ -53,6 +53,8 @@ QString QtProperty::getValueString() const
 void QtProperty::setAttribute(const QString &name, const QVariant &value)
 {
     attributes_[name] = value;
+
+    emit signalAttributeChange(this, name);
 }
 
 QVariant QtProperty::getAttribute(const QString &name) const
@@ -314,4 +316,23 @@ void QtGroupProperty::slotChildValueChange(QtProperty *property)
 {
     // emit signal to listner directly.
     emit signalValueChange(property);
+}
+
+
+/********************************************************************/
+QtEnumProperty::QtEnumProperty(int type, QObject *parent)
+    : QtProperty(type, parent)
+{
+
+}
+
+QString QtEnumProperty::getValueString() const
+{
+    int index = value_.toInt();
+    QStringList enumNames = attributes_.value("enumNames").toStringList();
+    if(index >= 0 && index < enumNames.size())
+    {
+        return enumNames[index];
+    }
+    return QString();
 }
