@@ -246,10 +246,10 @@ QWidget* QtBoolEditor::createEditor(QWidget *parent)
 {
     if(NULL == editor_)
     {
-        editor_ = new QCheckBox(parent);
-        editor_->setCheckState(value_ ? Qt::Checked : Qt::Unchecked);
+        editor_ = new QtBoolEdit(parent);
+        editor_->setChecked(value_);
 
-        connect(editor_, SIGNAL(stateChanged(int)), this, SLOT(slotEditorValueChange(int)));
+        connect(editor_, SIGNAL(toggled(bool)), this, SLOT(slotEditorValueChange(bool)));
         connect(editor_, SIGNAL(destroyed(QObject*)), this, SLOT(slotEditorDestory(QObject*)));
     }
     return editor_;
@@ -270,9 +270,8 @@ void QtBoolEditor::onPropertyValueChange(QtProperty * /*property*/)
     }
 }
 
-void QtBoolEditor::slotEditorValueChange(int state)
+void QtBoolEditor::slotEditorValueChange(bool value)
 {
-    bool value = state == Qt::Checked;
     if(value != value_)
     {
         value_ = value;

@@ -356,6 +356,11 @@ QString QtBoolProperty::getValueString() const
     return value_.toBool() ? "True" : "False";
 }
 
+QIcon QtBoolProperty::getValueIcon() const
+{
+    return QtPropertyBrowserUtils::drawCheckBox(value_.toBool());
+}
+
 /********************************************************************/
 QtColorProperty::QtColorProperty(int type, QObject *parent)
     : QtProperty(type, parent)

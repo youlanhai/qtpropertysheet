@@ -12,6 +12,7 @@ class QLineEdit;
 class QComboBox;
 class QCheckBox;
 class QtColorEditWidget;
+class QtBoolEdit;
 
 // QtPropertyEditor will be destroied when QtEditor destroied.
 class QtPropertyEditor : public QObject
@@ -110,11 +111,11 @@ public:
 
 public slots:
     virtual void onPropertyValueChange(QtProperty *property);
-    virtual void slotEditorValueChange(int state);
+    virtual void slotEditorValueChange(bool value);
 
 protected:
     bool                value_;
-    QCheckBox*          editor_;
+    QtBoolEdit*         editor_;
 };
 
 class QtColorEditor : public QtPropertyEditor

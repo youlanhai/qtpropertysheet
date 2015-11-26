@@ -185,6 +185,7 @@ class QtBoolProperty : public QtProperty
 public:
     QtBoolProperty(int type, QObject *parent);
     virtual QString getValueString() const;
+    virtual QIcon getValueIcon() const;
 };
 
 /********************************************************************/

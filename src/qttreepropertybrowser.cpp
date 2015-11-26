@@ -262,6 +262,7 @@ void QtTreePropertyBrowser::slotPropertyValueChange(QtProperty *property)
     if(item != NULL)
     {
         item->setText(1, property->getValueString());
+        item->setIcon(1, property->getValueIcon());
     }
 }
 
