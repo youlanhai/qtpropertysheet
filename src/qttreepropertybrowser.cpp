@@ -184,6 +184,7 @@ void QtTreePropertyBrowser::addProperty(QtProperty *property, QTreeWidgetItem *p
         item = new QTreeWidgetItem();
         item->setText(0, property->getTitle());
         item->setData(0, PropertyDataIndex, QVariant::fromValue<quintptr>(reinterpret_cast<quintptr>(property)));
+        item->setIcon(1, property->getValueIcon());
         item->setText(1, property->getValueString());
 
         if(property->hasValue())

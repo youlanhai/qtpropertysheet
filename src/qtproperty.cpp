@@ -1,5 +1,7 @@
 #include "qtproperty.h"
 #include "qtpropertymanager.h"
+#include "qtpropertybrowserutils.h"
+
 #include <cassert>
 #include <algorithm>
 
@@ -48,6 +50,11 @@ void QtProperty::setValue(const QVariant &value)
 QString QtProperty::getValueString() const
 {
     return value_.toString();
+}
+
+QIcon QtProperty::getValueIcon() const
+{
+    return QIcon();
 }
 
 void QtProperty::setAttribute(const QString &name, const QVariant &value)
@@ -347,4 +354,23 @@ QtBoolProperty::QtBoolProperty(int type, QObject *parent)
 QString QtBoolProperty::getValueString() const
 {
     return value_.toBool() ? "True" : "False";
+}
+
+/********************************************************************/
+QtColorProperty::QtColorProperty(int type, QObject *parent)
+    : QtProperty(type, parent)
+{
+
+}
+
+QString QtColorProperty::getValueString() const
+{
+    QColor color = value_.value<QColor>();
+    return QtPropertyBrowserUtils::colorValueText(color);
+}
+
+QIcon QtColorProperty::getValueIcon() const
+{
+    QColor color = value_.value<QColor>();
+    return QtPropertyBrowserUtils::brushValueIcon(QBrush(color));
 }

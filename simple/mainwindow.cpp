@@ -69,6 +69,11 @@ MainWindow::MainWindow(QWidget *parent) :
         property5->setValue(true);
         group->addChild(property5);
 
+        QtProperty *property6 = manager->createProperty(QtProperty::TYPE_COLOR, manager);
+        property6->setName("color");
+        property6->setValue(QColor(255, 0, 0));
+        group->addChild(property6);
+
         root->addChild(group);
     }
     {

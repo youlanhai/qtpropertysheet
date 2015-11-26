@@ -5,6 +5,7 @@
 #include <QVector>
 #include <QVariant>
 #include <QMap>
+#include <QIcon>
 
 class QtProperty;
 typedef QVector<QtProperty*>    QtPropertyList;
@@ -45,6 +46,7 @@ public:
     virtual const QVariant& getValue() const { return value_; }
 
     virtual QString getValueString() const;
+    virtual QIcon getValueIcon() const;
 
     virtual void setAttribute(const QString &name, const QVariant &value);
     QVariant getAttribute(const QString &name) const;
@@ -183,6 +185,17 @@ class QtBoolProperty : public QtProperty
 public:
     QtBoolProperty(int type, QObject *parent);
     virtual QString getValueString() const;
+};
+
+/********************************************************************/
+class QtColorProperty : public QtProperty
+{
+    Q_OBJECT
+public:
+    QtColorProperty(int type, QObject *parent);
+
+    virtual QString getValueString() const;
+    virtual QIcon getValueIcon() const;
 };
 
 #endif // QTPROPERTY_H

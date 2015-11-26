@@ -2,6 +2,8 @@
 #define QTPROPERTYEDITOR_H
 
 #include <QObject>
+#include <QColor>
+
 class QtProperty;
 class QWidget;
 class QSpinBox;
@@ -9,6 +11,7 @@ class QDoubleSpinBox;
 class QLineEdit;
 class QComboBox;
 class QCheckBox;
+class QtColorEditWidget;
 
 // QtPropertyEditor will be destroied when QtEditor destroied.
 class QtPropertyEditor : public QObject
@@ -112,6 +115,22 @@ public slots:
 protected:
     bool                value_;
     QCheckBox*          editor_;
+};
+
+class QtColorEditor : public QtPropertyEditor
+{
+    Q_OBJECT
+public:
+    explicit QtColorEditor(QtProperty *property);
+    virtual QWidget* createEditor(QWidget *parent);
+
+public slots:
+    virtual void onPropertyValueChange(QtProperty *property);
+    virtual void slotEditorValueChange(const QColor &color);
+
+protected:
+    QColor              value_;
+    QtColorEditWidget*  editor_;
 };
 
 #endif // QTPROPERTYEDITOR_H

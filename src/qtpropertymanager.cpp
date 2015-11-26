@@ -17,6 +17,7 @@ QtPropertyManager::QtPropertyManager(QObject *parent)
     REGISTER_PROPERTY(QtProperty::TYPE_GROUP, QtGroupProperty);
     REGISTER_PROPERTY(QtProperty::TYPE_ENUM, QtEnumProperty);
     REGISTER_PROPERTY(QtProperty::TYPE_BOOL, QtBoolProperty);
+    REGISTER_PROPERTY(QtProperty::TYPE_COLOR, QtColorProperty);
 
 #undef REGISTER_PROPERTY
 }

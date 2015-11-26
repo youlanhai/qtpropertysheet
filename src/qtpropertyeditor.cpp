@@ -1,5 +1,6 @@
 #include "qtpropertyeditor.h"
 #include "qtproperty.h"
+#include "qtpropertybrowserutils.h"
 
 #include <QSpinBox>
 #include <QDoubleSpinBox>
@@ -276,5 +277,48 @@ void QtBoolEditor::slotEditorValueChange(int state)
     {
         value_ = value;
         property_->setValue(value_);
+    }
+}
+
+/********************************************************************/
+QtColorEditor::QtColorEditor(QtProperty *property)
+    : QtPropertyEditor(property)
+    , editor_(NULL)
+{
+    value_ = property->getValue().value<QColor>();
+}
+
+QWidget* QtColorEditor::createEditor(QWidget *parent)
+{
+    if(NULL == editor_)
+    {
+        editor_ = new QtColorEditWidget(parent);
+        editor_->setValue(value_);
+
+        connect(editor_, SIGNAL(valueChanged(QColor)), this, SLOT(slotEditorValueChange(QColor)));
+        connect(editor_, SIGNAL(destroyed(QObject*)), this, SLOT(slotEditorDestory(QObject*)));
+    }
+    return editor_;
+}
+
+void QtColorEditor::onPropertyValueChange(QtProperty * property)
+{
+    QColor color = property->getValue().value<QColor>();
+    if(color != value_)
+    {
+        value_ = color;
+        if(NULL != editor_)
+        {
+            editor_->setValue(value_);
+        }
+    }
+}
+
+void QtColorEditor::slotEditorValueChange(const QColor &color)
+{
+    if(color != value_)
+    {
+        value_ = color;
+        property_->setValue(QVariant::fromValue(value_));
     }
 }

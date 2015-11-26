@@ -19,6 +19,7 @@ QtPropertyEditorFactory::QtPropertyEditorFactory(QObject *parent)
     REGISTER_CREATOR(QtProperty::TYPE_STRING, QtStringEditor);
     REGISTER_CREATOR(QtProperty::TYPE_ENUM, QtEnumEditor);
     REGISTER_CREATOR(QtProperty::TYPE_BOOL, QtBoolEditor);
+    REGISTER_CREATOR(QtProperty::TYPE_COLOR, QtColorEditor);
 
 #undef QtSpinBoxEditor
 }

@@ -7,7 +7,8 @@ SOURCES += \
     $$PWD/qtpropertybrowser.cpp \
     $$PWD/qttreepropertybrowser.cpp \
     $$PWD/qtpropertytreeview.cpp \
-    $$PWD/qtpropertytreedelegate.cpp
+    $$PWD/qtpropertytreedelegate.cpp \
+    $$PWD/qtpropertybrowserutils.cpp
 
 HEADERS  += \
     $$PWD/qtproperty.h \
@@ -17,4 +18,5 @@ HEADERS  += \
     $$PWD/qtpropertybrowser.h \
     $$PWD/qttreepropertybrowser.h \
     $$PWD/qtpropertytreeview.h \
-    $$PWD/qtpropertytreedelegate.h
+    $$PWD/qtpropertytreedelegate.h \
+    $$PWD/qtpropertybrowserutils.h
