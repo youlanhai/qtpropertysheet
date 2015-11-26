@@ -7,6 +7,8 @@ QtProperty::QtProperty(int type, QObject *parent)
     : QObject(parent)
     , type_(type)
     , parent_(NULL)
+    , visible_(true)
+    , selfVisible_(true)
 {
 
 }
@@ -121,29 +123,38 @@ QtProperty* QtProperty::findChild(const QString &name)
     return NULL;
 }
 
-void QtProperty::onChildAdd(QtProperty *child)
+void QtProperty::setChildValue(const QString &name, const QVariant &value)
+{
+    QtProperty *child = findChild(name);
+    if(child != NULL)
+    {
+        child->setValue(value);
+    }
+}
+
+void QtProperty::onChildAdd(QtProperty* /*child*/)
 {
 
 }
 
-void QtProperty::onChildRemove(QtProperty *child)
+void QtProperty::onChildRemove(QtProperty* /*child*/)
 {
 
 }
 
 /********************************************************************/
-QtGroupProperty::QtGroupProperty(int type, QObject *parent)
+QtContainerProperty::QtContainerProperty(int type, QObject *parent)
     : QtProperty(type, parent)
 {
 
 }
 
-void QtGroupProperty::onChildAdd(QtProperty *child)
+void QtContainerProperty::onChildAdd(QtProperty *child)
 {
     connect(child, SIGNAL(signalValueChange(QtProperty*)), this, SLOT(slotChildValueChange(QtProperty*)));
 }
 
-void QtGroupProperty::onChildRemove(QtProperty *child)
+void QtContainerProperty::onChildRemove(QtProperty *child)
 {
     disconnect(child, SIGNAL(signalValueChange(QtProperty*)), this, SLOT(slotChildValueChange(QtProperty*)));
 }
@@ -158,7 +169,7 @@ static void ensureSize(QVariantList &list, int size)
 }
 
 QtListProperty::QtListProperty(int type, QObject *parent)
-    : QtGroupProperty(type, parent)
+    : QtContainerProperty(type, parent)
 {
 
 }
@@ -214,7 +225,7 @@ void QtListProperty::slotChildValueChange(QtProperty *child)
 
 /********************************************************************/
 QtDictProperty::QtDictProperty(int type, QObject *parent)
-    : QtGroupProperty(type, parent)
+    : QtContainerProperty(type, parent)
 {
 
 }
@@ -248,4 +259,59 @@ void QtDictProperty::slotChildValueChange(QtProperty *property)
         value_ = valueMap;
         emit signalValueChange(this);
     }
+}
+
+/********************************************************************/
+QtGroupProperty::QtGroupProperty(int type, QObject *parent)
+    : QtContainerProperty(type, parent)
+{
+
+}
+
+void QtGroupProperty::setValue(const QVariant& /*value*/)
+{
+
+}
+
+QtProperty* QtGroupProperty::findChild(const QString &name)
+{
+    QtProperty *result = NULL;
+    foreach(QtProperty *child, children_)
+    {
+        if(name == child->getName())
+        {
+            result = child;
+        }
+        else if(child->getType() == TYPE_GROUP)
+        {
+            result = child->findChild(name);
+        }
+
+        if(result != NULL)
+        {
+            break;
+        }
+    }
+    return result;
+}
+
+void QtGroupProperty::setChildValue(const QString &name, const QVariant &value)
+{
+    foreach(QtProperty *child, children_)
+    {
+        if(child->getType() == TYPE_GROUP)
+        {
+            child->setChildValue(name, value);
+        }
+        else if(name == child->getName())
+        {
+            child->setValue(value);
+        }
+    }
+}
+
+void QtGroupProperty::slotChildValueChange(QtProperty *property)
+{
+    // emit signal to listner directly.
+    emit signalValueChange(property);
 }

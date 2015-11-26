@@ -42,7 +42,7 @@ public:
     const QString& getTitle() const;
 
     virtual void setValue(const QVariant &value);
-    const QVariant& getValue() const { return value_; }
+    virtual const QVariant& getValue() const { return value_; }
 
     virtual QString getValueString() const;
 
@@ -55,12 +55,20 @@ public:
     void removeAllChildren();
     void removeFromParent();
 
-    int indexChild(const QtProperty *child) const;
-    QtProperty* findChild(const QString &name);
     QtPropertyList& getChildren(){ return children_; }
+    int indexChild(const QtProperty *child) const;
+    virtual QtProperty* findChild(const QString &name);
+
+    virtual void setChildValue(const QString &name, const QVariant &value);
 
     virtual bool hasValue() const { return true; }
     virtual bool isModified() const { return false; }
+
+    void setVisible(bool visible){ visible_ = visible; }
+    bool isVisible() const { return visible_; }
+
+    void setSelfVisible(bool visible){ selfVisible_ = visible; }
+    bool isSelfVisible() const { return selfVisible_; }
 
 signals:
     void signalValueChange(QtProperty *property);
@@ -83,15 +91,17 @@ protected:
     QMap<QString, QVariant> attributes_;
 
     bool                visible_;
+    bool                selfVisible_;
 };
 
 
 /********************************************************************/
-class QtGroupProperty : public QtProperty
+class QtContainerProperty : public QtProperty
 {
     Q_OBJECT
 public:
-    QtGroupProperty(int type, QObject *parent);
+    QtContainerProperty(int type, QObject *parent);
+    virtual bool hasValue() const { return false; }
 
 protected slots:
     virtual void slotChildValueChange(QtProperty *property) = 0;
@@ -103,7 +113,7 @@ protected:
 
 
 /********************************************************************/
-class QtListProperty : public QtGroupProperty
+class QtListProperty : public QtContainerProperty
 {
     Q_OBJECT
 public:
@@ -118,7 +128,7 @@ protected slots:
 
 
 /********************************************************************/
-class QtDictProperty : public QtGroupProperty
+class QtDictProperty : public QtContainerProperty
 {
     Q_OBJECT
 public:
@@ -129,5 +139,31 @@ public:
 protected slots:
     virtual void slotChildValueChange(QtProperty *property);
 };
+
+
+/**
+ * @brief The QtGroupProperty class
+ *
+ * QtGroupProperty doesn't have value, it emits the children's value change event
+ * to it's listener directly.
+ *
+ * NOTICE: QtGroupProperty can only be root or child of another QtGroupProperty,
+ * Adding QtGroupProperty as child of any other property, will cause unexpected problem.
+ */
+class QtGroupProperty : public QtContainerProperty
+{
+    Q_OBJECT
+public:
+    QtGroupProperty(int type, QObject *parent);
+
+    virtual void setValue(const QVariant &value);
+
+    virtual QtProperty* findChild(const QString &name);
+    virtual void setChildValue(const QString &name, const QVariant &value);
+
+protected slots:
+    virtual void slotChildValueChange(QtProperty *property);
+};
+
 
 #endif // QTPROPERTY_H

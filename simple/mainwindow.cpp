@@ -35,22 +35,28 @@ MainWindow::MainWindow(QWidget *parent) :
     browser->init(ui->centralWidget);
     browser->setEditorFactory(new QtPropertyEditorFactory(this));
 
+    QtProperty *root = manager->createProperty(QtProperty::TYPE_GROUP, manager);
+    root->setName("root");
+    root->setSelfVisible(false);
+
     {
+        QtProperty *group = manager->createProperty(QtProperty::TYPE_GROUP, manager);
+        group->setTitle("information");
+
         QtProperty *property = manager->createProperty(QtProperty::TYPE_STRING, manager);
-        property->setName("test");
-        property->setValue(QString("test value"));
-        browser->addProperty(property);
+        property->setName("name");
+        property->setValue(QString("no name"));
+        group->addChild(property);
 
         QtProperty *property2 = manager->createProperty(QtProperty::TYPE_STRING, manager);
-        property2->setName("test2");
-        property->addChild(property2);
+        property2->setName("adress");
+        group->addChild(property2);
 
-        property2->setValue(QString("test value2"));
+        root->addChild(group);
     }
     {
         QtProperty *rect = manager->createProperty(QtProperty::TYPE_LIST, manager);
-        rect->setName("list");
-        connect(rect, SIGNAL(signalValueChange(QtProperty*)), this, SLOT(onValueChanged(QtProperty*)));
+        rect->setName("geometry");
 
         QtProperty *x = manager->createProperty(QtProperty::TYPE_DOUBLE, manager);
         x->setName("x");
@@ -68,15 +74,28 @@ MainWindow::MainWindow(QWidget *parent) :
         height->setName("height");
         rect->addChild(height);
 
-        browser->addProperty(rect);
-
-        QVariantList values;
-        values.push_back(QVariant(8.0f));
-        values.push_back(QVariant(9.0f));
-        values.push_back(QVariant(200.0f));
-        values.push_back(QVariant(100.0f));
-        rect->setValue(values);
+        root->addChild(rect);
     }
+
+    browser->addProperty(root);
+    connect(root, SIGNAL(signalValueChange(QtProperty*)), this, SLOT(onValueChanged(QtProperty*)));
+
+    // set property value
+
+    root->setChildValue("name", "Jack");
+
+    QtProperty *addressProperty = root->findChild("adress");
+    if(addressProperty != NULL)
+    {
+        addressProperty->setValue("Beijing");
+    }
+
+    QVariantList values;
+    values.push_back(QVariant(8.0f));
+    values.push_back(QVariant(9.0f));
+    values.push_back(QVariant(200.0f));
+    values.push_back(QVariant(100.0f));
+    root->setChildValue("geometry", values);
 
 #endif
 }

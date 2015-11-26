@@ -178,25 +178,34 @@ void QtTreePropertyBrowser::addProperty(QtProperty *property)
 
 void QtTreePropertyBrowser::addProperty(QtProperty *property, QTreeWidgetItem *parentItem)
 {
-    QTreeWidgetItem *item = new QTreeWidgetItem();
-    item->setText(0, property->getTitle());
-    item->setData(0, PropertyDataIndex, QVariant::fromValue<quintptr>(reinterpret_cast<quintptr>(property)));
-    item->setText(1, property->getValueString());
-    item->setFlags(item->flags() | Qt::ItemIsEditable);
+    QTreeWidgetItem *item = NULL;
+    if(property->isSelfVisible())
+    {
+        item = new QTreeWidgetItem();
+        item->setText(0, property->getTitle());
+        item->setData(0, PropertyDataIndex, QVariant::fromValue<quintptr>(reinterpret_cast<quintptr>(property)));
+        item->setText(1, property->getValueString());
+
+        if(property->hasValue())
+        {
+            item->setFlags(item->flags() | Qt::ItemIsEditable);
+        }
+
+        if(parentItem != NULL)
+        {
+            parentItem->addChild(item);
+        }
+        else
+        {
+            m_treeWidget->addTopLevelItem(item);
+        }
+        parentItem = item;
+    }
+    m_property2items[property] = item;
 
     connect(property, SIGNAL(signalPropertyInserted(QtProperty*,QtProperty*)), this, SLOT(slotPropertyInsert(QtProperty*,QtProperty*)));
     connect(property, SIGNAL(signalPropertyRemoved(QtProperty*,QtProperty*)), this, SLOT(slotPropertyRemove(QtProperty*,QtProperty*)));
     connect(property, SIGNAL(signalValueChange(QtProperty*)), this, SLOT(slotPropertyValueChange(QtProperty*)));
-    m_property2items[property] = item;
-
-    if(parentItem != NULL)
-    {
-        parentItem->addChild(item);
-    }
-    else
-    {
-        m_treeWidget->addTopLevelItem(item);
-    }
 
     // add it's children finaly.
     foreach(QtProperty *child, property->getChildren())
@@ -238,11 +247,6 @@ void QtTreePropertyBrowser::removeAllProperties()
 void QtTreePropertyBrowser::slotPropertyInsert(QtProperty *property, QtProperty *parent)
 {
     QTreeWidgetItem *parentItem = m_property2items.value(parent);
-    if(parentItem == NULL)
-    {
-        return;
-    }
-
     addProperty(property, parentItem);
 }
 
