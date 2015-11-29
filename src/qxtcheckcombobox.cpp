@@ -219,6 +219,21 @@ QStringList QxtCheckComboBox::checkedItems() const
     return items;
 }
 
+QIntList QxtCheckComboBox::checkedIndices() const
+{
+    QIntList indices;
+    if(model())
+    {
+        QModelIndex index = model()->index(0, modelColumn(), rootModelIndex());
+        QModelIndexList indexes = model()->match(index, Qt::CheckStateRole, Qt::Checked, -1, Qt::MatchExactly);
+        foreach (const QModelIndex &index, indexes)
+        {
+            indices.append(index.row());
+        }
+    }
+    return indices;
+}
+
 void QxtCheckComboBox::setCheckedItems(const QStringList& items)
 {
     // not the most efficient solution but most likely nobody
@@ -227,6 +242,15 @@ void QxtCheckComboBox::setCheckedItems(const QStringList& items)
     {
         const int index = findText(text);
         setItemCheckState(index, index != -1 ? Qt::Checked : Qt::Unchecked);
+    }
+}
+
+
+void QxtCheckComboBox::setCheckedIndices(const QIntList &indices)
+{
+    foreach(int index, indices)
+    {
+        setItemCheckState(index, Qt::Checked);
     }
 }
 

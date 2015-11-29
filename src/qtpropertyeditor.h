@@ -113,12 +113,12 @@ public:
 
 public slots:
     virtual void onPropertyValueChange(QtProperty *property);
-    virtual void slotEditorValueChange(int index);
     void checkedItemsChanged(const QStringList& items);
 
 private:
     int                 value_;
     QxtCheckComboBox*   editor_;
+    QStringList         flagNames_;
 };
 
 class QtBoolEditor : public QtPropertyEditor

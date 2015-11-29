@@ -29,6 +29,7 @@
 #include "qxtglobal.h"
 
 class QxtCheckComboBoxPrivate;
+typedef QList<int> QIntList;
 
 class QXT_GUI_EXPORT QxtCheckComboBox : public QComboBox
 {
@@ -54,9 +55,12 @@ public:
     void setSeparator(const QString& separator);
 
     QStringList checkedItems() const;
+    QIntList checkedIndices() const;
+
 
 public Q_SLOTS:
     void setCheckedItems(const QStringList& items);
+    void setCheckedIndices(const QIntList &indices);
 
 Q_SIGNALS:
     void checkedItemsChanged(const QStringList& items);

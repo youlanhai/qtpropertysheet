@@ -1,6 +1,7 @@
 #include "qtpropertyeditor.h"
 #include "qtproperty.h"
 #include "qtpropertybrowserutils.h"
+#include "qxtcheckcombobox.h"
 
 #include <QSpinBox>
 #include <QDoubleSpinBox>
@@ -239,10 +240,8 @@ QtFlagEditor::QtFlagEditor(QtProperty *property)
     : QtPropertyEditor(property)
     , editor_(NULL)
 {
-
+    value_ = property_->getValue().toInt();
 }
-
-#include "qxtcheckcombobox.h"
 
 QWidget* QtFlagEditor::createEditor(QWidget *parent)
 {
@@ -252,13 +251,21 @@ QWidget* QtFlagEditor::createEditor(QWidget *parent)
         editor_->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
         editor_->setMinimumContentsLength(1);
         editor_->view()->setTextElideMode(Qt::ElideRight);
+        editor_->setSeparator("|");
 
-        QStringList enumNames = property_->getAttribute("flagNames").toStringList();
-        editor_->addItems(enumNames);
+        flagNames_ = property_->getAttribute("flagNames").toStringList();
+        editor_->addItems(flagNames_);
 
-        editor_->setCurrentIndex(value_);
+        QIntList flagValues;
+        for(int i = 0; i < flagNames_.size(); ++i)
+        {
+            if(value_ & (1 << i))
+            {
+                flagValues.push_back(i);
+            }
+        }
+        editor_->setCheckedIndices(flagValues);
 
-        connect(editor_, SIGNAL(currentIndexChanged(int)), this, SLOT(slotEditorValueChange(int)));
         connect(editor_, SIGNAL(destroyed(QObject*)), this, SLOT(slotEditorDestory(QObject*)));
         connect(editor_, SIGNAL(checkedItemsChanged(QStringList)), this, SLOT(checkedItemsChanged(QStringList)));
     }
@@ -267,19 +274,38 @@ QWidget* QtFlagEditor::createEditor(QWidget *parent)
 
 void QtFlagEditor::onPropertyValueChange(QtProperty *property)
 {
-
+    int value = property->getValue().toInt();
+    if(value != value_)
+    {
+        value_ = value;
+        if(NULL != editor_)
+        {
+            QIntList flagValues;
+            for(int i = 0; i < flagNames_.size(); ++i)
+            {
+                if(value_ & (1 << i))
+                {
+                    flagValues.push_back(i);
+                }
+            }
+            editor_->setCheckedIndices(flagValues);
+        }
+    }
 }
 
-void QtFlagEditor::slotEditorValueChange(int index)
+void QtFlagEditor::checkedItemsChanged(const QStringList& /*items*/)
 {
-    printf("value changed: %d\n", index);
-    fflush(stdout);
-}
-
-void QtFlagEditor::checkedItemsChanged(const QStringList& items)
-{
-    printf("value changed.\n");
-    fflush(stdout);
+    QIntList indices = editor_->checkedIndices();
+    int value = 0;
+    foreach(int index, indices)
+    {
+        value |= (1 << index);
+    }
+    if(value != value_)
+    {
+        value_ = value;
+        property_->setValue(value_);
+    }
 }
 
 /********************************************************************/

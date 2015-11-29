@@ -362,6 +362,29 @@ QString QtEnumProperty::getValueString() const
 }
 
 /********************************************************************/
+QtFlagProperty::QtFlagProperty(int type, QObject *parent)
+    : QtProperty(type, parent)
+{
+
+}
+
+QString QtFlagProperty::getValueString() const
+{
+    int value = value_.toInt();
+    QStringList enumNames = attributes_.value("flagNames").toStringList();
+
+    QStringList selected;
+    for(int i = 0; i < enumNames.size(); ++i)
+    {
+        if(value & (1 << i))
+        {
+            selected.push_back(enumNames[i]);
+        }
+    }
+    return selected.join('|');
+}
+
+/********************************************************************/
 QtBoolProperty::QtBoolProperty(int type, QObject *parent)
     : QtProperty(type, parent)
 {

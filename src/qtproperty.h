@@ -180,6 +180,15 @@ public:
 };
 
 /********************************************************************/
+class QtFlagProperty : public QtProperty
+{
+    Q_OBJECT
+public:
+    QtFlagProperty(int type, QObject *parent);
+    virtual QString getValueString() const;
+};
+
+/********************************************************************/
 class QtBoolProperty : public QtProperty
 {
     Q_OBJECT
