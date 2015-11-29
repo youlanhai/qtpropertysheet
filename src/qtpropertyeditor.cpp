@@ -78,16 +78,12 @@ void QtIntSpinBoxEditor::slotEditorValueChange(int value)
 
 void QtIntSpinBoxEditor::onPropertyValueChange(QtProperty* property)
 {
-    int value = property->getValue().toInt();
-    if(value == value_)
-    {
-        return;
-    }
-
-    value_ = value;
+    value_ = property->getValue().toInt();
     if(editor_ != 0)
     {
+        editor_->blockSignals(true);
         editor_->setValue(value_);
+        editor_->blockSignals(false);
     }
 }
 
@@ -151,16 +147,12 @@ void QtDoubleSpinBoxEditor::slotEditorValueChange(double value)
 
 void QtDoubleSpinBoxEditor::onPropertyValueChange(QtProperty* property)
 {
-    int value = property->getValue().toDouble();
-    if(value == value_)
-    {
-        return;
-    }
-
-    value_ = value;
+    value_ = property->getValue().toDouble();
     if(editor_ != 0)
     {
+        editor_->blockSignals(true);
         editor_->setValue(value_);
+        editor_->blockSignals(false);
     }
 }
 
@@ -210,16 +202,12 @@ QWidget* QtStringEditor::createEditor(QWidget *parent)
 
 void QtStringEditor::onPropertyValueChange(QtProperty *property)
 {
-    QString value = property->getValue().toString();
-    if(value == value_)
-    {
-        return;
-    }
-
-    value_ = value;
+    value_ = property->getValue().toString();
     if(editor_ != NULL)
     {
+        editor_->blockSignals(true);
         editor_->setText(value_);
+        editor_->blockSignals(false);
     }
 }
 
@@ -266,16 +254,12 @@ QWidget* QtEnumEditor::createEditor(QWidget *parent)
 
 void QtEnumEditor::onPropertyValueChange(QtProperty *property)
 {
-    int value = property->getValue().toInt();
-    if(value == value_)
-    {
-        return;
-    }
-
-    value_ = value;
+    value_ = property->getValue().toInt();
     if(editor_ != NULL)
     {
+        editor_->blockSignals(true);
         editor_->setCurrentIndex(value_);
+        editor_->blockSignals(false);
     }
 }
 
@@ -337,19 +321,17 @@ void QtFlagEditor::setValueToEditor(int value)
             flagValues.push_back(i);
         }
     }
+    editor_->blockSignals(true);
     editor_->setCheckedIndices(flagValues);
+    editor_->blockSignals(false);
 }
 
 void QtFlagEditor::onPropertyValueChange(QtProperty *property)
 {
-    int value = property->getValue().toInt();
-    if(value != value_)
+    value_ = property->getValue().toInt();
+    if(NULL != editor_)
     {
-        value_ = value;
-        if(NULL != editor_)
-        {
-            setValueToEditor(value_);
-        }
+        setValueToEditor(value_);
     }
 }
 
@@ -402,16 +384,12 @@ QWidget* QtBoolEditor::createEditor(QWidget *parent)
 
 void QtBoolEditor::onPropertyValueChange(QtProperty * property)
 {
-    bool value = property->getValue().toBool();
-    if(value == value_)
-    {
-        return;
-    }
-
-    value_ = value;
+    value_ = property->getValue().toBool();
     if(NULL != editor_)
     {
+        editor_->blockSignals(true);
         editor_->setCheckState(value_ ? Qt::Checked : Qt::Unchecked);
+        editor_->blockSignals(false);
     }
 }
 
@@ -447,14 +425,12 @@ QWidget* QtColorEditor::createEditor(QWidget *parent)
 
 void QtColorEditor::onPropertyValueChange(QtProperty * property)
 {
-    QColor color = property->getValue().value<QColor>();
-    if(color != value_)
+    value_ = property->getValue().value<QColor>();
+    if(NULL != editor_)
     {
-        value_ = color;
-        if(NULL != editor_)
-        {
-            editor_->setValue(value_);
-        }
+        editor_->blockSignals(true);
+        editor_->setValue(value_);
+        editor_->blockSignals(false);
     }
 }
 
