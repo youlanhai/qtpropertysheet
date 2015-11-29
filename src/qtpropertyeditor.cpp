@@ -41,6 +41,7 @@ QtIntSpinBoxEditor::QtIntSpinBoxEditor(QtProperty *property)
     , editor_(0)
 {
     value_ = property_->getValue().toInt();
+    connect(property, SIGNAL(signalAttributeChange(QtProperty*,QString)), this, SLOT(slotSetAttribute(QtProperty*,QString)));
 }
 
 QWidget* QtIntSpinBoxEditor::createEditor(QWidget *parent)
@@ -49,7 +50,10 @@ QWidget* QtIntSpinBoxEditor::createEditor(QWidget *parent)
     {
         editor_ = new QSpinBox(parent);
         editor_->setKeyboardTracking(false);
-        editor_->setRange(std::numeric_limits<int>::min(), std::numeric_limits<int>::max());
+
+        slotSetAttribute(property_, QtAttributeName::MinValue);
+        slotSetAttribute(property_, QtAttributeName::MaxValue);
+
         editor_->setValue(value_);
 
         connect(editor_, SIGNAL(valueChanged(int)), this, SLOT(slotEditorValueChange(int)));
@@ -86,12 +90,30 @@ void QtIntSpinBoxEditor::onPropertyValueChange(QtProperty* /*property*/)
         editor_->setValue(value_);
     }
 }
+
+void QtIntSpinBoxEditor::slotSetAttribute(QtProperty *property, const QString &name)
+{
+    if(name == QtAttributeName::MinValue)
+    {
+        QVariant v = property->getAttribute(QtAttributeName::MinValue);
+        int minValue = (v.type() == QVariant::Int) ? v.toInt() : std::numeric_limits<int>::min();
+        editor_->setMinimum(minValue);
+    }
+    else if(name == QtAttributeName::MaxValue)
+    {
+        QVariant v = property_->getAttribute(QtAttributeName::MaxValue);
+        int maxValue = (v.type() == QVariant::Int) ? v.toInt() : std::numeric_limits<int>::max();
+        editor_->setMaximum(maxValue);
+    }
+}
+
 /********************************************************************/
 QtDoubleSpinBoxEditor::QtDoubleSpinBoxEditor(QtProperty *property)
     : QtPropertyEditor(property)
     , editor_(0)
 {
     value_ = property_->getValue().toDouble();
+    connect(property_, SIGNAL(signalAttributeChange(QtProperty*,QString)), this, SLOT(slotSetAttribute(QtProperty*,QString)));
 }
 
 QWidget* QtDoubleSpinBoxEditor::createEditor(QWidget *parent)
@@ -100,7 +122,10 @@ QWidget* QtDoubleSpinBoxEditor::createEditor(QWidget *parent)
     {
         editor_ = new QDoubleSpinBox(parent);
         editor_->setKeyboardTracking(false);
-        editor_->setRange(std::numeric_limits<double>::min(), std::numeric_limits<double>::max());
+
+        slotSetAttribute(property_, QtAttributeName::MinValue);
+        slotSetAttribute(property_, QtAttributeName::MaxValue);
+
         editor_->setValue(value_);
 
         connect(editor_, SIGNAL(valueChanged(double)), this, SLOT(slotEditorValueChange(double)));
@@ -135,6 +160,22 @@ void QtDoubleSpinBoxEditor::onPropertyValueChange(QtProperty* /*property*/)
     if(editor_ != 0)
     {
         editor_->setValue(value_);
+    }
+}
+
+void QtDoubleSpinBoxEditor::slotSetAttribute(QtProperty *property, const QString &name)
+{
+    if(name == QtAttributeName::MinValue)
+    {
+        QVariant v = property->getAttribute(QtAttributeName::MinValue);
+        int minValue = (v.type() == QVariant::Int) ? v.toInt() : std::numeric_limits<int>::min();
+        editor_->setMinimum(minValue);
+    }
+    else if(name == QtAttributeName::MaxValue)
+    {
+        QVariant v = property_->getAttribute(QtAttributeName::MaxValue);
+        int maxValue = (v.type() == QVariant::Int) ? v.toInt() : std::numeric_limits<int>::max();
+        editor_->setMaximum(maxValue);
     }
 }
 /********************************************************************/
@@ -191,6 +232,7 @@ QtEnumEditor::QtEnumEditor(QtProperty *property)
     , editor_(NULL)
 {
     value_ = property_->getValue().toInt();
+    connect(property_, SIGNAL(signalAttributeChange(QtProperty*,QString)), this, SLOT(slotSetAttribute(QtProperty*,QString)));
 }
 
 QWidget* QtEnumEditor::createEditor(QWidget *parent)
@@ -202,8 +244,8 @@ QWidget* QtEnumEditor::createEditor(QWidget *parent)
         editor_->setMinimumContentsLength(1);
         editor_->view()->setTextElideMode(Qt::ElideRight);
 
-        QStringList enumNames = property_->getAttribute(QtAttributeName::EnumName).toStringList();
-        editor_->addItems(enumNames);
+        slotSetAttribute(property_, QtAttributeName::EnumName);
+
         editor_->setCurrentIndex(value_);
 
         connect(editor_, SIGNAL(currentIndexChanged(int)), this, SLOT(slotEditorValueChange(int)));
@@ -236,12 +278,24 @@ void QtEnumEditor::slotEditorValueChange(int index)
     }
 }
 
+void QtEnumEditor::slotSetAttribute(QtProperty * /*property*/, const QString &name)
+{
+    if(name == QtAttributeName::EnumName)
+    {
+        editor_->clear();
+
+        QStringList enumNames = property_->getAttribute(QtAttributeName::EnumName).toStringList();
+        editor_->addItems(enumNames);
+    }
+}
+
 /********************************************************************/
 QtFlagEditor::QtFlagEditor(QtProperty *property)
     : QtPropertyEditor(property)
     , editor_(NULL)
 {
     value_ = property_->getValue().toInt();
+    connect(property_, SIGNAL(signalAttributeChange(QtProperty*,QString)), this, SLOT(slotSetAttribute(QtProperty*,QString)));
 }
 
 QWidget* QtFlagEditor::createEditor(QWidget *parent)
@@ -254,23 +308,26 @@ QWidget* QtFlagEditor::createEditor(QWidget *parent)
         editor_->view()->setTextElideMode(Qt::ElideRight);
         editor_->setSeparator("|");
 
-        flagNames_ = property_->getAttribute(QtAttributeName::FlagName).toStringList();
-        editor_->addItems(flagNames_);
-
-        QIntList flagValues;
-        for(int i = 0; i < flagNames_.size(); ++i)
-        {
-            if(value_ & (1 << i))
-            {
-                flagValues.push_back(i);
-            }
-        }
-        editor_->setCheckedIndices(flagValues);
+        slotSetAttribute(property_, QtAttributeName::FlagName);
+        setValueToEditor(value_);
 
         connect(editor_, SIGNAL(destroyed(QObject*)), this, SLOT(slotEditorDestory(QObject*)));
         connect(editor_, SIGNAL(checkedItemsChanged(QStringList)), this, SLOT(checkedItemsChanged(QStringList)));
     }
     return editor_;
+}
+
+void QtFlagEditor::setValueToEditor(int value)
+{
+    QIntList flagValues;
+    for(int i = 0; i < flagNames_.size(); ++i)
+    {
+        if(value & (1 << i))
+        {
+            flagValues.push_back(i);
+        }
+    }
+    editor_->setCheckedIndices(flagValues);
 }
 
 void QtFlagEditor::onPropertyValueChange(QtProperty *property)
@@ -281,15 +338,7 @@ void QtFlagEditor::onPropertyValueChange(QtProperty *property)
         value_ = value;
         if(NULL != editor_)
         {
-            QIntList flagValues;
-            for(int i = 0; i < flagNames_.size(); ++i)
-            {
-                if(value_ & (1 << i))
-                {
-                    flagValues.push_back(i);
-                }
-            }
-            editor_->setCheckedIndices(flagValues);
+            setValueToEditor(value_);
         }
     }
 }
@@ -306,6 +355,17 @@ void QtFlagEditor::checkedItemsChanged(const QStringList& /*items*/)
     {
         value_ = value;
         property_->setValue(value_);
+    }
+}
+
+void QtFlagEditor::slotSetAttribute(QtProperty * /*property*/, const QString &name)
+{
+    if(name == QtAttributeName::FlagName)
+    {
+        editor_->clear();
+
+        flagNames_ = property_->getAttribute(QtAttributeName::FlagName).toStringList();
+        editor_->addItems(flagNames_);
     }
 }
 

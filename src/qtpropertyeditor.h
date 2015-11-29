@@ -46,6 +46,7 @@ public:
 public slots:
     virtual void onPropertyValueChange(QtProperty *property);
     void slotEditorValueChange(int value);
+    void slotSetAttribute(QtProperty *property, const QString &name);
 
 private:
     int                 value_;
@@ -63,6 +64,7 @@ public:
 public slots:
     virtual void onPropertyValueChange(QtProperty *property);
     void slotEditorValueChange(double value);
+    void slotSetAttribute(QtProperty *property, const QString &name);
 
 private:
     double              value_;
@@ -97,6 +99,7 @@ public:
 public slots:
     virtual void onPropertyValueChange(QtProperty *property);
     virtual void slotEditorValueChange(int index);
+    void slotSetAttribute(QtProperty *property, const QString &name);
 
 private:
     int                 value_;
@@ -111,9 +114,12 @@ public:
     explicit QtFlagEditor(QtProperty *property);
     virtual QWidget* createEditor(QWidget *parent);
 
+    void setValueToEditor(int value);
+
 public slots:
     virtual void onPropertyValueChange(QtProperty *property);
     void checkedItemsChanged(const QStringList& items);
+    void slotSetAttribute(QtProperty *property, const QString &name);
 
 private:
     int                 value_;
