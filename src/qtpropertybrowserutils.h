@@ -67,6 +67,8 @@ class QCheckBox;
 class QLineEdit;
 class QLabel;
 class QToolButton;
+class QPalette;
+class QStyle;
 
 class QtCursorDatabase
 {
@@ -100,6 +102,7 @@ public:
     static QIcon fontValueIcon(const QFont &f);
     static QString fontValueText(const QFont &f);
     static QIcon drawCheckBox(bool value);
+    static QIcon drawIndicatorIcon(const QPalette &palette, QStyle *style);
 };
 
 class QtBoolEdit : public QWidget {
