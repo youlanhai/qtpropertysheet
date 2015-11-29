@@ -212,7 +212,7 @@ void QtTreePropertyBrowser::addProperty(QtProperty *property, QTreeWidgetItem *p
     // add it's children finaly.
     foreach(QtProperty *child, property->getChildren())
     {
-        addProperty(child, item);
+        addProperty(child, parentItem);
     }
 }
 
