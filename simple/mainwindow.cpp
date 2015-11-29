@@ -15,21 +15,6 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-#if 0
-    QHBoxLayout *layout = new QHBoxLayout();
-
-    QTreeWidget *widget = new QTreeWidget(ui->centralWidget);
-    widget->setColumnCount(2);
-    QTreeWidgetItem *item = new QTreeWidgetItem();
-    item->setText(0, "name");
-    item->setText(1, "value");
-    widget->addTopLevelItem(item);
-
-    layout->addWidget(widget);
-    ui->centralWidget->setLayout(layout);
-
-#else
-
     QtPropertyFactory *manager = new QtPropertyFactory(this);
 
     QtTreePropertyBrowser *browser = new QtTreePropertyBrowser(this);
@@ -39,6 +24,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QtProperty *root = manager->createProperty(QtProperty::TYPE_GROUP, manager);
     root->setName("root");
     root->setSelfVisible(false);
+    root_ = root;
 
     {
         QtProperty *group = manager->createProperty(QtProperty::TYPE_GROUP, manager);
@@ -116,7 +102,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(root, SIGNAL(signalValueChange(QtProperty*)), this, SLOT(onValueChanged(QtProperty*)));
     browser->addProperty(root);
 
-#if 1
+
     // test set property value
 
     //1. set child value by name.
@@ -136,7 +122,7 @@ MainWindow::MainWindow(QWidget *parent) :
     values.push_back(QVariant(200.0f));
     values.push_back(QVariant(100.0f));
     root->setChildValue("geometry", values);
-#endif
+
 
 #if 0
     // test remove and add
@@ -147,8 +133,6 @@ MainWindow::MainWindow(QWidget *parent) :
     //test delete
     // delete root
 
-    root_ = root;
-#endif
 }
 
 MainWindow::~MainWindow()
