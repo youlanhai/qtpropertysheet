@@ -6,4 +6,5 @@ namespace QtAttributeName
     const QString MaxValue = "maxValue";
     const QString EnumName = "enumNames";
     const QString FlagName = "flagNames";
+    const QString Decimals = "decimals";
 }

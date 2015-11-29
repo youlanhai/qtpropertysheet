@@ -9,6 +9,7 @@ namespace QtAttributeName
     extern const QString MaxValue;
     extern const QString EnumName;
     extern const QString FlagName;
+    extern const QString Decimals;
 }
 
 #endif // QTATTRIBUTENAME_H

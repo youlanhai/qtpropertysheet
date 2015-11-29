@@ -76,9 +76,9 @@ void QtIntSpinBoxEditor::slotEditorValueChange(int value)
     }
 }
 
-void QtIntSpinBoxEditor::onPropertyValueChange(QtProperty* /*property*/)
+void QtIntSpinBoxEditor::onPropertyValueChange(QtProperty* property)
 {
-    int value = property_->getValue().toInt();
+    int value = property->getValue().toInt();
     if(value == value_)
     {
         return;
@@ -125,6 +125,7 @@ QWidget* QtDoubleSpinBoxEditor::createEditor(QWidget *parent)
 
         slotSetAttribute(property_, QtAttributeName::MinValue);
         slotSetAttribute(property_, QtAttributeName::MaxValue);
+        slotSetAttribute(property_, QtAttributeName::Decimals);
 
         editor_->setValue(value_);
 
@@ -148,9 +149,9 @@ void QtDoubleSpinBoxEditor::slotEditorValueChange(double value)
     }
 }
 
-void QtDoubleSpinBoxEditor::onPropertyValueChange(QtProperty* /*property*/)
+void QtDoubleSpinBoxEditor::onPropertyValueChange(QtProperty* property)
 {
-    int value = property_->getValue().toDouble();
+    int value = property->getValue().toDouble();
     if(value == value_)
     {
         return;
@@ -173,11 +174,20 @@ void QtDoubleSpinBoxEditor::slotSetAttribute(QtProperty *property, const QString
     }
     else if(name == QtAttributeName::MaxValue)
     {
-        QVariant v = property_->getAttribute(QtAttributeName::MaxValue);
+        QVariant v = property->getAttribute(QtAttributeName::MaxValue);
         int maxValue = (v.type() == QVariant::Int) ? v.toInt() : std::numeric_limits<int>::max();
         editor_->setMaximum(maxValue);
     }
+    else if(name == QtAttributeName::Decimals)
+    {
+        QVariant v = property->getAttribute(name);
+        if(v.type() == QVariant::Int)
+        {
+            editor_->setDecimals(v.toInt());
+        }
+    }
 }
+
 /********************************************************************/
 QtStringEditor::QtStringEditor(QtProperty *property)
     : QtPropertyEditor(property)
@@ -278,13 +288,13 @@ void QtEnumEditor::slotEditorValueChange(int index)
     }
 }
 
-void QtEnumEditor::slotSetAttribute(QtProperty * /*property*/, const QString &name)
+void QtEnumEditor::slotSetAttribute(QtProperty * property, const QString &name)
 {
     if(name == QtAttributeName::EnumName)
     {
         editor_->clear();
 
-        QStringList enumNames = property_->getAttribute(QtAttributeName::EnumName).toStringList();
+        QStringList enumNames = property->getAttribute(QtAttributeName::EnumName).toStringList();
         editor_->addItems(enumNames);
     }
 }
@@ -358,13 +368,13 @@ void QtFlagEditor::checkedItemsChanged(const QStringList& /*items*/)
     }
 }
 
-void QtFlagEditor::slotSetAttribute(QtProperty * /*property*/, const QString &name)
+void QtFlagEditor::slotSetAttribute(QtProperty * property, const QString &name)
 {
     if(name == QtAttributeName::FlagName)
     {
         editor_->clear();
 
-        flagNames_ = property_->getAttribute(QtAttributeName::FlagName).toStringList();
+        flagNames_ = property->getAttribute(QtAttributeName::FlagName).toStringList();
         editor_->addItems(flagNames_);
     }
 }
@@ -390,9 +400,9 @@ QWidget* QtBoolEditor::createEditor(QWidget *parent)
     return editor_;
 }
 
-void QtBoolEditor::onPropertyValueChange(QtProperty * /*property*/)
+void QtBoolEditor::onPropertyValueChange(QtProperty * property)
 {
-    bool value = property_->getValue().toBool();
+    bool value = property->getValue().toBool();
     if(value == value_)
     {
         return;
