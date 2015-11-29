@@ -2,7 +2,7 @@
 #include "ui_mainwindow.h"
 #include "qttreepropertybrowser.h"
 #include "qtproperty.h"
-#include "qtpropertymanager.h"
+#include "qtpropertyfactory.h"
 #include "qtpropertyeditorfactory.h"
 
 #include <QTreeWidget>
@@ -30,7 +30,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 #else
 
-    QtPropertyManager *manager = new QtPropertyManager(this);
+    QtPropertyFactory *manager = new QtPropertyFactory(this);
 
     QtTreePropertyBrowser *browser = new QtTreePropertyBrowser(this);
     browser->init(ui->centralWidget);

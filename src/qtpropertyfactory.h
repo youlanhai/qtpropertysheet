@@ -8,11 +8,11 @@ class QtProperty;
 
 typedef QtProperty*(*QtPropertyCreator)(int type, QObject *parent);
 
-class QtPropertyManager : public QObject
+class QtPropertyFactory : public QObject
 {
     Q_OBJECT
 public:
-    explicit QtPropertyManager(QObject *parent = 0);
+    explicit QtPropertyFactory(QObject *parent = 0);
 
     virtual QtProperty* createProperty(int type, QObject *parent);
 

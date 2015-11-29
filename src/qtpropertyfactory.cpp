@@ -1,4 +1,4 @@
-#include "qtpropertymanager.h"
+#include "qtpropertyfactory.h"
 #include "qtproperty.h"
 
 template<typename T>
@@ -7,7 +7,7 @@ static QtProperty* internalCreator(int type, QObject *parent)
     return new T(type, parent);
 }
 
-QtPropertyManager::QtPropertyManager(QObject *parent)
+QtPropertyFactory::QtPropertyFactory(QObject *parent)
     : QObject(parent)
 {
 #define REGISTER_PROPERTY(TYPE, CLASS) registerCreator(TYPE, internalCreator<CLASS>)
@@ -24,7 +24,7 @@ QtPropertyManager::QtPropertyManager(QObject *parent)
 #undef REGISTER_PROPERTY
 }
 
-QtProperty* QtPropertyManager::createProperty(int type, QObject *parent)
+QtProperty* QtPropertyFactory::createProperty(int type, QObject *parent)
 {
     QtPropertyCreator method = propertyCreator_.value(type);
     if(method != NULL)
@@ -34,7 +34,7 @@ QtProperty* QtPropertyManager::createProperty(int type, QObject *parent)
     return new QtProperty(type, parent);
 }
 
-void QtPropertyManager::registerCreator(int type, QtPropertyCreator method)
+void QtPropertyFactory::registerCreator(int type, QtPropertyCreator method)
 {
     propertyCreator_[type] = method;
 }

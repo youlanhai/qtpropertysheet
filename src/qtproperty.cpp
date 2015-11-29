@@ -1,5 +1,5 @@
 #include "qtproperty.h"
-#include "qtpropertymanager.h"
+#include "qtpropertyfactory.h"
 #include "qtpropertybrowserutils.h"
 #include "qtattributename.h"
 
