@@ -3,6 +3,7 @@
 #include "qtpropertybrowserutils.h"
 #include "qtattributename.h"
 
+#include <QLocale>
 #include <cassert>
 #include <algorithm>
 
@@ -400,6 +401,20 @@ QString QtBoolProperty::getValueString() const
 QIcon QtBoolProperty::getValueIcon() const
 {
     return QtPropertyBrowserUtils::drawCheckBox(value_.toBool());
+}
+
+/********************************************************************/
+QtDoubleProperty::QtDoubleProperty(int type, QObject *parent)
+    : QtProperty(type, parent)
+{
+
+}
+
+QString QtDoubleProperty::getValueString() const
+{
+    QVariant v = getAttribute(QtAttributeName::Decimals);
+    int decimals = v.type() == QVariant::Int ? v.toInt() : 2;
+    return QLocale::system().toString(value_.toDouble(), 'f', decimals);
 }
 
 /********************************************************************/

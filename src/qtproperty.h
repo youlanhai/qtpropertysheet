@@ -199,6 +199,15 @@ public:
 };
 
 /********************************************************************/
+class QtDoubleProperty : public QtProperty
+{
+    Q_OBJECT
+public:
+    QtDoubleProperty(int type, QObject *parent);
+    virtual QString getValueString() const;
+};
+
+/********************************************************************/
 class QtColorProperty : public QtProperty
 {
     Q_OBJECT
