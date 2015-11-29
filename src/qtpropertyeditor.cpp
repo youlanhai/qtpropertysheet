@@ -2,6 +2,7 @@
 #include "qtproperty.h"
 #include "qtpropertybrowserutils.h"
 #include "qxtcheckcombobox.h"
+#include "qtattributename.h"
 
 #include <QSpinBox>
 #include <QDoubleSpinBox>
@@ -201,7 +202,7 @@ QWidget* QtEnumEditor::createEditor(QWidget *parent)
         editor_->setMinimumContentsLength(1);
         editor_->view()->setTextElideMode(Qt::ElideRight);
 
-        QStringList enumNames = property_->getAttribute("enumNames").toStringList();
+        QStringList enumNames = property_->getAttribute(QtAttributeName::EnumName).toStringList();
         editor_->addItems(enumNames);
         editor_->setCurrentIndex(value_);
 
@@ -253,7 +254,7 @@ QWidget* QtFlagEditor::createEditor(QWidget *parent)
         editor_->view()->setTextElideMode(Qt::ElideRight);
         editor_->setSeparator("|");
 
-        flagNames_ = property_->getAttribute("flagNames").toStringList();
+        flagNames_ = property_->getAttribute(QtAttributeName::FlagName).toStringList();
         editor_->addItems(flagNames_);
 
         QIntList flagValues;

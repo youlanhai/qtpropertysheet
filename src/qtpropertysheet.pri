@@ -9,7 +9,8 @@ SOURCES += \
     $$PWD/qtpropertytreeview.cpp \
     $$PWD/qtpropertytreedelegate.cpp \
     $$PWD/qtpropertybrowserutils.cpp \
-    $$PWD/qxtcheckcombobox.cpp
+    $$PWD/qxtcheckcombobox.cpp \
+    $$PWD/qtattributename.cpp
 
 HEADERS  += \
     $$PWD/qtproperty.h \
@@ -22,4 +23,5 @@ HEADERS  += \
     $$PWD/qtpropertytreedelegate.h \
     $$PWD/qtpropertybrowserutils.h \
     $$PWD/qxtcheckcombobox_p.h \
-    $$PWD/qxtcheckcombobox.h
+    $$PWD/qxtcheckcombobox.h \
+    $$PWD/qtattributename.h

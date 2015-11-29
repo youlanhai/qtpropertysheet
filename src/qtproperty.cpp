@@ -1,6 +1,7 @@
 #include "qtproperty.h"
 #include "qtpropertymanager.h"
 #include "qtpropertybrowserutils.h"
+#include "qtattributename.h"
 
 #include <cassert>
 #include <algorithm>
@@ -221,13 +222,13 @@ void QtListProperty::setValue(const QVariant &value)
 QString QtListProperty::getValueString() const
 {
     QString text;
-    text += "(";
+    text += "[";
     foreach(QtProperty *child, children_)
     {
         text += child->getValueString();
         text += ", ";
     }
-    text += ")";
+    text += "]";
     return text;
 }
 
@@ -353,7 +354,7 @@ QtEnumProperty::QtEnumProperty(int type, QObject *parent)
 QString QtEnumProperty::getValueString() const
 {
     int index = value_.toInt();
-    QStringList enumNames = attributes_.value("enumNames").toStringList();
+    QStringList enumNames = attributes_.value(QtAttributeName::EnumName).toStringList();
     if(index >= 0 && index < enumNames.size())
     {
         return enumNames[index];
@@ -371,7 +372,7 @@ QtFlagProperty::QtFlagProperty(int type, QObject *parent)
 QString QtFlagProperty::getValueString() const
 {
     int value = value_.toInt();
-    QStringList enumNames = attributes_.value("flagNames").toStringList();
+    QStringList enumNames = attributes_.value(QtAttributeName::FlagName).toStringList();
 
     QStringList selected;
     for(int i = 0; i < enumNames.size(); ++i)
