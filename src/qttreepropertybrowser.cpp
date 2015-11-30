@@ -63,8 +63,6 @@ bool QtTreePropertyBrowser::init(QWidget *parent)
 
     expandIcon_ = QtPropertyBrowserUtils::drawIndicatorIcon(treeWidget_->palette(), treeWidget_->style());
 
-    connect(treeWidget_, SIGNAL(collapsed(const QModelIndex &)), this, SLOT(slotCollapsed(const QModelIndex &)));
-    connect(treeWidget_, SIGNAL(expanded(const QModelIndex &)), this, SLOT(slotExpanded(const QModelIndex &)));
     connect(treeWidget_, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(slotCurrentTreeItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)));
     connect(treeWidget_, SIGNAL(destroyed(QObject*)), this, SLOT(slotTreeViewDestroy(QObject*)));
     return true;
@@ -89,7 +87,7 @@ QWidget* QtTreePropertyBrowser::createEditor(QtProperty *property, QWidget *pare
     return NULL;
 }
 
-QTreeWidgetItem* QtTreePropertyBrowser::editedItem()
+QTreeWidgetItem* QtTreePropertyBrowser::getEditedItem()
 {
     return delegate_->editedItem();
 }
@@ -97,16 +95,6 @@ QTreeWidgetItem* QtTreePropertyBrowser::editedItem()
 QTreeWidgetItem* QtTreePropertyBrowser::indexToItem(const QModelIndex &index)
 {
     return treeWidget_->indexToItem(index);
-}
-
-void QtTreePropertyBrowser::slotCollapsed(const QModelIndex &)
-{
-
-}
-
-void QtTreePropertyBrowser::slotExpanded(const QModelIndex &)
-{
-
 }
 
 void QtTreePropertyBrowser::slotCurrentTreeItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)

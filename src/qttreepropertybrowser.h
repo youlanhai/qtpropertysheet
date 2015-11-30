@@ -13,6 +13,8 @@ class QtPropertyTreeDelegate;
 class QtProperty;
 class QtPropertyEditorFactory;
 
+typedef QMap<QtProperty*, QTreeWidgetItem*> Property2ItemMap;
+
 class QtTreePropertyBrowser : public QObject
 {
     Q_OBJECT
@@ -29,23 +31,19 @@ public:
 
     QWidget* createEditor(QtProperty *property, QWidget *parent);
 
-    QTreeWidgetItem* editedItem();
-
     QTreeWidgetItem* indexToItem(const QModelIndex &index);
     QtProperty* indexToProperty(const QModelIndex &index);
     QtProperty* itemToProperty(QTreeWidgetItem* item);
 
-    QtPropertyTreeView* treeWidget(){ return treeWidget_; }
+    QTreeWidgetItem* getEditedItem();
+    QtPropertyTreeView* getTreeWidget(){ return treeWidget_; }
 
     void addProperty(QtProperty *property);
     void removeProperty(QtProperty *property);
     void removeAllProperties();
-
-signals:
+    Property2ItemMap& getProperties(){ return property2items_; }
 
 public slots:
-    void slotCollapsed(const QModelIndex &);
-    void slotExpanded(const QModelIndex &);
     void slotCurrentTreeItemChanged(QTreeWidgetItem*, QTreeWidgetItem*);
 
     void slotPropertyInsert(QtProperty *property, QtProperty *parent);
@@ -64,7 +62,6 @@ private:
     QtPropertyTreeDelegate*     delegate_;
     QIcon                       expandIcon_;
 
-    typedef QMap<QtProperty*, QTreeWidgetItem*> Property2ItemMap;
     Property2ItemMap            property2items_;
 };
 

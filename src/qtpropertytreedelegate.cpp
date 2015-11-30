@@ -23,7 +23,7 @@ int QtPropertyTreeDelegate::indentation(const QModelIndex &index) const
         return 0;
     }
 
-    QtPropertyTreeView *treeWidget = editorPrivate_->treeWidget();
+    QtPropertyTreeView *treeWidget = editorPrivate_->getTreeWidget();
 
     QTreeWidgetItem *item = treeWidget->indexToItem(index);
     int indent = 0;

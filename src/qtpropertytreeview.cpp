@@ -67,7 +67,7 @@ void QtPropertyTreeView::keyPressEvent(QKeyEvent *event)
     case Qt::Key_Return:
     case Qt::Key_Enter:
     case Qt::Key_Space: // Trigger Edit
-        if (!editorPrivate_->editedItem())
+        if (!editorPrivate_->getEditedItem())
         {
             const QTreeWidgetItem *item = currentItem();
             if (item && item->columnCount() >= 2 && isItemEditable(item->flags()))
@@ -100,7 +100,7 @@ void QtPropertyTreeView::mousePressEvent(QMouseEvent *event)
     {
         QtProperty *property = editorPrivate_->itemToProperty(item);
 
-        if ((item != editorPrivate_->editedItem()) &&
+        if ((item != editorPrivate_->getEditedItem()) &&
                 (event->button() == Qt::LeftButton) &&
                 (header()->logicalIndexAt(event->pos().x()) == 1) &&
                 isItemEditable(item->flags()))
