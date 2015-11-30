@@ -13,7 +13,7 @@ public:
 
     void setEditorPrivate(QtTreePropertyBrowser *editorPrivate)
     {
-        m_editorPrivate = editorPrivate;
+        editorPrivate_ = editorPrivate;
     }
 
     QTreeWidgetItem* indexToItem(const QModelIndex &index)
@@ -27,7 +27,7 @@ protected:
     void drawRow(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
 private:
-    QtTreePropertyBrowser *m_editorPrivate;
+    QtTreePropertyBrowser *editorPrivate_;
 };
 
 #endif // QTPROPERTYTREEVIEW_H

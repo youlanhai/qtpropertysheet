@@ -14,7 +14,7 @@ public:
     explicit QtPropertyTreeDelegate(QObject *parent = 0);
 
     void setEditorPrivate(QtTreePropertyBrowser *editorPrivate)
-        { m_editorPrivate = editorPrivate; }
+        { editorPrivate_ = editorPrivate; }
 
     QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option,
             const QModelIndex &index) const;
@@ -35,7 +35,7 @@ public:
     bool eventFilter(QObject *object, QEvent *event);
     void closeEditor(QtProperty *property);
 
-    QTreeWidgetItem *editedItem() const { return m_editedItem; }
+    QTreeWidgetItem *editedItem() const { return editedItem_; }
 
 protected:
 
@@ -51,15 +51,15 @@ private:
     int indentation(const QModelIndex &index) const;
 
     typedef QMap<QWidget *, QtProperty *> EditorToPropertyMap;
-    mutable EditorToPropertyMap m_editorToProperty;
+    mutable EditorToPropertyMap editorToProperty_;
 
     typedef QMap<QtProperty *, QWidget *> PropertyToEditorMap;
-    mutable PropertyToEditorMap m_propertyToEditor;
+    mutable PropertyToEditorMap propertyToEditor_;
 
-    QtTreePropertyBrowser *     m_editorPrivate;
-    mutable QTreeWidgetItem *   m_editedItem;
-    mutable QWidget *           m_editedWidget;
-    mutable bool                m_disablePainting;
+    QtTreePropertyBrowser *     editorPrivate_;
+    mutable QTreeWidgetItem *   editedItem_;
+    mutable QWidget *           editedWidget_;
+    mutable bool                disablePainting_;
 };
 
 

@@ -86,10 +86,10 @@ public:
 #endif
 private:
     void appendCursor(Qt::CursorShape shape, const QString &name, const QIcon &icon);
-    QStringList m_cursorNames;
-    QMap<int, QIcon> m_cursorIcons;
-    QMap<int, Qt::CursorShape> m_valueToCursorShape;
-    QMap<Qt::CursorShape, int> m_cursorShapeToValue;
+    QStringList cursorNames_;
+    QMap<int, QIcon> cursorIcons_;
+    QMap<int, Qt::CursorShape> valueToCursorShape_;
+    QMap<Qt::CursorShape, int> cursorShapeToValue_;
 };
 
 class QtPropertyBrowserUtils
@@ -112,7 +112,7 @@ class QtBoolEdit : public QWidget {
 public:
     QtBoolEdit(QWidget *parent = 0);
 
-    bool textVisible() const { return m_textVisible; }
+    bool textVisible() const { return textVisible_; }
     void setTextVisible(bool textVisible);
 
     Qt::CheckState checkState() const;
@@ -131,8 +131,8 @@ protected:
     void paintEvent(QPaintEvent *);
 
 private:
-    QCheckBox *m_checkBox;
-    bool m_textVisible;
+    QCheckBox *checkBox_;
+    bool textVisible_;
 };
 
 class QtKeySequenceEdit : public QWidget
@@ -160,9 +160,9 @@ private:
     void handleKeyEvent(QKeyEvent *e);
     int translateModifiers(Qt::KeyboardModifiers state, const QString &text) const;
 
-    int m_num;
-    QKeySequence m_keySequence;
-    QLineEdit *m_lineEdit;
+    int num_;
+    QKeySequence keySequence_;
+    QLineEdit *lineEdit_;
 };
 
 class QtColorEditWidget : public QWidget
@@ -187,10 +187,10 @@ private Q_SLOTS:
     void buttonClicked();
 
 private:
-    QColor m_color;
-    QLabel *m_pixmapLabel;
-    QLabel *m_label;
-    QToolButton *m_button;
+    QColor color_;
+    QLabel *pixmapLabel_;
+    QLabel *label_;
+    QToolButton *button_;
 };
 
 #if QT_VERSION >= 0x040400

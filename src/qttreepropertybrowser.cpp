@@ -24,8 +24,8 @@ const int PropertyDataIndex = Qt::UserRole + 1;
 QtTreePropertyBrowser::QtTreePropertyBrowser(QObject *parent)
     : QObject(parent)
     , editorFactory_(NULL)
-    , m_treeWidget(NULL)
-    , m_delegate(NULL)
+    , treeWidget_(NULL)
+    , delegate_(NULL)
 {
 
 }
@@ -40,33 +40,33 @@ bool QtTreePropertyBrowser::init(QWidget *parent)
     QHBoxLayout *layout = new QHBoxLayout(parent);
     layout->setMargin(0);
 
-    m_treeWidget = new QtPropertyTreeView(parent);
-    m_treeWidget->setEditorPrivate(this);
-    m_treeWidget->setIconSize(QSize(18, 18));
-    layout->addWidget(m_treeWidget);
-    parent->setFocusProxy(m_treeWidget);
+    treeWidget_ = new QtPropertyTreeView(parent);
+    treeWidget_->setEditorPrivate(this);
+    treeWidget_->setIconSize(QSize(18, 18));
+    layout->addWidget(treeWidget_);
+    parent->setFocusProxy(treeWidget_);
 
-    m_treeWidget->setColumnCount(2);
+    treeWidget_->setColumnCount(2);
     QStringList labels;
     labels.append(QCoreApplication::translate("QtTreePropertyBrowser", "Property"));
     labels.append(QCoreApplication::translate("QtTreePropertyBrowser", "Value"));
-    m_treeWidget->setHeaderLabels(labels);
-    m_treeWidget->setAlternatingRowColors(true);
-    m_treeWidget->setEditTriggers(QAbstractItemView::EditKeyPressed);
+    treeWidget_->setHeaderLabels(labels);
+    treeWidget_->setAlternatingRowColors(true);
+    treeWidget_->setEditTriggers(QAbstractItemView::EditKeyPressed);
 
-    m_delegate = new QtPropertyTreeDelegate(parent);
-    m_delegate->setEditorPrivate(this);
-    m_treeWidget->setItemDelegate(m_delegate);
+    delegate_ = new QtPropertyTreeDelegate(parent);
+    delegate_->setEditorPrivate(this);
+    treeWidget_->setItemDelegate(delegate_);
 
-    //m_treeWidget->header()->setMovable(false);
-    //m_treeWidget->header()->setResizeMode(QHeaderView::Stretch);
+    //treeWidget_->header()->setMovable(false);
+    //treeWidget_->header()->setResizeMode(QHeaderView::Stretch);
 
-    m_expandIcon = QtPropertyBrowserUtils::drawIndicatorIcon(m_treeWidget->palette(), m_treeWidget->style());
+    expandIcon_ = QtPropertyBrowserUtils::drawIndicatorIcon(treeWidget_->palette(), treeWidget_->style());
 
-    connect(m_treeWidget, SIGNAL(collapsed(const QModelIndex &)), this, SLOT(slotCollapsed(const QModelIndex &)));
-    connect(m_treeWidget, SIGNAL(expanded(const QModelIndex &)), this, SLOT(slotExpanded(const QModelIndex &)));
-    connect(m_treeWidget, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(slotCurrentTreeItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)));
-    connect(m_treeWidget, SIGNAL(destroyed(QObject*)), this, SLOT(slotTreeViewDestroy(QObject*)));
+    connect(treeWidget_, SIGNAL(collapsed(const QModelIndex &)), this, SLOT(slotCollapsed(const QModelIndex &)));
+    connect(treeWidget_, SIGNAL(expanded(const QModelIndex &)), this, SLOT(slotExpanded(const QModelIndex &)));
+    connect(treeWidget_, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(slotCurrentTreeItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)));
+    connect(treeWidget_, SIGNAL(destroyed(QObject*)), this, SLOT(slotTreeViewDestroy(QObject*)));
     return true;
 }
 
@@ -77,7 +77,7 @@ void QtTreePropertyBrowser::setEditorFactory(QtPropertyEditorFactory *factory)
 
 bool QtTreePropertyBrowser::lastColumn(int column)
 {
-    return m_treeWidget->header()->visualIndex(column) == m_treeWidget->columnCount() - 1;
+    return treeWidget_->header()->visualIndex(column) == treeWidget_->columnCount() - 1;
 }
 
 QWidget* QtTreePropertyBrowser::createEditor(QtProperty *property, QWidget *parent)
@@ -91,12 +91,12 @@ QWidget* QtTreePropertyBrowser::createEditor(QtProperty *property, QWidget *pare
 
 QTreeWidgetItem* QtTreePropertyBrowser::editedItem()
 {
-    return m_delegate->editedItem();
+    return delegate_->editedItem();
 }
 
 QTreeWidgetItem* QtTreePropertyBrowser::indexToItem(const QModelIndex &index)
 {
-    return m_treeWidget->indexToItem(index);
+    return treeWidget_->indexToItem(index);
 }
 
 void QtTreePropertyBrowser::slotCollapsed(const QModelIndex &)
@@ -116,7 +116,7 @@ void QtTreePropertyBrowser::slotCurrentTreeItemChanged(QTreeWidgetItem*, QTreeWi
 
 QtProperty* QtTreePropertyBrowser::indexToProperty(const QModelIndex &index)
 {
-    return itemToProperty(m_treeWidget->indexToItem(index));
+    return itemToProperty(treeWidget_->indexToItem(index));
 }
 
 QtProperty* QtTreePropertyBrowser::itemToProperty(QTreeWidgetItem* item)
@@ -131,7 +131,7 @@ QtProperty* QtTreePropertyBrowser::itemToProperty(QTreeWidgetItem* item)
 
 void QtTreePropertyBrowser::addProperty(QtProperty *property)
 {
-    if(m_property2items.contains(property))
+    if(property2items_.contains(property))
     {
         return;
     }
@@ -161,11 +161,11 @@ void QtTreePropertyBrowser::addProperty(QtProperty *property, QTreeWidgetItem *p
         }
         else
         {
-            m_treeWidget->addTopLevelItem(item);
+            treeWidget_->addTopLevelItem(item);
         }
         parentItem = item;
     }
-    m_property2items[property] = item;
+    property2items_[property] = item;
 
     connect(property, SIGNAL(signalPropertyInserted(QtProperty*,QtProperty*)), this, SLOT(slotPropertyInsert(QtProperty*,QtProperty*)));
     connect(property, SIGNAL(signalPropertyRemoved(QtProperty*,QtProperty*)), this, SLOT(slotPropertyRemove(QtProperty*,QtProperty*)));
@@ -181,11 +181,11 @@ void QtTreePropertyBrowser::addProperty(QtProperty *property, QTreeWidgetItem *p
 
 void QtTreePropertyBrowser::removeProperty(QtProperty *property)
 {
-    Property2ItemMap::iterator it = m_property2items.find(property);
-    if(it != m_property2items.end())
+    Property2ItemMap::iterator it = property2items_.find(property);
+    if(it != property2items_.end())
     {
         QTreeWidgetItem *item = it.value();
-        m_property2items.erase(it);
+        property2items_.erase(it);
         disconnect(property, 0, this, 0);
 
         // remove it's children first.
@@ -201,17 +201,17 @@ void QtTreePropertyBrowser::removeProperty(QtProperty *property)
 
 void QtTreePropertyBrowser::removeAllProperties()
 {
-    QList<QtProperty*> properties = m_property2items.keys();
+    QList<QtProperty*> properties = property2items_.keys();
     foreach(QtProperty *property, properties)
     {
         removeProperty(property);
     }
-    m_property2items.clear();
+    property2items_.clear();
 }
 
 void QtTreePropertyBrowser::slotPropertyInsert(QtProperty *property, QtProperty *parent)
 {
-    QTreeWidgetItem *parentItem = m_property2items.value(parent);
+    QTreeWidgetItem *parentItem = property2items_.value(parent);
     addProperty(property, parentItem);
 }
 
@@ -222,7 +222,7 @@ void QtTreePropertyBrowser::slotPropertyRemove(QtProperty *property, QtProperty 
 
 void QtTreePropertyBrowser::slotPropertyValueChange(QtProperty *property)
 {
-    QTreeWidgetItem *item = m_property2items.value(property);
+    QTreeWidgetItem *item = property2items_.value(property);
     if(item != NULL)
     {
         item->setText(1, property->getValueString());
@@ -232,7 +232,7 @@ void QtTreePropertyBrowser::slotPropertyValueChange(QtProperty *property)
 
 void QtTreePropertyBrowser::slotPropertyPropertyChange(QtProperty *property)
 {
-    QTreeWidgetItem *item = m_property2items.value(property);
+    QTreeWidgetItem *item = property2items_.value(property);
     if(item != NULL)
     {
         item->setText(0, property->getTitle());
@@ -242,15 +242,15 @@ void QtTreePropertyBrowser::slotPropertyPropertyChange(QtProperty *property)
 
 void QtTreePropertyBrowser::slotTreeViewDestroy(QObject *p)
 {
-    if(m_treeWidget == p)
+    if(treeWidget_ == p)
     {
-        m_treeWidget = NULL;
+        treeWidget_ = NULL;
     }
 }
 
 void QtTreePropertyBrowser::deleteTreeItem(QTreeWidgetItem *item)
 {
-    if(m_treeWidget)
+    if(treeWidget_)
     {
         delete item;
     }

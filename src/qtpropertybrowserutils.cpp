@@ -100,53 +100,53 @@ QtCursorDatabase::QtCursorDatabase()
 
 void QtCursorDatabase::clear()
 {
-    m_cursorNames.clear();
-    m_cursorIcons.clear();
-    m_valueToCursorShape.clear();
-    m_cursorShapeToValue.clear();
+    cursorNames_.clear();
+    cursorIcons_.clear();
+    valueToCursorShape_.clear();
+    cursorShapeToValue_.clear();
 }
 
 void QtCursorDatabase::appendCursor(Qt::CursorShape shape, const QString &name, const QIcon &icon)
 {
-    if (m_cursorShapeToValue.contains(shape))
+    if (cursorShapeToValue_.contains(shape))
         return;
-    const int value = m_cursorNames.count();
-    m_cursorNames.append(name);
-    m_cursorIcons.insert(value, icon);
-    m_valueToCursorShape.insert(value, shape);
-    m_cursorShapeToValue.insert(shape, value);
+    const int value = cursorNames_.count();
+    cursorNames_.append(name);
+    cursorIcons_.insert(value, icon);
+    valueToCursorShape_.insert(value, shape);
+    cursorShapeToValue_.insert(shape, value);
 }
 
 QStringList QtCursorDatabase::cursorShapeNames() const
 {
-    return m_cursorNames;
+    return cursorNames_;
 }
 
 QMap<int, QIcon> QtCursorDatabase::cursorShapeIcons() const
 {
-    return m_cursorIcons;
+    return cursorIcons_;
 }
 
 QString QtCursorDatabase::cursorToShapeName(const QCursor &cursor) const
 {
     int val = cursorToValue(cursor);
     if (val >= 0)
-        return m_cursorNames.at(val);
+        return cursorNames_.at(val);
     return QString();
 }
 
 QIcon QtCursorDatabase::cursorToShapeIcon(const QCursor &cursor) const
 {
     int val = cursorToValue(cursor);
-    return m_cursorIcons.value(val);
+    return cursorIcons_.value(val);
 }
 
 int QtCursorDatabase::cursorToValue(const QCursor &cursor) const
 {
 #ifndef QT_NO_CURSOR
     Qt::CursorShape shape = cursor.shape();
-    if (m_cursorShapeToValue.contains(shape))
-        return m_cursorShapeToValue[shape];
+    if (cursorShapeToValue_.contains(shape))
+        return cursorShapeToValue_[shape];
 #endif
     return -1;
 }
@@ -154,8 +154,8 @@ int QtCursorDatabase::cursorToValue(const QCursor &cursor) const
 #ifndef QT_NO_CURSOR
 QCursor QtCursorDatabase::valueToCursor(int value) const
 {
-    if (m_valueToCursorShape.contains(value))
-        return QCursor(m_valueToCursorShape[value]);
+    if (valueToCursorShape_.contains(value))
+        return QCursor(valueToCursorShape_[value]);
     return QCursor();
 }
 #endif
@@ -310,65 +310,65 @@ QVariant QtPropertyBrowserUtils::color2variant(const QColor &color)
 
 QtBoolEdit::QtBoolEdit(QWidget *parent) :
     QWidget(parent),
-    m_checkBox(new QCheckBox(this)),
-    m_textVisible(true)
+    checkBox_(new QCheckBox(this)),
+    textVisible_(true)
 {
     QHBoxLayout *lt = new QHBoxLayout;
     if (QApplication::layoutDirection() == Qt::LeftToRight)
         lt->setContentsMargins(4, 0, 0, 0);
     else
         lt->setContentsMargins(0, 0, 4, 0);
-    lt->addWidget(m_checkBox);
+    lt->addWidget(checkBox_);
     setLayout(lt);
-    connect(m_checkBox, SIGNAL(toggled(bool)), this, SIGNAL(toggled(bool)));
-    setFocusProxy(m_checkBox);
-    m_checkBox->setText(tr("True"));
+    connect(checkBox_, SIGNAL(toggled(bool)), this, SIGNAL(toggled(bool)));
+    setFocusProxy(checkBox_);
+    checkBox_->setText(tr("True"));
 }
 
 void QtBoolEdit::setTextVisible(bool textVisible)
 {
-    if (m_textVisible == textVisible)
+    if (textVisible_ == textVisible)
         return;
 
-    m_textVisible = textVisible;
-    if (m_textVisible)
-        m_checkBox->setText(isChecked() ? tr("True") : tr("False"));
+    textVisible_ = textVisible;
+    if (textVisible_)
+        checkBox_->setText(isChecked() ? tr("True") : tr("False"));
     else
-        m_checkBox->setText(QString());
+        checkBox_->setText(QString());
 }
 
 Qt::CheckState QtBoolEdit::checkState() const
 {
-    return m_checkBox->checkState();
+    return checkBox_->checkState();
 }
 
 void QtBoolEdit::setCheckState(Qt::CheckState state)
 {
-    m_checkBox->setCheckState(state);
+    checkBox_->setCheckState(state);
 }
 
 bool QtBoolEdit::isChecked() const
 {
-    return m_checkBox->isChecked();
+    return checkBox_->isChecked();
 }
 
 void QtBoolEdit::setChecked(bool c)
 {
-    m_checkBox->setChecked(c);
-    if (!m_textVisible)
+    checkBox_->setChecked(c);
+    if (!textVisible_)
         return;
-    m_checkBox->setText(isChecked() ? tr("True") : tr("False"));
+    checkBox_->setText(isChecked() ? tr("True") : tr("False"));
 }
 
 bool QtBoolEdit::blockCheckBoxSignals(bool block)
 {
-    return m_checkBox->blockSignals(block);
+    return checkBox_->blockSignals(block);
 }
 
 void QtBoolEdit::mousePressEvent(QMouseEvent *event)
 {
     if (event->buttons() == Qt::LeftButton) {
-        m_checkBox->click();
+        checkBox_->click();
         event->accept();
     } else {
         QWidget::mousePressEvent(event);
@@ -386,23 +386,23 @@ void QtBoolEdit::paintEvent(QPaintEvent *)
 
 
 QtKeySequenceEdit::QtKeySequenceEdit(QWidget *parent)
-    : QWidget(parent), m_num(0), m_lineEdit(new QLineEdit(this))
+    : QWidget(parent), num_(0), lineEdit_(new QLineEdit(this))
 {
     QHBoxLayout *layout = new QHBoxLayout(this);
-    layout->addWidget(m_lineEdit);
+    layout->addWidget(lineEdit_);
     layout->setMargin(0);
-    m_lineEdit->installEventFilter(this);
-    m_lineEdit->setReadOnly(true);
-    m_lineEdit->setFocusProxy(this);
-    setFocusPolicy(m_lineEdit->focusPolicy());
+    lineEdit_->installEventFilter(this);
+    lineEdit_->setReadOnly(true);
+    lineEdit_->setFocusProxy(this);
+    setFocusPolicy(lineEdit_->focusPolicy());
     setAttribute(Qt::WA_InputMethodEnabled);
 }
 
 bool QtKeySequenceEdit::eventFilter(QObject *o, QEvent *e)
 {
-    if (o == m_lineEdit && e->type() == QEvent::ContextMenu) {
+    if (o == lineEdit_ && e->type() == QEvent::ContextMenu) {
         QContextMenuEvent *c = static_cast<QContextMenuEvent *>(e);
-        QMenu *menu = m_lineEdit->createStandardContextMenu();
+        QMenu *menu = lineEdit_->createStandardContextMenu();
         const QList<QAction *> actions = menu->actions();
         QListIterator<QAction *> itAction(actions);
         while (itAction.hasNext()) {
@@ -420,7 +420,7 @@ bool QtKeySequenceEdit::eventFilter(QObject *o, QEvent *e)
         QAction *clearAction = new QAction(tr("Clear Shortcut"), menu);
         menu->insertAction(actionBefore, clearAction);
         menu->insertSeparator(actionBefore);
-        clearAction->setEnabled(!m_keySequence.isEmpty());
+        clearAction->setEnabled(!keySequence_.isEmpty());
         connect(clearAction, SIGNAL(triggered()), this, SLOT(slotClearShortcut()));
         menu->exec(c->globalPos());
         delete menu;
@@ -433,10 +433,10 @@ bool QtKeySequenceEdit::eventFilter(QObject *o, QEvent *e)
 
 void QtKeySequenceEdit::slotClearShortcut()
 {
-    if (m_keySequence.isEmpty())
+    if (keySequence_.isEmpty())
         return;
     setKeySequence(QKeySequence());
-    emit keySequenceChanged(m_keySequence);
+    emit keySequenceChanged(keySequence_);
 }
 
 void QtKeySequenceEdit::handleKeyEvent(QKeyEvent *e)
@@ -448,38 +448,38 @@ void QtKeySequenceEdit::handleKeyEvent(QKeyEvent *e)
         return;
 
     nextKey |= translateModifiers(e->modifiers(), e->text());
-    int k0 = m_keySequence[0];
-    int k1 = m_keySequence[1];
-    int k2 = m_keySequence[2];
-    int k3 = m_keySequence[3];
-    switch (m_num) {
+    int k0 = keySequence_[0];
+    int k1 = keySequence_[1];
+    int k2 = keySequence_[2];
+    int k3 = keySequence_[3];
+    switch (num_) {
         case 0: k0 = nextKey; k1 = 0; k2 = 0; k3 = 0; break;
         case 1: k1 = nextKey; k2 = 0; k3 = 0; break;
         case 2: k2 = nextKey; k3 = 0; break;
         case 3: k3 = nextKey; break;
         default: break;
     }
-    ++m_num;
-    if (m_num > 3)
-        m_num = 0;
-    m_keySequence = QKeySequence(k0, k1, k2, k3);
-    m_lineEdit->setText(m_keySequence.toString(QKeySequence::NativeText));
+    ++num_;
+    if (num_ > 3)
+        num_ = 0;
+    keySequence_ = QKeySequence(k0, k1, k2, k3);
+    lineEdit_->setText(keySequence_.toString(QKeySequence::NativeText));
     e->accept();
-    emit keySequenceChanged(m_keySequence);
+    emit keySequenceChanged(keySequence_);
 }
 
 void QtKeySequenceEdit::setKeySequence(const QKeySequence &sequence)
 {
-    if (sequence == m_keySequence)
+    if (sequence == keySequence_)
         return;
-    m_num = 0;
-    m_keySequence = sequence;
-    m_lineEdit->setText(m_keySequence.toString(QKeySequence::NativeText));
+    num_ = 0;
+    keySequence_ = sequence;
+    lineEdit_->setText(keySequence_.toString(QKeySequence::NativeText));
 }
 
 QKeySequence QtKeySequenceEdit::keySequence() const
 {
-    return m_keySequence;
+    return keySequence_;
 }
 
 int QtKeySequenceEdit::translateModifiers(Qt::KeyboardModifiers state, const QString &text) const
@@ -498,15 +498,15 @@ int QtKeySequenceEdit::translateModifiers(Qt::KeyboardModifiers state, const QSt
 
 void QtKeySequenceEdit::focusInEvent(QFocusEvent *e)
 {
-    m_lineEdit->event(e);
-    m_lineEdit->selectAll();
+    lineEdit_->event(e);
+    lineEdit_->selectAll();
     QWidget::focusInEvent(e);
 }
 
 void QtKeySequenceEdit::focusOutEvent(QFocusEvent *e)
 {
-    m_num = 0;
-    m_lineEdit->event(e);
+    num_ = 0;
+    lineEdit_->event(e);
     QWidget::focusOutEvent(e);
 }
 
@@ -518,7 +518,7 @@ void QtKeySequenceEdit::keyPressEvent(QKeyEvent *e)
 
 void QtKeySequenceEdit::keyReleaseEvent(QKeyEvent *e)
 {
-    m_lineEdit->event(e);
+    lineEdit_->event(e);
 }
 
 void QtKeySequenceEdit::paintEvent(QPaintEvent *)
@@ -552,52 +552,52 @@ static inline void setupTreeViewEditorMargin(QLayout *lt)
 
 QtColorEditWidget::QtColorEditWidget(QWidget *parent) :
     QWidget(parent),
-    m_pixmapLabel(new QLabel),
-    m_label(new QLabel),
-    m_button(new QToolButton)
+    pixmapLabel_(new QLabel),
+    label_(new QLabel),
+    button_(new QToolButton)
 {
     QHBoxLayout *lt = new QHBoxLayout(this);
     setupTreeViewEditorMargin(lt);
     lt->setSpacing(0);
-    lt->addWidget(m_pixmapLabel);
-    lt->addWidget(m_label);
+    lt->addWidget(pixmapLabel_);
+    lt->addWidget(label_);
     lt->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Ignored));
 
-    m_button->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Ignored);
-    m_button->setFixedWidth(20);
-    setFocusProxy(m_button);
-    setFocusPolicy(m_button->focusPolicy());
-    m_button->setText(tr("..."));
-    m_button->installEventFilter(this);
-    connect(m_button, SIGNAL(clicked()), this, SLOT(buttonClicked()));
-    lt->addWidget(m_button);
-    m_pixmapLabel->setPixmap(QtPropertyBrowserUtils::brushValuePixmap(QBrush(m_color)));
-    m_label->setText(QtPropertyBrowserUtils::colorValueText(m_color));
+    button_->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Ignored);
+    button_->setFixedWidth(20);
+    setFocusProxy(button_);
+    setFocusPolicy(button_->focusPolicy());
+    button_->setText(tr("..."));
+    button_->installEventFilter(this);
+    connect(button_, SIGNAL(clicked()), this, SLOT(buttonClicked()));
+    lt->addWidget(button_);
+    pixmapLabel_->setPixmap(QtPropertyBrowserUtils::brushValuePixmap(QBrush(color_)));
+    label_->setText(QtPropertyBrowserUtils::colorValueText(color_));
 }
 
 void QtColorEditWidget::setValue(const QColor &c)
 {
-    if (m_color != c) {
-        m_color = c;
-        m_pixmapLabel->setPixmap(QtPropertyBrowserUtils::brushValuePixmap(QBrush(c)));
-        m_label->setText(QtPropertyBrowserUtils::colorValueText(c));
+    if (color_ != c) {
+        color_ = c;
+        pixmapLabel_->setPixmap(QtPropertyBrowserUtils::brushValuePixmap(QBrush(c)));
+        label_->setText(QtPropertyBrowserUtils::colorValueText(c));
     }
 }
 
 void QtColorEditWidget::buttonClicked()
 {
     bool ok = false;
-    QRgb oldRgba = m_color.rgba();
+    QRgb oldRgba = color_.rgba();
     QRgb newRgba = QColorDialog::getRgba(oldRgba, &ok, this);
     if (ok && newRgba != oldRgba) {
         setValue(QColor::fromRgba(newRgba));
-        emit valueChanged(m_color);
+        emit valueChanged(color_);
     }
 }
 
 bool QtColorEditWidget::eventFilter(QObject *obj, QEvent *ev)
 {
-    if (obj == m_button) {
+    if (obj == button_) {
         switch (ev->type()) {
         case QEvent::KeyPress:
         case QEvent::KeyRelease: { // Prevent the QToolButton from handling Enter/Escape meant control the delegate

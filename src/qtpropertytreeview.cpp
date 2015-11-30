@@ -18,7 +18,7 @@ bool isItemEditable(int flags)
 
 QtPropertyTreeView::QtPropertyTreeView(QWidget *parent)
     : QTreeWidget(parent)
-    , m_editorPrivate(0)
+    , editorPrivate_(0)
 {
     connect(header(), SIGNAL(sectionDoubleClicked(int)), this, SLOT(resizeColumnToContents(int)));
 }
@@ -27,16 +27,16 @@ void QtPropertyTreeView::drawRow(QPainter *painter, const QStyleOptionViewItem &
 {
     QStyleOptionViewItemV3 opt = option;
     bool hasValue = true;
-    if (m_editorPrivate)
+    if (editorPrivate_)
     {
-        QtProperty *property = m_editorPrivate->indexToProperty(index);
+        QtProperty *property = editorPrivate_->indexToProperty(index);
         if (property)
         {
             hasValue = property->hasValue();
         }
     }
 
-    if (!hasValue && m_editorPrivate->markPropertiesWithoutValue())
+    if (!hasValue && editorPrivate_->markPropertiesWithoutValue())
     {
         const QColor c = option.palette.color(QPalette::Dark);
         painter->fillRect(option.rect, c);
@@ -44,7 +44,7 @@ void QtPropertyTreeView::drawRow(QPainter *painter, const QStyleOptionViewItem &
     }
     else
     {
-        const QColor c = QColor(255, 255, 255) ;//m_editorPrivate->calculatedBackgroundColor(m_editorPrivate->indexToBrowserItem(index));
+        const QColor c = QColor(255, 255, 255) ;//editorPrivate_->calculatedBackgroundColor(editorPrivate_->indexToBrowserItem(index));
         if (c.isValid())
         {
             painter->fillRect(option.rect, c);
@@ -67,7 +67,7 @@ void QtPropertyTreeView::keyPressEvent(QKeyEvent *event)
     case Qt::Key_Return:
     case Qt::Key_Enter:
     case Qt::Key_Space: // Trigger Edit
-        if (!m_editorPrivate->editedItem())
+        if (!editorPrivate_->editedItem())
         {
             const QTreeWidgetItem *item = currentItem();
             if (item && item->columnCount() >= 2 && isItemEditable(item->flags()))
@@ -98,16 +98,16 @@ void QtPropertyTreeView::mousePressEvent(QMouseEvent *event)
 
     if (item)
     {
-        QtProperty *property = m_editorPrivate->itemToProperty(item);
+        QtProperty *property = editorPrivate_->itemToProperty(item);
 
-        if ((item != m_editorPrivate->editedItem()) &&
+        if ((item != editorPrivate_->editedItem()) &&
                 (event->button() == Qt::LeftButton) &&
                 (header()->logicalIndexAt(event->pos().x()) == 1) &&
                 isItemEditable(item->flags()))
         {
             editItem(item, 1);
         }
-        else if (property && !property->hasValue() && m_editorPrivate->markPropertiesWithoutValue() && !rootIsDecorated())
+        else if (property && !property->hasValue() && editorPrivate_->markPropertiesWithoutValue() && !rootIsDecorated())
         {
             if (event->pos().x() + header()->offset() < 20)
                 item->setExpanded(!item->isExpanded());

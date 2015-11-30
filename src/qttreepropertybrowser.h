@@ -35,7 +35,7 @@ public:
     QtProperty* indexToProperty(const QModelIndex &index);
     QtProperty* itemToProperty(QTreeWidgetItem* item);
 
-    QtPropertyTreeView* treeWidget(){ return m_treeWidget; }
+    QtPropertyTreeView* treeWidget(){ return treeWidget_; }
 
     void addProperty(QtProperty *property);
     void removeProperty(QtProperty *property);
@@ -60,12 +60,12 @@ private:
     void deleteTreeItem(QTreeWidgetItem *item);
 
     QtPropertyEditorFactory*    editorFactory_;
-    QtPropertyTreeView*         m_treeWidget;
-    QtPropertyTreeDelegate*     m_delegate;
-    QIcon       m_expandIcon;
+    QtPropertyTreeView*         treeWidget_;
+    QtPropertyTreeDelegate*     delegate_;
+    QIcon                       expandIcon_;
 
     typedef QMap<QtProperty*, QTreeWidgetItem*> Property2ItemMap;
-    Property2ItemMap            m_property2items;
+    Property2ItemMap            property2items_;
 };
 
 #endif // QTTREEPROPERTYBROWSER_H
