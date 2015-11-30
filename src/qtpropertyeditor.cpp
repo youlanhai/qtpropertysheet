@@ -403,11 +403,13 @@ void QtBoolEditor::slotEditorValueChange(bool value)
 }
 
 /********************************************************************/
+
+
 QtColorEditor::QtColorEditor(QtProperty *property)
     : QtPropertyEditor(property)
     , editor_(NULL)
 {
-    value_ = property->getValue().value<QColor>();
+    value_ = QtPropertyBrowserUtils::variant2color(property->getValue());
 }
 
 QWidget* QtColorEditor::createEditor(QWidget *parent)
@@ -425,7 +427,7 @@ QWidget* QtColorEditor::createEditor(QWidget *parent)
 
 void QtColorEditor::onPropertyValueChange(QtProperty * property)
 {
-    value_ = property->getValue().value<QColor>();
+    value_ = QtPropertyBrowserUtils::variant2color(property->getValue());
     if(NULL != editor_)
     {
         editor_->blockSignals(true);
@@ -439,6 +441,6 @@ void QtColorEditor::slotEditorValueChange(const QColor &color)
     if(color != value_)
     {
         value_ = color;
-        property_->setValue(QVariant::fromValue(value_));
+        property_->setValue(QtPropertyBrowserUtils::color2variant(value_));
     }
 }

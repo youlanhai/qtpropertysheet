@@ -277,6 +277,37 @@ QIcon QtPropertyBrowserUtils::drawIndicatorIcon(const QPalette &palette, QStyle 
     return rc;
 }
 
+QColor QtPropertyBrowserUtils::variant2color(const QVariant &value)
+{
+    if(value.type() == QVariant::Color)
+    {
+        return value.value<QColor>();
+    }
+    else if(value.type() == QVariant::List)
+    {
+        QVariantList val = value.toList();
+        if(val.size() == 4)
+        {
+            return QColor( val[0].toInt(),
+                    val[1].toInt(),
+                    val[2].toInt(),
+                    val[3].toInt()
+                    );
+        }
+    }
+    return QColor(0, 0, 0);
+}
+
+QVariant QtPropertyBrowserUtils::color2variant(const QColor &color)
+{
+    QVariantList val;
+    val.push_back(color.red());
+    val.push_back(color.green());
+    val.push_back(color.blue());
+    val.push_back(color.alpha());
+    return val;
+}
+
 QtBoolEdit::QtBoolEdit(QWidget *parent) :
     QWidget(parent),
     m_checkBox(new QCheckBox(this)),

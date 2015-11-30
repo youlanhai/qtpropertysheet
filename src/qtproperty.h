@@ -17,6 +17,7 @@ class QtProperty : public QObject
 public:
     enum Type
     {
+        TYPE_NONE,
         TYPE_BOOL,
         TYPE_INT,
         TYPE_DOUBLE,

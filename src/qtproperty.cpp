@@ -426,12 +426,12 @@ QtColorProperty::QtColorProperty(int type, QObject *parent)
 
 QString QtColorProperty::getValueString() const
 {
-    QColor color = value_.value<QColor>();
+    QColor color = QtPropertyBrowserUtils::variant2color(value_);
     return QtPropertyBrowserUtils::colorValueText(color);
 }
 
 QIcon QtColorProperty::getValueIcon() const
 {
-    QColor color = value_.value<QColor>();
+    QColor color = QtPropertyBrowserUtils::variant2color(value_);
     return QtPropertyBrowserUtils::brushValueIcon(QBrush(color));
 }

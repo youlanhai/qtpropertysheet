@@ -103,6 +103,8 @@ public:
     static QString fontValueText(const QFont &f);
     static QIcon drawCheckBox(bool value);
     static QIcon drawIndicatorIcon(const QPalette &palette, QStyle *style);
+    static QColor variant2color(const QVariant &value);
+    static QVariant color2variant(const QColor &color);
 };
 
 class QtBoolEdit : public QWidget {
