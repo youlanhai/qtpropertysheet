@@ -106,7 +106,6 @@ class QtContainerProperty : public QtProperty
     Q_OBJECT
 public:
     QtContainerProperty(int type, QObject *parent);
-    virtual bool hasValue() const { return false; }
 
 protected slots:
     virtual void slotChildValueChange(QtProperty *property) = 0;
@@ -161,6 +160,7 @@ class QtGroupProperty : public QtContainerProperty
 public:
     QtGroupProperty(int type, QObject *parent);
 
+    virtual bool hasValue() const { return false; }
     virtual void setValue(const QVariant &value);
 
     virtual QtProperty* findChild(const QString &name);

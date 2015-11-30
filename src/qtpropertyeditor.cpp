@@ -92,17 +92,25 @@ void QtIntSpinBoxEditor::onPropertyValueChange(QtProperty* property)
 
 void QtIntSpinBoxEditor::slotSetAttribute(QtProperty *property, const QString &name)
 {
+    if(NULL == editor_)
+    {
+        return;
+    }
+
+    QVariant v = property->getAttribute(QtAttributeName::MaxValue);
     if(name == QtAttributeName::MinValue)
     {
-        QVariant v = property->getAttribute(QtAttributeName::MinValue);
         int minValue = (v.type() == QVariant::Int) ? v.toInt() : std::numeric_limits<int>::min();
         editor_->setMinimum(minValue);
     }
     else if(name == QtAttributeName::MaxValue)
     {
-        QVariant v = property_->getAttribute(QtAttributeName::MaxValue);
         int maxValue = (v.type() == QVariant::Int) ? v.toInt() : std::numeric_limits<int>::max();
         editor_->setMaximum(maxValue);
+    }
+    else if(name == QtAttributeName::ReadOnly)
+    {
+        editor_->setReadOnly(v.type() == QVariant::Bool && v.toBool());
     }
 }
 
@@ -161,25 +169,32 @@ void QtDoubleSpinBoxEditor::onPropertyValueChange(QtProperty* property)
 
 void QtDoubleSpinBoxEditor::slotSetAttribute(QtProperty *property, const QString &name)
 {
+    if(NULL == editor_)
+    {
+        return;
+    }
+
+    QVariant v = property->getAttribute(QtAttributeName::MinValue);
     if(name == QtAttributeName::MinValue)
     {
-        QVariant v = property->getAttribute(QtAttributeName::MinValue);
         int minValue = (v.type() == QVariant::Int) ? v.toInt() : std::numeric_limits<int>::min();
         editor_->setMinimum(minValue);
     }
     else if(name == QtAttributeName::MaxValue)
     {
-        QVariant v = property->getAttribute(QtAttributeName::MaxValue);
         int maxValue = (v.type() == QVariant::Int) ? v.toInt() : std::numeric_limits<int>::max();
         editor_->setMaximum(maxValue);
     }
     else if(name == QtAttributeName::Decimals)
     {
-        QVariant v = property->getAttribute(name);
         if(v.type() == QVariant::Int)
         {
             editor_->setDecimals(v.toInt());
         }
+    }
+    else if(name == QtAttributeName::ReadOnly)
+    {
+        editor_->setReadOnly(v.type() == QVariant::Bool && v.toBool());
     }
 }
 
@@ -197,6 +212,9 @@ QWidget* QtStringEditor::createEditor(QWidget *parent)
     {
         editor_ = new QLineEdit(parent);
         editor_->setText(value_);
+
+        slotSetAttribute(property_, QtAttributeName::ReadOnly);
+
         connect(editor_, SIGNAL(editingFinished()), this, SLOT(slotEditFinished()));
         connect(editor_, SIGNAL(destroyed(QObject*)), this, SLOT(slotEditorDestory(QObject*)));
     }
@@ -223,6 +241,23 @@ void QtStringEditor::slotEditFinished()
         if(property_ != 0)
         {
             property_->setValue(value_);
+        }
+    }
+}
+
+void QtStringEditor::slotSetAttribute(QtProperty *property, const QString &name)
+{
+    if(!editor_)
+    {
+        return;
+    }
+
+    QVariant value = property->getAttribute(name);
+    if(name == QtAttributeName::ReadOnly)
+    {
+        if(value.type() == QVariant::Bool)
+        {
+            editor_->setReadOnly(value.toBool());
         }
     }
 }
@@ -406,8 +441,6 @@ void QtBoolEditor::slotEditorValueChange(bool value)
 }
 
 /********************************************************************/
-
-
 QtColorEditor::QtColorEditor(QtProperty *property)
     : QtPropertyEditor(property)
     , editor_(NULL)
@@ -505,6 +538,14 @@ void QtFileEditor::onPropertyValueChange(QtProperty *property)
     }
 }
 
+void QtFileEditor::slotEditorDestory(QObject *object)
+{
+    QtPropertyEditor::slotEditorDestory(object);
+
+    input_ = NULL;
+    button_ = NULL;
+}
+
 void QtFileEditor::slotSetAttribute(QtProperty *property, const QString &name)
 {
     QVariant value = property->getAttribute(name);
@@ -527,6 +568,13 @@ void QtFileEditor::slotSetAttribute(QtProperty *property, const QString &name)
         if(value.type() == QVariant::String)
         {
             relativePath_ = value.toString();
+        }
+    }
+    else if(name == QtAttributeName::ReadOnly)
+    {
+        if(editor_ != NULL && value.type() == QVariant::Bool)
+        {
+            input_->setReadOnly(value.toBool());
         }
     }
 }

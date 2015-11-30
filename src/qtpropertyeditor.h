@@ -84,11 +84,11 @@ public:
 public slots:
     virtual void onPropertyValueChange(QtProperty *property);
     void slotEditFinished();
+    void slotSetAttribute(QtProperty *property, const QString &name);
 
 private:
     QString             value_;
     QLineEdit*          editor_;
-
 };
 
 class QtEnumEditor : public QtPropertyEditor
@@ -180,6 +180,7 @@ public slots:
     void slotEditingFinished();
 
     virtual void onPropertyValueChange(QtProperty *property);
+    virtual void slotEditorDestory(QObject *object);
     void slotSetAttribute(QtProperty *property, const QString &name);
 
 private:
