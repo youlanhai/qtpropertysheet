@@ -455,8 +455,10 @@ QtFileEditor::QtFileEditor(QtProperty *property)
     , editor_(NULL)
     , input_(NULL)
     , button_(NULL)
+    , dialogType_(READ_FILE)
 {
     value_ = property->getValue().toString();
+    connect(property_, SIGNAL(signalAttributeChange(QtProperty*,QString)), this, SLOT(slotSetAttribute(QtProperty*,QString)));
 }
 
 QWidget* QtFileEditor::createEditor(QWidget *parent)
@@ -481,11 +483,14 @@ QWidget* QtFileEditor::createEditor(QWidget *parent)
     button_->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Ignored);
     button_->setFixedWidth(20);
     button_->setText(tr("..."));
-    //button_->installEventFilter(this);
     editor_->setFocusProxy(button_);
     editor_->setFocusPolicy(button_->focusPolicy());
     connect(button_, SIGNAL(clicked()), this, SLOT(slotButtonClicked()));
     layout->addWidget(button_);
+
+    slotSetAttribute(property_, QtAttributeName::FileDialogType);
+    slotSetAttribute(property_, QtAttributeName::FileDialogFilter);
+    slotSetAttribute(property_, QtAttributeName::FileRelativePath);
 
     connect(editor_, SIGNAL(destroyed(QObject*)), this, SLOT(slotEditorDestory(QObject*)));
     return editor_;
@@ -500,6 +505,32 @@ void QtFileEditor::onPropertyValueChange(QtProperty *property)
     }
 }
 
+void QtFileEditor::slotSetAttribute(QtProperty *property, const QString &name)
+{
+    QVariant value = property->getAttribute(name);
+    if(name == QtAttributeName::FileDialogType)
+    {
+        if(value.type() == QVariant::Int)
+        {
+            dialogType_ = (DialogType)value.toInt();
+        }
+    }
+    else if(name == QtAttributeName::FileDialogFilter)
+    {
+        if(value.type() == QVariant::String)
+        {
+            filter_ = value.toString();
+        }
+    }
+    else if(name == QtAttributeName::FileRelativePath)
+    {
+        if(value.type() == QVariant::String)
+        {
+            relativePath_ = value.toString();
+        }
+    }
+}
+
 void QtFileEditor::setValue(const QString &value)
 {
     value_ = value;
@@ -511,7 +542,35 @@ void QtFileEditor::setValue(const QString &value)
 
 void QtFileEditor::slotButtonClicked()
 {
-    QString path = QFileDialog::getOpenFileName();
+    QString path;
+    switch(dialogType_)
+    {
+    case READ_FILE:
+        path = QFileDialog::getOpenFileName(NULL, tr("open file"), value_, filter_);
+        break;
+
+   case WRITE_FILE:
+        path = QFileDialog::getSaveFileName(NULL, tr("save file"), value_, filter_);
+        break;
+
+    case DIRECTORY:
+        path = QFileDialog::getExistingDirectory(NULL, tr("open directory"), value_);
+        break;
+
+    default:
+        break;
+    }
+
+    if(path.isEmpty())
+    {
+        return;
+    }
+
+    if(!relativePath_.isEmpty())
+    {
+        path = QDir(relativePath_).relativeFilePath(path);
+    }
+
     if(!path.isEmpty() && path != value_)
     {
         setValue(path);

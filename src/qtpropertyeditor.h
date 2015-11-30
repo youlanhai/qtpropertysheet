@@ -165,6 +165,13 @@ class QtFileEditor : public QtPropertyEditor
 {
     Q_OBJECT
 public:
+    enum DialogType
+    {
+        READ_FILE,
+        WRITE_FILE,
+        DIRECTORY,
+    };
+
     explicit QtFileEditor(QtProperty *property);
     virtual QWidget* createEditor(QWidget *parent);
 
@@ -173,6 +180,7 @@ public slots:
     void slotEditingFinished();
 
     virtual void onPropertyValueChange(QtProperty *property);
+    void slotSetAttribute(QtProperty *property, const QString &name);
 
 private:
     void setValue(const QString &value);
@@ -181,6 +189,9 @@ private:
     QWidget*        editor_;
     QLineEdit*      input_;
     QToolButton*    button_;
+    DialogType      dialogType_;
+    QString         filter_;
+    QString         relativePath_;
 };
 
 #endif // QTPROPERTYEDITOR_H

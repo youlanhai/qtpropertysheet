@@ -4,9 +4,11 @@
 #include "qtproperty.h"
 #include "qtpropertyfactory.h"
 #include "qtpropertyeditorfactory.h"
+#include "qtattributename.h"
 
 #include <QTreeWidget>
 #include <QHBoxLayout>
+#include <QDir>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -72,6 +74,8 @@ MainWindow::MainWindow(QWidget *parent) :
         QtProperty *property8 = manager->createProperty(QtProperty::TYPE_FILE, manager);
         property8->setName("head icon");
         property8->setValue(QString("no-image"));
+        property8->setAttribute(QtAttributeName::FileDialogFilter, QString("Images(*.png *.jpg)"));
+        property8->setAttribute(QtAttributeName::FileRelativePath, QDir::currentPath());
         group->addChild(property8);
 
         root->addChild(group);
