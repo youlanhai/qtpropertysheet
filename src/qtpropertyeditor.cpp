@@ -651,7 +651,11 @@ bool QtFileEditor::eventFilter(QObject *obj, QEvent *event)
 {
     if(event->type() == QEvent::DragEnter)
     {
-        event->accept();
+        const QMimeData *data = ((QDragEnterEvent*)event)->mimeData();
+        if(data->hasUrls())
+        {
+            ((QDragEnterEvent*)event)->acceptProposedAction();
+        }
         return true;
     }
     else if(event->type() == QEvent::Drop)
@@ -659,7 +663,7 @@ bool QtFileEditor::eventFilter(QObject *obj, QEvent *event)
         const QMimeData *data = ((QDropEvent*)event)->mimeData();
         if(data->hasUrls())
         {
-            event->accept();
+            ((QDropEvent*)event)->acceptProposedAction();
 
             QString text = data->urls()[0].toString(QUrl::PreferLocalFile);
             setRawPath(text);
@@ -667,8 +671,9 @@ bool QtFileEditor::eventFilter(QObject *obj, QEvent *event)
         }
         else if(data->hasText())
         {
-            event->accept();
+            ((QDropEvent*)event)->acceptProposedAction();
             setRawPath(data->text());
+            return true;
         }
     }
 
