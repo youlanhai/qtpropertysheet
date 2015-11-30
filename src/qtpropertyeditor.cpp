@@ -13,6 +13,9 @@
 #include <QHBoxLayout>
 #include <QToolButton>
 #include <QFileDialog>
+#include <QEvent>
+#include <QDropEvent>
+#include <QMimeData>
 
 #include <limits>
 
@@ -509,6 +512,8 @@ QWidget* QtFileEditor::createEditor(QWidget *parent)
 
     input_ = new QLineEdit();
     input_->setText(value_);
+    input_->setAcceptDrops(true);
+    input_->installEventFilter(this);
     connect(input_, SIGNAL(editingFinished()), this, SLOT(slotEditingFinished()));
     layout->addWidget(input_);
 
@@ -588,6 +593,21 @@ void QtFileEditor::setValue(const QString &value)
     input_->blockSignals(false);
 }
 
+void QtFileEditor::setRawPath(const QString &value)
+{
+    QString path = value;
+    if(!relativePath_.isEmpty())
+    {
+        path = QDir(relativePath_).relativeFilePath(path);
+    }
+
+    if(path != value_)
+    {
+        setValue(path);
+        property_->setValue(path);
+    }
+}
+
 void QtFileEditor::slotButtonClicked()
 {
     QString path;
@@ -614,16 +634,7 @@ void QtFileEditor::slotButtonClicked()
         return;
     }
 
-    if(!relativePath_.isEmpty())
-    {
-        path = QDir(relativePath_).relativeFilePath(path);
-    }
-
-    if(!path.isEmpty() && path != value_)
-    {
-        setValue(path);
-        property_->setValue(path);
-    }
+    setRawPath(path);
 }
 
 void QtFileEditor::slotEditingFinished()
@@ -634,4 +645,32 @@ void QtFileEditor::slotEditingFinished()
         value_ = text;
         property_->setValue(value_);
     }
+}
+
+bool QtFileEditor::eventFilter(QObject *obj, QEvent *event)
+{
+    if(event->type() == QEvent::DragEnter)
+    {
+        event->accept();
+        return true;
+    }
+    else if(event->type() == QEvent::Drop)
+    {
+        const QMimeData *data = ((QDropEvent*)event)->mimeData();
+        if(data->hasUrls())
+        {
+            event->accept();
+
+            QString text = data->urls()[0].toString(QUrl::PreferLocalFile);
+            setRawPath(text);
+            return true;
+        }
+        else if(data->hasText())
+        {
+            event->accept();
+            setRawPath(data->text());
+        }
+    }
+
+    return QtPropertyEditor::eventFilter(obj, event);
 }

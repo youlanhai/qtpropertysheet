@@ -183,8 +183,12 @@ public slots:
     virtual void slotEditorDestory(QObject *object);
     void slotSetAttribute(QtProperty *property, const QString &name);
 
+protected:
+    virtual bool eventFilter(QObject *obj, QEvent *event);
+
 private:
     void setValue(const QString &value);
+    void setRawPath(const QString &value);
 
     QString         value_;
     QWidget*        editor_;
