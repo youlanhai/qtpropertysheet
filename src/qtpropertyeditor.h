@@ -11,6 +11,8 @@ class QDoubleSpinBox;
 class QLineEdit;
 class QComboBox;
 class QCheckBox;
+class QToolButton;
+
 class QtColorEditWidget;
 class QtBoolEdit;
 class QxtCheckComboBox;
@@ -157,6 +159,28 @@ public slots:
 protected:
     QColor              value_;
     QtColorEditWidget*  editor_;
+};
+
+class QtFileEditor : public QtPropertyEditor
+{
+    Q_OBJECT
+public:
+    explicit QtFileEditor(QtProperty *property);
+    virtual QWidget* createEditor(QWidget *parent);
+
+public slots:
+    void slotButtonClicked();
+    void slotEditingFinished();
+
+    virtual void onPropertyValueChange(QtProperty *property);
+
+private:
+    void setValue(const QString &value);
+
+    QString         value_;
+    QWidget*        editor_;
+    QLineEdit*      input_;
+    QToolButton*    button_;
 };
 
 #endif // QTPROPERTYEDITOR_H

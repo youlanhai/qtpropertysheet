@@ -28,6 +28,7 @@ public:
         TYPE_ENUM,
         TYPE_FLAG,
         TYPE_COLOR,
+        TYPE_FILE,
         TYPE_USER = 256,
     };
 

@@ -10,6 +10,9 @@
 #include <QComboBox>
 #include <QAbstractItemView>
 #include <QCheckBox>
+#include <QHBoxLayout>
+#include <QToolButton>
+#include <QFileDialog>
 
 #include <limits>
 
@@ -442,5 +445,86 @@ void QtColorEditor::slotEditorValueChange(const QColor &color)
     {
         value_ = color;
         property_->setValue(QtPropertyBrowserUtils::color2variant(value_));
+    }
+}
+
+
+/********************************************************************/
+QtFileEditor::QtFileEditor(QtProperty *property)
+    : QtPropertyEditor(property)
+    , editor_(NULL)
+    , input_(NULL)
+    , button_(NULL)
+{
+    value_ = property->getValue().toString();
+}
+
+QWidget* QtFileEditor::createEditor(QWidget *parent)
+{
+    if(NULL != editor_)
+    {
+        return editor_;
+    }
+
+    editor_ = new QWidget(parent);
+
+    QHBoxLayout *layout = new QHBoxLayout(editor_);
+    QtPropertyBrowserUtils::setupTreeViewEditorMargin(layout);
+    layout->setSpacing(0);
+
+    input_ = new QLineEdit();
+    input_->setText(value_);
+    connect(input_, SIGNAL(editingFinished()), this, SLOT(slotEditingFinished()));
+    layout->addWidget(input_);
+
+    button_ = new QToolButton();
+    button_->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Ignored);
+    button_->setFixedWidth(20);
+    button_->setText(tr("..."));
+    //button_->installEventFilter(this);
+    editor_->setFocusProxy(button_);
+    editor_->setFocusPolicy(button_->focusPolicy());
+    connect(button_, SIGNAL(clicked()), this, SLOT(slotButtonClicked()));
+    layout->addWidget(button_);
+
+    connect(editor_, SIGNAL(destroyed(QObject*)), this, SLOT(slotEditorDestory(QObject*)));
+    return editor_;
+}
+
+void QtFileEditor::onPropertyValueChange(QtProperty *property)
+{
+    QString value = property->getValue().toString();
+    if(editor_ != NULL)
+    {
+        setValue(value);
+    }
+}
+
+void QtFileEditor::setValue(const QString &value)
+{
+    value_ = value;
+
+    input_->blockSignals(true);
+    input_->setText(value);
+    input_->blockSignals(false);
+}
+
+void QtFileEditor::slotButtonClicked()
+{
+    QString path = QFileDialog::getOpenFileName();
+    if(!path.isEmpty() && path != value_)
+    {
+        setValue(path);
+        property_->setValue(path);
+    }
+}
+
+void QtFileEditor::slotEditingFinished()
+{
+    QString text = input_->text();
+    if(text != value_)
+    {
+        value_ = text;
+        property_->setValue(value_);
     }
 }

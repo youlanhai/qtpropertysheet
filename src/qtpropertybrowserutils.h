@@ -69,6 +69,7 @@ class QLabel;
 class QToolButton;
 class QPalette;
 class QStyle;
+class QLayout;
 
 class QtCursorDatabase
 {
@@ -105,6 +106,7 @@ public:
     static QIcon drawIndicatorIcon(const QPalette &palette, QStyle *style);
     static QColor variant2color(const QVariant &value);
     static QVariant color2variant(const QColor &color);
+    static void setupTreeViewEditorMargin(QLayout *lt);
 };
 
 class QtBoolEdit : public QWidget {
@@ -187,10 +189,10 @@ private Q_SLOTS:
     void buttonClicked();
 
 private:
-    QColor color_;
-    QLabel *pixmapLabel_;
-    QLabel *label_;
-    QToolButton *button_;
+    QColor          color_;
+    QLabel*         pixmapLabel_;
+    QLabel*         label_;
+    QToolButton*    button_;
 };
 
 #if QT_VERSION >= 0x040400

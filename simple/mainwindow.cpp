@@ -69,6 +69,11 @@ MainWindow::MainWindow(QWidget *parent) :
         property7->setAttribute("flagNames", hobby);
         group->addChild(property7);
 
+        QtProperty *property8 = manager->createProperty(QtProperty::TYPE_FILE, manager);
+        property8->setName("head icon");
+        property8->setValue(QString("no-image"));
+        group->addChild(property8);
+
         root->addChild(group);
     }
     {

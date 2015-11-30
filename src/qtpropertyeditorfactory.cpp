@@ -21,6 +21,7 @@ QtPropertyEditorFactory::QtPropertyEditorFactory(QObject *parent)
     REGISTER_CREATOR(QtProperty::TYPE_BOOL, QtBoolEditor);
     REGISTER_CREATOR(QtProperty::TYPE_COLOR, QtColorEditor);
     REGISTER_CREATOR(QtProperty::TYPE_FLAG, QtFlagEditor);
+    REGISTER_CREATOR(QtProperty::TYPE_FILE, QtFileEditor);
 
 #undef QtSpinBoxEditor
 }

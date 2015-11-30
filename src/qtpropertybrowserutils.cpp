@@ -541,7 +541,7 @@ bool QtKeySequenceEdit::event(QEvent *e)
 }
 
 
-static inline void setupTreeViewEditorMargin(QLayout *lt)
+/*static*/ void QtPropertyBrowserUtils::setupTreeViewEditorMargin(QLayout *lt)
 {
     enum { DecorationMargin = 4 };
     if (QApplication::layoutDirection() == Qt::LeftToRight)
@@ -557,7 +557,7 @@ QtColorEditWidget::QtColorEditWidget(QWidget *parent) :
     button_(new QToolButton)
 {
     QHBoxLayout *lt = new QHBoxLayout(this);
-    setupTreeViewEditorMargin(lt);
+    QtPropertyBrowserUtils::setupTreeViewEditorMargin(lt);
     lt->setSpacing(0);
     lt->addWidget(pixmapLabel_);
     lt->addWidget(label_);
