@@ -665,7 +665,7 @@ bool QtFileEditor::eventFilter(QObject *obj, QEvent *event)
         {
             ((QDropEvent*)event)->acceptProposedAction();
 
-            QString text = data->urls()[0].toString(QUrl::PreferLocalFile);
+            QString text = data->urls()[0].toLocalFile();
             setRawPath(text);
             return true;
         }
