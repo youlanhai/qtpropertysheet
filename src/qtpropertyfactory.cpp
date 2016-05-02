@@ -2,9 +2,9 @@
 #include "qtproperty.h"
 
 template<typename T>
-static QtProperty* internalCreator(int type, QObject *parent)
+static QtProperty* internalCreator(int type, QtPropertyFactory *factory)
 {
-    return new T(type, parent);
+    return new T(type, factory);
 }
 
 QtPropertyFactory::QtPropertyFactory(QObject *parent)
@@ -21,18 +21,19 @@ QtPropertyFactory::QtPropertyFactory(QObject *parent)
     REGISTER_PROPERTY(QtProperty::TYPE_DOUBLE, QtDoubleProperty);
     REGISTER_PROPERTY(QtProperty::TYPE_COLOR, QtColorProperty);
     REGISTER_PROPERTY(QtProperty::TYPE_DYNAMIC_LIST, QtDynamicListProperty);
+    REGISTER_PROPERTY(QtProperty::TYPE_DYNAMIC_ITEM, QtDynamicItemProperty);
 
 #undef REGISTER_PROPERTY
 }
 
-QtProperty* QtPropertyFactory::createProperty(int type, QObject *parent)
+QtProperty* QtPropertyFactory::createProperty(int type)
 {
     QtPropertyCreator method = propertyCreator_.value(type);
     if(method != NULL)
     {
-        return method(type, parent);
+        return method(type, this);
     }
-    return new QtProperty(type, parent);
+    return new QtProperty(type, this);
 }
 
 void QtPropertyFactory::registerCreator(int type, QtPropertyCreator method)

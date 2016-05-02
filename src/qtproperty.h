@@ -8,6 +8,8 @@
 #include <QIcon>
 
 class QtProperty;
+class QtPropertyFactory;
+
 typedef QVector<QtProperty*>    QtPropertyList;
 typedef QMap<QString, QVariant> QtPropertyAttributes;
 
@@ -34,7 +36,7 @@ public:
         TYPE_USER = 256,
     };
 
-    QtProperty(int type, QObject *parent);
+    QtProperty(int type, QtPropertyFactory *factory);
     virtual ~QtProperty();
 
     int getType() const { return type_; }
@@ -56,10 +58,19 @@ public:
     QVariant getAttribute(const QString &name) const;
     QtPropertyAttributes& getAttributes(){ return attributes_; }
 
+    /** 添加子属性，由属性树负责delete child。*/
     void addChild(QtProperty *child);
+
+    /** 移除子属性，不delete child。*/
     void removeChild(QtProperty *child);
-    void removeAllChildren();
+
+    /** 将自己从属性树中取下，不delete自己。*/
     void removeFromParent();
+
+    /** 移除所有子属性。
+     *  @param clean 如果为true，则delete所有子属性。否则，仅从树中移除引用。
+     */
+    void removeAllChildren(bool clean);
 
     QtPropertyList& getChildren(){ return children_; }
     int indexChild(const QtProperty *child) const;
@@ -80,12 +91,15 @@ signals:
     void signalValueChange(QtProperty *property);
     void signalPropertyInserted(QtProperty *property, QtProperty *parent);
     void signalPropertyRemoved(QtProperty *property, QtProperty *parent);
+    void signalPropertyReordered(QtProperty *property);
     void signalAttributeChange(QtProperty *property, const QString &name);
     void signalPropertyChange(QtProperty *property);
 
 protected:
     virtual void onChildAdd(QtProperty *child);
     virtual void onChildRemove(QtProperty *child);
+
+    QtPropertyFactory*  factory_;
 
     int                 type_;
     QString             name_;
@@ -107,7 +121,7 @@ class QtContainerProperty : public QtProperty
 {
     Q_OBJECT
 public:
-    QtContainerProperty(int type, QObject *parent);
+    QtContainerProperty(int type, QtPropertyFactory *factory);
 
 protected slots:
     virtual void slotChildValueChange(QtProperty *property) = 0;
@@ -123,7 +137,7 @@ class QtListProperty : public QtContainerProperty
 {
     Q_OBJECT
 public:
-    QtListProperty(int type, QObject *parent);
+    QtListProperty(int type, QtPropertyFactory *factory);
 
     virtual void setValue(const QVariant &value);
     virtual QString getValueString() const;
@@ -138,7 +152,7 @@ class QtDictProperty : public QtContainerProperty
 {
     Q_OBJECT
 public:
-    QtDictProperty(int type, QObject *parent);
+    QtDictProperty(int type, QtPropertyFactory *factory);
 
     virtual void setValue(const QVariant &value);
 
@@ -160,7 +174,7 @@ class QtGroupProperty : public QtContainerProperty
 {
     Q_OBJECT
 public:
-    QtGroupProperty(int type, QObject *parent);
+    QtGroupProperty(int type, QtPropertyFactory *factory);
 
     virtual bool hasValue() const { return false; }
     virtual void setValue(const QVariant &value);
@@ -179,7 +193,7 @@ class QtEnumProperty : public QtProperty
 {
     Q_OBJECT
 public:
-    QtEnumProperty(int type, QObject *parent);
+    QtEnumProperty(int type, QtPropertyFactory *factory);
     virtual QString getValueString() const;
 };
 
@@ -188,7 +202,7 @@ class QtFlagProperty : public QtProperty
 {
     Q_OBJECT
 public:
-    QtFlagProperty(int type, QObject *parent);
+    QtFlagProperty(int type, QtPropertyFactory *factory);
     virtual QString getValueString() const;
 };
 
@@ -197,7 +211,7 @@ class QtBoolProperty : public QtProperty
 {
     Q_OBJECT
 public:
-    QtBoolProperty(int type, QObject *parent);
+    QtBoolProperty(int type, QtPropertyFactory *factory);
     virtual QString getValueString() const;
     virtual QIcon getValueIcon() const;
 };
@@ -207,7 +221,7 @@ class QtDoubleProperty : public QtProperty
 {
     Q_OBJECT
 public:
-    QtDoubleProperty(int type, QObject *parent);
+    QtDoubleProperty(int type, QtPropertyFactory *factory);
     virtual QString getValueString() const;
 };
 
@@ -216,7 +230,7 @@ class QtColorProperty : public QtProperty
 {
     Q_OBJECT
 public:
-    QtColorProperty(int type, QObject *parent);
+    QtColorProperty(int type, QtPropertyFactory *factory);
 
     virtual QString getValueString() const;
     virtual QIcon getValueIcon() const;
@@ -226,13 +240,17 @@ class QtDynamicListProperty : public QtProperty
 {
     Q_OBJECT
 public:
-    QtDynamicListProperty(int type, QObject *parent);
+    QtDynamicListProperty(int type, QtPropertyFactory *factory);
+    ~QtDynamicListProperty();
 
     virtual void setValue(const QVariant &value);
     virtual QString getValueString() const;
 
 protected slots:
     void slotItemValueChange(QtProperty *item);
+    void slotItemMoveUp(QtProperty *item);
+    void slotItemMoveDown(QtProperty *item);
+    void slotItemDelete(QtProperty *item);
 
     void slotLengthChange(QtProperty *property);
 
@@ -245,10 +263,19 @@ protected:
     QtProperty* 	propLength_;
     QtPropertyList  items_;
 
-    int 			valueType_;
-    QVariant		valueDefault_;
-
     QVariantList    valueList_;
+};
+
+class QtDynamicItemProperty : public QtProperty
+{
+    Q_OBJECT
+public:
+    QtDynamicItemProperty(int type, QtPropertyFactory *factory);
+
+signals:
+    void signalMoveUp(QtProperty *property);
+    void signalMoveDown(QtProperty *property);
+    void signalDelete(QtProperty *property);
 };
 
 #endif // QTPROPERTY_H

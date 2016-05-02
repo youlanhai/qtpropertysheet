@@ -210,7 +210,10 @@ public:
 
 public slots:
     virtual void onPropertyValueChange(QtProperty *property);
-    virtual void slotEditorValueChange(bool value);
+
+    void onBtnMoveUp();
+    void onBtnMoveDown();
+    void onBtnDelete();
 
 private:
     QWidget* 		editor_;

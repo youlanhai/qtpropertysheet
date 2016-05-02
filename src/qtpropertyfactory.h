@@ -5,8 +5,9 @@
 #include <QMap>
 
 class QtProperty;
+class QtPropertyFactory;
 
-typedef QtProperty*(*QtPropertyCreator)(int type, QObject *parent);
+typedef QtProperty*(*QtPropertyCreator)(int type, QtPropertyFactory *parent);
 
 class QtPropertyFactory : public QObject
 {
@@ -14,7 +15,7 @@ class QtPropertyFactory : public QObject
 public:
     explicit QtPropertyFactory(QObject *parent = 0);
 
-    virtual QtProperty* createProperty(int type, QObject *parent);
+    virtual QtProperty* createProperty(int type);
 
     void registerCreator(int type, QtPropertyCreator method);
 

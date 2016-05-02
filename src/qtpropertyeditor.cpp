@@ -703,17 +703,20 @@ QWidget* QtDynamicItemEditor::createEditor(QWidget *parent, QtPropertyEditorFact
     QtPropertyBrowserUtils::setupTreeViewEditorMargin(layout);
     layout->setSpacing(0);
 
-    int type = property_->getAttribute("itemType").toInt();
+
+    int type = property_->getAttribute("valueType").toInt();
     if(type == 0)
     {
         type = QtProperty::TYPE_INT;
     }
 
     impl_ = factory->createPropertyEditor(property_, type);
-    QWidget *subEditor = impl_->createEditor(NULL, factory);
+    QWidget *subEditor = impl_->createEditor(editor_, factory);
     if(subEditor != NULL)
     {
         layout->addWidget(subEditor);
+        editor_->setFocusProxy(subEditor);
+        editor_->setFocusPolicy(subEditor->focusPolicy());
     }
 
     QToolButton *btnMoveUp = new QToolButton();
@@ -733,18 +736,44 @@ QWidget* QtDynamicItemEditor::createEditor(QWidget *parent, QtPropertyEditorFact
     btnDel->setFixedWidth(20);
     btnDel->setText(tr("X"));
     layout->addWidget(btnDel);
-    //connect(btnDel, SIGNAL(clicked()), this, SLOT(slotButtonClicked()));
+
+    connect(btnMoveUp, SIGNAL(clicked()), this, SLOT(onBtnMoveUp()));
+    connect(btnMoveDown, SIGNAL(clicked()), this, SLOT(onBtnMoveDown()));
+    connect(btnDel, SIGNAL(clicked()), this, SLOT(onBtnDelete()));
 
     connect(editor_, SIGNAL(destroyed(QObject*)), this, SLOT(slotEditorDestory(QObject*)));
     return editor_;
 }
 
-void QtDynamicItemEditor::onPropertyValueChange(QtProperty *property)
+void QtDynamicItemEditor::onPropertyValueChange(QtProperty * /*property*/)
 {
 
 }
 
-void QtDynamicItemEditor::slotEditorValueChange(bool value)
+void QtDynamicItemEditor::onBtnMoveUp()
 {
-
+    QtDynamicItemProperty *property = dynamic_cast<QtDynamicItemProperty*>(property_);
+    if(property != NULL)
+    {
+        emit property->signalMoveUp(property);
+    }
 }
+
+void QtDynamicItemEditor::onBtnMoveDown()
+{
+    QtDynamicItemProperty *property = dynamic_cast<QtDynamicItemProperty*>(property_);
+    if(property != NULL)
+    {
+        emit property->signalMoveDown(property);
+    }
+}
+
+void QtDynamicItemEditor::onBtnDelete()
+{
+    QtDynamicItemProperty *property = dynamic_cast<QtDynamicItemProperty*>(property_);
+    if(property != NULL)
+    {
+        emit property->signalDelete(property);
+    }
+}
+
