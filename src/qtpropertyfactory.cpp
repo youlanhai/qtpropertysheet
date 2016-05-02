@@ -20,6 +20,7 @@ QtPropertyFactory::QtPropertyFactory(QObject *parent)
     REGISTER_PROPERTY(QtProperty::TYPE_BOOL, QtBoolProperty);
     REGISTER_PROPERTY(QtProperty::TYPE_DOUBLE, QtDoubleProperty);
     REGISTER_PROPERTY(QtProperty::TYPE_COLOR, QtColorProperty);
+    REGISTER_PROPERTY(QtProperty::TYPE_DYNAMIC_LIST, QtDynamicListProperty);
 
 #undef REGISTER_PROPERTY
 }

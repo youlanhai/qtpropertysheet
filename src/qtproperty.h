@@ -29,6 +29,8 @@ public:
         TYPE_FLAG,
         TYPE_COLOR,
         TYPE_FILE,
+        TYPE_DYNAMIC_LIST,
+        TYPE_DYNAMIC_ITEM,
         TYPE_USER = 256,
     };
 
@@ -218,6 +220,35 @@ public:
 
     virtual QString getValueString() const;
     virtual QIcon getValueIcon() const;
+};
+/********************************************************************/
+class QtDynamicListProperty : public QtProperty
+{
+    Q_OBJECT
+public:
+    QtDynamicListProperty(int type, QObject *parent);
+
+    virtual void setValue(const QVariant &value);
+    virtual QString getValueString() const;
+
+protected slots:
+    void slotItemValueChange(QtProperty *item);
+
+    void slotLengthChange(QtProperty *property);
+
+protected:
+    void setLength(int length);
+    QtProperty* appendItem();
+    void popItem();
+
+    int 			length_;
+    QtProperty* 	propLength_;
+    QtPropertyList  items_;
+
+    int 			valueType_;
+    QVariant		valueDefault_;
+
+    QVariantList    valueList_;
 };
 
 #endif // QTPROPERTY_H

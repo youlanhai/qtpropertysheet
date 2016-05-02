@@ -435,3 +435,106 @@ QIcon QtColorProperty::getValueIcon() const
     QColor color = QtPropertyBrowserUtils::variant2color(value_);
     return QtPropertyBrowserUtils::brushValueIcon(QBrush(color));
 }
+
+/********************************************************************/
+QtDynamicListProperty::QtDynamicListProperty(int type, QObject *parent)
+    : QtProperty(type, parent)
+    , length_(0)
+    , valueType_(TYPE_INT)
+    , valueDefault_(0)
+{
+    propLength_ = new QtProperty(TYPE_INT, this);
+    propLength_->setName("length");
+    propLength_->setTitle(tr("list length"));
+    addChild(propLength_);
+    connect(propLength_, SIGNAL(signalValueChange(QtProperty*)), this, SLOT(slotLengthChange(QtProperty*)));
+}
+
+void QtDynamicListProperty::setValue(const QVariant &value)
+{
+    if(value_ == value)
+    {
+        return;
+    }
+    value_ = value;
+
+    QVariantList valueList = value.toList();
+    setLength(valueList.size());
+
+    for(int i = 0; i < items_.size(); ++i)
+    {
+        valueList_[i] = valueList[i];
+        items_[i]->setValue(valueList[i]);
+    }
+
+    emit signalValueChange(this);
+}
+
+QString QtDynamicListProperty::getValueString() const
+{
+    return "";
+}
+
+void QtDynamicListProperty::slotItemValueChange(QtProperty *item)
+{
+    int i = items_.indexOf(item);
+    if(i >= 0)
+    {
+        if(valueList_[i] != item->getValue())
+        {
+            valueList_[i] = item->getValue();
+
+            value_ = valueList_;
+            emit signalValueChange(this);
+        }
+    }
+}
+
+void QtDynamicListProperty::slotLengthChange(QtProperty *property)
+{
+    int length = property->getValue().toInt();
+    setLength(length);
+}
+
+void QtDynamicListProperty::setLength(int length)
+{
+    length = std::max(0, length);
+    if(length_ == length)
+    {
+        return;
+    }
+
+    while(length_ < length)
+    {
+        appendItem();
+        ++length_;
+    }
+    while(length_ > length)
+    {
+        popItem();
+        --length_;
+    }
+    propLength_->setValue(length_);
+    value_ = valueList_;
+}
+
+QtProperty* QtDynamicListProperty::appendItem()
+{
+    QtProperty *prop = new QtProperty(TYPE_DYNAMIC_ITEM, this);
+    prop->setName(QString::number(items_.size()));
+    prop->setAttribute("itemType", valueType_);
+    prop->setValue(valueDefault_);
+
+    valueList_.append(valueDefault_);
+    items_.append(prop);
+
+    this->addChild(prop);
+    return prop;
+}
+
+void QtDynamicListProperty::popItem()
+{
+    removeChild(children_.back());
+    items_.pop_back();
+    valueList_.pop_back();
+}

@@ -107,6 +107,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
         root->addChild(rect);
     }
+    {
+        QtProperty *prop = manager->createProperty(QtProperty::TYPE_DYNAMIC_LIST, manager);
+        prop->setName("dynamic list");
+        root->addChild(prop);
+    }
 
     connect(root, SIGNAL(signalValueChange(QtProperty*)), this, SLOT(onValueChanged(QtProperty*)));
     browser->addProperty(root);
