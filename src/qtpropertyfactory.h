@@ -5,8 +5,9 @@
 #include <QMap>
 
 class QtProperty;
+class QtPropertyFactory;
 
-typedef QtProperty*(*QtPropertyCreator)(int type, QObject *parent);
+typedef QtProperty*(*QtPropertyCreator)(int type, QtPropertyFactory *factory);
 
 class QtPropertyFactory : public QObject
 {
@@ -14,7 +15,7 @@ class QtPropertyFactory : public QObject
 public:
     explicit QtPropertyFactory(QObject *parent = 0);
 
-    QtProperty* createProperty(int type, QObject *parent);
+    QtProperty* createProperty(int type);
 
     void registerCreator(int type, QtPropertyCreator method);
 
@@ -23,7 +24,7 @@ public:
 
 private:
     template<typename T>
-    static QtProperty* internalCreator(int type, QObject *parent);
+    static QtProperty* internalCreator(int type, QtPropertyFactory *factory);
 
     typedef QMap<int, QtPropertyCreator> CreatorMap;
     CreatorMap      propertyCreator_;
@@ -36,9 +37,9 @@ void QtPropertyFactory::registerCreator(int type)
 }
 
 template<typename T>
-/*static*/ QtProperty* QtPropertyFactory::internalCreator(int type, QObject *parent)
+/*static*/ QtProperty* QtPropertyFactory::internalCreator(int type, QtPropertyFactory *factory)
 {
-    return new T(type, parent);
+    return new T(type, factory);
 }
 
 #endif // QTPROPERTYMANAGER_H

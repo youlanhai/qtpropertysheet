@@ -17,6 +17,8 @@ class QtColorEditWidget;
 class QtBoolEdit;
 class QxtCheckComboBox;
 
+class QtPropertyEditorFactory;
+
 // QtPropertyEditor will be destroied when QtEditor destroied.
 class QtPropertyEditor : public QObject
 {
@@ -25,7 +27,7 @@ public:
     explicit QtPropertyEditor(QtProperty *property);
     virtual ~QtPropertyEditor();
 
-    virtual QWidget* createEditor(QWidget *parent) = 0;
+    virtual QWidget* createEditor(QWidget *parent, QtPropertyEditorFactory *factory) = 0;
 
 public slots:
     virtual void onPropertyValueChange(QtProperty *property) = 0;
@@ -43,7 +45,7 @@ class QtIntSpinBoxEditor : public QtPropertyEditor
     Q_OBJECT
 public:
     explicit QtIntSpinBoxEditor(QtProperty *property);
-    virtual QWidget* createEditor(QWidget *parent);
+    virtual QWidget* createEditor(QWidget *parent, QtPropertyEditorFactory *factory);
 
 public slots:
     virtual void onPropertyValueChange(QtProperty *property);
@@ -61,7 +63,7 @@ class QtDoubleSpinBoxEditor : public QtPropertyEditor
     Q_OBJECT
 public:
     explicit QtDoubleSpinBoxEditor(QtProperty *property);
-    virtual QWidget* createEditor(QWidget *parent);
+    virtual QWidget* createEditor(QWidget *parent, QtPropertyEditorFactory *factory);
 
 public slots:
     virtual void onPropertyValueChange(QtProperty *property);
@@ -79,7 +81,7 @@ class QtStringEditor : public QtPropertyEditor
     Q_OBJECT
 public:
     explicit QtStringEditor(QtProperty *property);
-    virtual QWidget* createEditor(QWidget *parent);
+    virtual QWidget* createEditor(QWidget *parent, QtPropertyEditorFactory *factory);
 
 public slots:
     virtual void onPropertyValueChange(QtProperty *property);
@@ -96,7 +98,7 @@ class QtEnumEditor : public QtPropertyEditor
     Q_OBJECT
 public:
     explicit QtEnumEditor(QtProperty *property);
-    virtual QWidget* createEditor(QWidget *parent);
+    virtual QWidget* createEditor(QWidget *parent, QtPropertyEditorFactory *factory);
 
 public slots:
     virtual void onPropertyValueChange(QtProperty *property);
@@ -114,7 +116,7 @@ class QtFlagEditor : public QtPropertyEditor
     Q_OBJECT
 public:
     explicit QtFlagEditor(QtProperty *property);
-    virtual QWidget* createEditor(QWidget *parent);
+    virtual QWidget* createEditor(QWidget *parent, QtPropertyEditorFactory *factory);
 
     void setValueToEditor(int value);
 
@@ -134,7 +136,7 @@ class QtBoolEditor : public QtPropertyEditor
     Q_OBJECT
 public:
     explicit QtBoolEditor(QtProperty *property);
-    virtual QWidget* createEditor(QWidget *parent);
+    virtual QWidget* createEditor(QWidget *parent, QtPropertyEditorFactory *factory);
 
 public slots:
     virtual void onPropertyValueChange(QtProperty *property);
@@ -150,7 +152,7 @@ class QtColorEditor : public QtPropertyEditor
     Q_OBJECT
 public:
     explicit QtColorEditor(QtProperty *property);
-    virtual QWidget* createEditor(QWidget *parent);
+    virtual QWidget* createEditor(QWidget *parent, QtPropertyEditorFactory *factory);
 
 public slots:
     virtual void onPropertyValueChange(QtProperty *property);
@@ -173,7 +175,7 @@ public:
     };
 
     explicit QtFileEditor(QtProperty *property);
-    virtual QWidget* createEditor(QWidget *parent);
+    virtual QWidget* createEditor(QWidget *parent, QtPropertyEditorFactory *factory);
 
 public slots:
     virtual void slotButtonClicked();
@@ -195,6 +197,25 @@ protected:
     DialogType      dialogType_;
     QString         filter_;
     QString         relativePath_;
+};
+
+class QtDynamicItemEditor : public QtPropertyEditor
+{
+    Q_OBJECT
+public:
+    explicit QtDynamicItemEditor(QtProperty *property);
+    virtual QWidget* createEditor(QWidget *parent, QtPropertyEditorFactory *factory);
+
+public slots:
+    virtual void onPropertyValueChange(QtProperty *property);
+
+    void onBtnMoveUp();
+    void onBtnMoveDown();
+    void onBtnDelete();
+
+private:
+    QWidget* 		editor_;
+    QtPropertyEditor* impl_;
 };
 
 #endif // QTPROPERTYEDITOR_H

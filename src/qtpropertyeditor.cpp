@@ -3,6 +3,7 @@
 #include "qtpropertybrowserutils.h"
 #include "qxtcheckcombobox.h"
 #include "qtattributename.h"
+#include "qtpropertyeditorfactory.h"
 
 #include <QSpinBox>
 #include <QDoubleSpinBox>
@@ -50,7 +51,7 @@ QtIntSpinBoxEditor::QtIntSpinBoxEditor(QtProperty *property)
     connect(property, SIGNAL(signalAttributeChange(QtProperty*,QString)), this, SLOT(slotSetAttribute(QtProperty*,QString)));
 }
 
-QWidget* QtIntSpinBoxEditor::createEditor(QWidget *parent)
+QWidget* QtIntSpinBoxEditor::createEditor(QWidget *parent, QtPropertyEditorFactory * /*factory*/)
 {
     if(editor_ == 0)
     {
@@ -126,7 +127,7 @@ QtDoubleSpinBoxEditor::QtDoubleSpinBoxEditor(QtProperty *property)
     connect(property_, SIGNAL(signalAttributeChange(QtProperty*,QString)), this, SLOT(slotSetAttribute(QtProperty*,QString)));
 }
 
-QWidget* QtDoubleSpinBoxEditor::createEditor(QWidget *parent)
+QWidget* QtDoubleSpinBoxEditor::createEditor(QWidget *parent, QtPropertyEditorFactory * /*factory*/)
 {
     if(editor_ == 0)
     {
@@ -209,7 +210,7 @@ QtStringEditor::QtStringEditor(QtProperty *property)
     value_ = property->getValue().toString();
 }
 
-QWidget* QtStringEditor::createEditor(QWidget *parent)
+QWidget* QtStringEditor::createEditor(QWidget *parent, QtPropertyEditorFactory * /*factory*/)
 {
     if(editor_ == NULL)
     {
@@ -274,7 +275,7 @@ QtEnumEditor::QtEnumEditor(QtProperty *property)
     connect(property_, SIGNAL(signalAttributeChange(QtProperty*,QString)), this, SLOT(slotSetAttribute(QtProperty*,QString)));
 }
 
-QWidget* QtEnumEditor::createEditor(QWidget *parent)
+QWidget* QtEnumEditor::createEditor(QWidget *parent, QtPropertyEditorFactory * /*factory*/)
 {
     if(editor_ == NULL)
     {
@@ -333,7 +334,7 @@ QtFlagEditor::QtFlagEditor(QtProperty *property)
     connect(property_, SIGNAL(signalAttributeChange(QtProperty*,QString)), this, SLOT(slotSetAttribute(QtProperty*,QString)));
 }
 
-QWidget* QtFlagEditor::createEditor(QWidget *parent)
+QWidget* QtFlagEditor::createEditor(QWidget *parent, QtPropertyEditorFactory * /*factory*/)
 {
     if(NULL == editor_)
     {
@@ -410,7 +411,7 @@ QtBoolEditor::QtBoolEditor(QtProperty *property)
     value_ = property_->getValue().toBool();
 }
 
-QWidget* QtBoolEditor::createEditor(QWidget *parent)
+QWidget* QtBoolEditor::createEditor(QWidget *parent, QtPropertyEditorFactory * /*factory*/)
 {
     if(NULL == editor_)
     {
@@ -451,7 +452,7 @@ QtColorEditor::QtColorEditor(QtProperty *property)
     value_ = QtPropertyBrowserUtils::variant2color(property->getValue());
 }
 
-QWidget* QtColorEditor::createEditor(QWidget *parent)
+QWidget* QtColorEditor::createEditor(QWidget *parent, QtPropertyEditorFactory * /*factory*/)
 {
     if(NULL == editor_)
     {
@@ -497,7 +498,7 @@ QtFileEditor::QtFileEditor(QtProperty *property)
     connect(property_, SIGNAL(signalAttributeChange(QtProperty*,QString)), this, SLOT(slotSetAttribute(QtProperty*,QString)));
 }
 
-QWidget* QtFileEditor::createEditor(QWidget *parent)
+QWidget* QtFileEditor::createEditor(QWidget *parent, QtPropertyEditorFactory * /*factory*/)
 {
     if(NULL != editor_)
     {
@@ -688,3 +689,100 @@ bool QtFileEditor::eventFilter(QObject *obj, QEvent *event)
 
     return QtPropertyEditor::eventFilter(obj, event);
 }
+
+
+QtDynamicItemEditor::QtDynamicItemEditor(QtProperty *property)
+    : QtPropertyEditor(property)
+    , editor_(NULL)
+    , impl_(NULL)
+{
+
+}
+
+QWidget* QtDynamicItemEditor::createEditor(QWidget *parent, QtPropertyEditorFactory *factory)
+{
+    if(editor_ != NULL)
+    {
+        return editor_;
+    }
+
+    editor_ = new QWidget(parent);
+
+    QHBoxLayout *layout = new QHBoxLayout(editor_);
+    QtPropertyBrowserUtils::setupTreeViewEditorMargin(layout);
+    layout->setSpacing(0);
+
+
+    int type = property_->getAttribute("valueType").toInt();
+    if(type == 0)
+    {
+        type = QtProperty::TYPE_INT;
+    }
+
+    impl_ = factory->createPropertyEditor(property_, type);
+    QWidget *subEditor = impl_->createEditor(editor_, factory);
+    if(subEditor != NULL)
+    {
+        layout->addWidget(subEditor);
+        editor_->setFocusProxy(subEditor);
+        editor_->setFocusPolicy(subEditor->focusPolicy());
+    }
+
+    QToolButton *btnMoveUp = new QToolButton();
+    btnMoveUp->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Ignored);
+    btnMoveUp->setFixedWidth(20);
+    btnMoveUp->setText(tr("↑"));
+    layout->addWidget(btnMoveUp);
+
+    QToolButton *btnMoveDown = new QToolButton();
+    btnMoveDown->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Ignored);
+    btnMoveDown->setFixedWidth(20);
+    btnMoveDown->setText(tr("↓"));
+    layout->addWidget(btnMoveDown);
+
+    QToolButton *btnDel = new QToolButton();
+    btnDel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Ignored);
+    btnDel->setFixedWidth(20);
+    btnDel->setText(tr("X"));
+    layout->addWidget(btnDel);
+
+    connect(btnMoveUp, SIGNAL(clicked()), this, SLOT(onBtnMoveUp()));
+    connect(btnMoveDown, SIGNAL(clicked()), this, SLOT(onBtnMoveDown()));
+    connect(btnDel, SIGNAL(clicked()), this, SLOT(onBtnDelete()));
+
+    connect(editor_, SIGNAL(destroyed(QObject*)), this, SLOT(slotEditorDestory(QObject*)));
+    return editor_;
+}
+
+void QtDynamicItemEditor::onPropertyValueChange(QtProperty * /*property*/)
+{
+
+}
+
+void QtDynamicItemEditor::onBtnMoveUp()
+{
+    QtDynamicItemProperty *property = dynamic_cast<QtDynamicItemProperty*>(property_);
+    if(property != NULL)
+    {
+        emit property->signalMoveUp(property);
+    }
+}
+
+void QtDynamicItemEditor::onBtnMoveDown()
+{
+    QtDynamicItemProperty *property = dynamic_cast<QtDynamicItemProperty*>(property_);
+    if(property != NULL)
+    {
+        emit property->signalMoveDown(property);
+    }
+}
+
+void QtDynamicItemEditor::onBtnDelete()
+{
+    QtDynamicItemProperty *property = dynamic_cast<QtDynamicItemProperty*>(property_);
+    if(property != NULL)
+    {
+        emit property->signalDelete(property);
+    }
+}
+

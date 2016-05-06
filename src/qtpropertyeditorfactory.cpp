@@ -17,6 +17,7 @@ QtPropertyEditorFactory::QtPropertyEditorFactory(QObject *parent)
     REGISTER_CREATOR(QtProperty::TYPE_COLOR, QtColorEditor);
     REGISTER_CREATOR(QtProperty::TYPE_FLAG, QtFlagEditor);
     REGISTER_CREATOR(QtProperty::TYPE_FILE, QtFileEditor);
+    REGISTER_CREATOR(QtProperty::TYPE_DYNAMIC_ITEM, QtDynamicItemEditor);
 
 #undef QtSpinBoxEditor
 }
@@ -26,14 +27,19 @@ QWidget* QtPropertyEditorFactory::createEditor(QtProperty *property, QWidget *pa
     QtPropertyEditor *propertyEditor = createPropertyEditor(property);
     if(propertyEditor != NULL)
     {
-        return propertyEditor->createEditor(parent);
+        return propertyEditor->createEditor(parent, this);
     }
     return NULL;
 }
 
-QtPropertyEditor* QtPropertyEditorFactory::createPropertyEditor(QtProperty *property)
+QtPropertyEditor* QtPropertyEditorFactory::createPropertyEditor(QtProperty *property, int type)
 {
-    QtPropertyEditorCreator method = creators_.value(property->getType());
+    if(type == QtProperty::TYPE_NONE)
+    {
+        type = property->getType();
+    }
+
+    QtPropertyEditorCreator method = creators_.value(type);
     if(method != NULL)
     {
         return method(property);

@@ -16,7 +16,7 @@ class QtPropertyEditorFactory : public QObject
 public:
     explicit QtPropertyEditorFactory(QObject *parent);
 
-    QtPropertyEditor* createPropertyEditor(QtProperty *property);
+    QtPropertyEditor* createPropertyEditor(QtProperty *property, int type = 0);
 
     QWidget* createEditor(QtProperty *property, QWidget *parent);
 

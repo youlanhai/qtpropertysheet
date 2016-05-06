@@ -7,8 +7,9 @@
 #include <cassert>
 #include <algorithm>
 
-QtProperty::QtProperty(int type, QObject *parent)
-    : QObject(parent)
+QtProperty::QtProperty(int type, QtPropertyFactory *factory)
+    : QObject(factory)
+    , factory_(factory)
     , type_(type)
     , parent_(NULL)
     , visible_(true)
@@ -21,7 +22,7 @@ QtProperty::~QtProperty()
 {
     emit signalPropertyRemoved(this, parent_);
 
-    removeAllChildren();
+    removeAllChildren(true);
     removeFromParent();
 }
 
@@ -125,12 +126,17 @@ void QtProperty::removeFromParent()
     }
 }
 
-void QtProperty::removeAllChildren()
+void QtProperty::removeAllChildren(bool clean)
 {
     QtPropertyList temp = children_;
     foreach(QtProperty *child, temp)
     {
         removeChild(child);
+
+        if(clean)
+        {
+            delete child;
+        }
     }
 }
 
@@ -171,8 +177,8 @@ void QtProperty::onChildRemove(QtProperty* /*child*/)
 }
 
 /********************************************************************/
-QtContainerProperty::QtContainerProperty(int type, QObject *parent)
-    : QtProperty(type, parent)
+QtContainerProperty::QtContainerProperty(int type, QtPropertyFactory *factory)
+    : QtProperty(type, factory)
 {
 
 }
@@ -196,8 +202,8 @@ static void ensureSize(QVariantList &list, int size)
     }
 }
 
-QtListProperty::QtListProperty(int type, QObject *parent)
-    : QtContainerProperty(type, parent)
+QtListProperty::QtListProperty(int type, QtPropertyFactory *factory)
+    : QtContainerProperty(type, factory)
 {
 
 }
@@ -252,8 +258,8 @@ void QtListProperty::slotChildValueChange(QtProperty *child)
 }
 
 /********************************************************************/
-QtDictProperty::QtDictProperty(int type, QObject *parent)
-    : QtContainerProperty(type, parent)
+QtDictProperty::QtDictProperty(int type, QtPropertyFactory *factory)
+    : QtContainerProperty(type, factory)
 {
 
 }
@@ -290,8 +296,8 @@ void QtDictProperty::slotChildValueChange(QtProperty *property)
 }
 
 /********************************************************************/
-QtGroupProperty::QtGroupProperty(int type, QObject *parent)
-    : QtContainerProperty(type, parent)
+QtGroupProperty::QtGroupProperty(int type, QtPropertyFactory *factory)
+    : QtContainerProperty(type, factory)
 {
 
 }
@@ -346,8 +352,8 @@ void QtGroupProperty::slotChildValueChange(QtProperty *property)
 
 
 /********************************************************************/
-QtEnumProperty::QtEnumProperty(int type, QObject *parent)
-    : QtProperty(type, parent)
+QtEnumProperty::QtEnumProperty(int type, QtPropertyFactory *factory)
+    : QtProperty(type, factory)
 {
 
 }
@@ -364,8 +370,8 @@ QString QtEnumProperty::getValueString() const
 }
 
 /********************************************************************/
-QtFlagProperty::QtFlagProperty(int type, QObject *parent)
-    : QtProperty(type, parent)
+QtFlagProperty::QtFlagProperty(int type, QtPropertyFactory *factory)
+    : QtProperty(type, factory)
 {
 
 }
@@ -387,8 +393,8 @@ QString QtFlagProperty::getValueString() const
 }
 
 /********************************************************************/
-QtBoolProperty::QtBoolProperty(int type, QObject *parent)
-    : QtProperty(type, parent)
+QtBoolProperty::QtBoolProperty(int type, QtPropertyFactory *factory)
+    : QtProperty(type, factory)
 {
 
 }
@@ -404,8 +410,8 @@ QIcon QtBoolProperty::getValueIcon() const
 }
 
 /********************************************************************/
-QtDoubleProperty::QtDoubleProperty(int type, QObject *parent)
-    : QtProperty(type, parent)
+QtDoubleProperty::QtDoubleProperty(int type, QtPropertyFactory *factory)
+    : QtProperty(type, factory)
 {
 
 }
@@ -418,8 +424,8 @@ QString QtDoubleProperty::getValueString() const
 }
 
 /********************************************************************/
-QtColorProperty::QtColorProperty(int type, QObject *parent)
-    : QtProperty(type, parent)
+QtColorProperty::QtColorProperty(int type, QtPropertyFactory *factory)
+    : QtProperty(type, factory)
 {
 
 }
@@ -434,4 +440,169 @@ QIcon QtColorProperty::getValueIcon() const
 {
     QColor color = QtPropertyBrowserUtils::variant2color(value_);
     return QtPropertyBrowserUtils::brushValueIcon(QBrush(color));
+}
+
+/********************************************************************/
+QtDynamicListProperty::QtDynamicListProperty(int type, QtPropertyFactory *factory)
+    : QtProperty(type, factory)
+    , length_(0)
+{
+    propLength_ = factory_->createProperty(TYPE_INT);
+    propLength_->setName("length");
+    propLength_->setTitle(tr("Length"));
+    addChild(propLength_);
+    connect(propLength_, SIGNAL(signalValueChange(QtProperty*)), this, SLOT(slotLengthChange(QtProperty*)));
+}
+
+QtDynamicListProperty::~QtDynamicListProperty()
+{
+}
+
+void QtDynamicListProperty::setValue(const QVariant &value)
+{
+    if(value_ == value)
+    {
+        return;
+    }
+
+    QVariantList valueList = value.toList();
+    setLength(valueList.size());
+
+    for(int i = 0; i < items_.size(); ++i)
+    {
+        valueList_[i] = valueList[i];
+        items_[i]->setValue(valueList[i]);
+    }
+
+    value_ = valueList_;
+    emit signalValueChange(this);
+}
+
+QString QtDynamicListProperty::getValueString() const
+{
+    QString ret = "[";
+    foreach(QtProperty *item, items_)
+    {
+        ret += item->getValueString();
+        ret += ",";
+    }
+    ret += "]";
+    return ret;
+}
+
+void QtDynamicListProperty::slotItemValueChange(QtProperty *item)
+{
+    int i = items_.indexOf(item);
+    if(valueList_[i] != item->getValue())
+    {
+        valueList_[i] = item->getValue();
+        value_ = valueList_;
+
+        emit signalValueChange(this);
+    }
+}
+
+void QtDynamicListProperty::slotItemMoveUp(QtProperty *item)
+{
+    int i = items_.indexOf(item);
+    if(i <= 0)
+    {
+        return;
+    }
+    QtProperty *prev = items_[i - 1];
+    QVariant value = prev->getValue();
+    prev->setValue(item->getValue());
+    item->setValue(value);
+}
+
+void QtDynamicListProperty::slotItemMoveDown(QtProperty *item)
+{
+    int i = items_.indexOf(item);
+    if(i + 1 >= items_.size())
+    {
+        return;
+    }
+    QtProperty *next = items_[i + 1];
+    QVariant value = next->getValue();
+    next->setValue(item->getValue());
+    item->setValue(value);
+}
+
+void QtDynamicListProperty::slotItemDelete(QtProperty *item)
+{
+    int i = items_.indexOf(item);
+    for(; i < items_.size() - 1; ++i)
+    {
+        items_[i]->setValue(items_[i + 1]->getValue());
+    }
+
+    setLength(length_ - 1);
+}
+
+void QtDynamicListProperty::slotLengthChange(QtProperty *property)
+{
+    int length = property->getValue().toInt();
+    setLength(length);
+
+    emit signalValueChange(this);
+}
+
+void QtDynamicListProperty::setLength(int length)
+{
+    length = std::max(0, length);
+    if(length_ == length)
+    {
+        return;
+    }
+
+    while(length_ < length)
+    {
+        appendItem();
+        ++length_;
+    }
+    while(length_ > length)
+    {
+        popItem();
+        --length_;
+    }
+    propLength_->setValue(length_);
+    value_ = valueList_;
+}
+
+QtProperty* QtDynamicListProperty::appendItem()
+{
+    QtDynamicItemProperty *prop = dynamic_cast<QtDynamicItemProperty*>(factory_->createProperty(TYPE_DYNAMIC_ITEM));
+    prop->setName(QString::number(items_.size()));
+    prop->setAttribute("valueType", getAttribute("valueType"));
+
+    QVariant valueDefault = getAttribute("valueDefault");
+    prop->setValue(valueDefault);
+
+    connect(prop, SIGNAL(signalValueChange(QtProperty*)), this, SLOT(slotItemValueChange(QtProperty*)));
+    connect(prop, SIGNAL(signalMoveUp(QtProperty*)), this, SLOT(slotItemMoveUp(QtProperty*)));
+    connect(prop, SIGNAL(signalMoveDown(QtProperty*)), this, SLOT(slotItemMoveDown(QtProperty*)));
+    connect(prop, SIGNAL(signalDelete(QtProperty*)), this, SLOT(slotItemDelete(QtProperty*)));
+
+    valueList_.append(valueDefault);
+    items_.append(prop);
+
+    this->addChild(prop);
+    return prop;
+}
+
+void QtDynamicListProperty::popItem()
+{
+    QtProperty *item = items_.back();
+    items_.pop_back();
+    valueList_.pop_back();
+
+    removeChild(item);
+    delete item;
+}
+
+/********************************************************************/
+QtDynamicItemProperty::QtDynamicItemProperty(int type, QtPropertyFactory *factory)
+    : QtProperty(type, factory)
+{
+
 }
