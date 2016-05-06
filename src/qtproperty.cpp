@@ -1,4 +1,4 @@
-#include "qtproperty.h"
+﻿#include "qtproperty.h"
 #include "qtpropertyfactory.h"
 #include "qtpropertybrowserutils.h"
 #include "qtattributename.h"
@@ -208,7 +208,6 @@ void QtListProperty::setValue(const QVariant &value)
     {
         return;
     }
-    value_ = value;
 
     QVariantList valueList = value.toList();
     ensureSize(valueList, children_.size());
@@ -216,6 +215,7 @@ void QtListProperty::setValue(const QVariant &value)
     {
         children_[i]->setValue(valueList[i]);
     }
+    value_ = valueList;
 
     emit signalValueChange(this);
 }
@@ -239,7 +239,7 @@ void QtListProperty::slotChildValueChange(QtProperty *child)
     if(i >= 0)
     {
         QVariantList valueList = value_.toList();
-        ensureSize(valueList, i + 1);
+        ensureSize(valueList, children_.size());
 
         if(valueList[i] != child->getValue())
         {

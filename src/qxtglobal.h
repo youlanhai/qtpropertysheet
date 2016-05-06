@@ -30,6 +30,7 @@
 
 #define QXT_VERSION 0x000700
 #define QXT_VERSION_STR "0.7.0"
+#define QXT_STATIC
 
 //--------------------------global macros------------------------------
 

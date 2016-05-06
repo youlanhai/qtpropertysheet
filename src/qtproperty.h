@@ -1,4 +1,4 @@
-#ifndef QTPROPERTY_H
+﻿#ifndef QTPROPERTY_H
 #define QTPROPERTY_H
 
 #include <QObject>
@@ -43,6 +43,9 @@ public:
 
     void setTitle(const QString &title);
     const QString& getTitle() const;
+
+    void setToolTip(const QString &tip){ tips_ = tip; }
+    const QString& getToolTip() const {return tips_; }
 
     virtual void setValue(const QVariant &value);
     virtual const QVariant& getValue() const { return value_; }
@@ -160,7 +163,7 @@ class QtGroupProperty : public QtContainerProperty
 public:
     QtGroupProperty(int type, QObject *parent);
 
-    virtual bool hasValue() const { return false; }
+    //virtual bool hasValue() const { return false; }
     virtual void setValue(const QVariant &value);
 
     virtual QtProperty* findChild(const QString &name);

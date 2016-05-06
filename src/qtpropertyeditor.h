@@ -176,19 +176,17 @@ public:
     virtual QWidget* createEditor(QWidget *parent);
 
 public slots:
-    void slotButtonClicked();
-    void slotEditingFinished();
+    virtual void slotButtonClicked();
+    virtual void slotEditingFinished();
 
     virtual void onPropertyValueChange(QtProperty *property);
     virtual void slotEditorDestory(QObject *object);
-    void slotSetAttribute(QtProperty *property, const QString &name);
+    virtual void slotSetAttribute(QtProperty *property, const QString &name);
 
 protected:
     virtual bool eventFilter(QObject *obj, QEvent *event);
-
-private:
-    void setValue(const QString &value);
-    void setRawPath(const QString &value);
+    virtual void setValue(const QString &value);
+    virtual void onFileSeleted(const QString &fullPath);
 
     QString         value_;
     QWidget*        editor_;

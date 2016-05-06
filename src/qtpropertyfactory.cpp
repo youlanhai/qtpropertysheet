@@ -1,16 +1,11 @@
 #include "qtpropertyfactory.h"
 #include "qtproperty.h"
 
-template<typename T>
-static QtProperty* internalCreator(int type, QObject *parent)
-{
-    return new T(type, parent);
-}
 
 QtPropertyFactory::QtPropertyFactory(QObject *parent)
     : QObject(parent)
 {
-#define REGISTER_PROPERTY(TYPE, CLASS) registerCreator(TYPE, internalCreator<CLASS>)
+#define REGISTER_PROPERTY(TYPE, CLASS) registerCreator<CLASS>(TYPE)
 
     REGISTER_PROPERTY(QtProperty::TYPE_LIST, QtListProperty);
     REGISTER_PROPERTY(QtProperty::TYPE_DICT, QtDictProperty);

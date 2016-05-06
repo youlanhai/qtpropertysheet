@@ -593,9 +593,9 @@ void QtFileEditor::setValue(const QString &value)
     input_->blockSignals(false);
 }
 
-void QtFileEditor::setRawPath(const QString &value)
+void QtFileEditor::onFileSeleted(const QString &fullPath)
 {
-    QString path = value;
+    QString path = fullPath;
     if(!relativePath_.isEmpty())
     {
         path = QDir(relativePath_).relativeFilePath(path);
@@ -634,7 +634,7 @@ void QtFileEditor::slotButtonClicked()
         return;
     }
 
-    setRawPath(path);
+    onFileSeleted(path);
 }
 
 void QtFileEditor::slotEditingFinished()
@@ -649,30 +649,39 @@ void QtFileEditor::slotEditingFinished()
 
 bool QtFileEditor::eventFilter(QObject *obj, QEvent *event)
 {
-    if(event->type() == QEvent::DragEnter)
+    if(obj == input_)
     {
-        const QMimeData *data = ((QDragEnterEvent*)event)->mimeData();
-        if(data->hasUrls())
+        if(event->type() == QEvent::DragEnter)
         {
-            ((QDragEnterEvent*)event)->acceptProposedAction();
-        }
-        return true;
-    }
-    else if(event->type() == QEvent::Drop)
-    {
-        const QMimeData *data = ((QDropEvent*)event)->mimeData();
-        if(data->hasUrls())
-        {
-            ((QDropEvent*)event)->acceptProposedAction();
-
-            QString text = data->urls()[0].toLocalFile();
-            setRawPath(text);
+            QDragEnterEvent *dragEvent = (QDragEnterEvent*)event;
+            const QMimeData *data = dragEvent->mimeData();
+            if(data->hasUrls())
+            {
+                dragEvent->acceptProposedAction();
+                dragEvent->setDropAction(Qt::CopyAction);
+            }
+            else
+            {
+                dragEvent->ignore();
+            }
             return true;
         }
-        else if(data->hasText())
+        else if(event->type() == QEvent::Drop)
         {
-            ((QDropEvent*)event)->acceptProposedAction();
-            setRawPath(data->text());
+            QDropEvent *dropEvent = (QDropEvent*)event;
+            const QMimeData *data = dropEvent->mimeData();
+            if(data->hasUrls())
+            {
+                event->accept();
+                dropEvent->setDropAction(Qt::CopyAction);
+
+                QString path = data->urls()[0].toLocalFile();
+                onFileSeleted(path);
+            }
+            else
+            {
+                event->ignore();
+            }
             return true;
         }
     }

@@ -28,6 +28,7 @@ public:
 
     bool markPropertiesWithoutValue(){ return true; }
     bool lastColumn(int column);
+    QColor calculatedBackgroundColor(QtProperty *property);
 
     QWidget* createEditor(QtProperty *property, QWidget *parent);
 
@@ -42,6 +43,9 @@ public:
     void removeProperty(QtProperty *property);
     void removeAllProperties();
     Property2ItemMap& getProperties(){ return property2items_; }
+
+    bool isExpanded(QtProperty *property);
+    void setExpanded(QtProperty *property, bool expand);
 
 public slots:
     void slotCurrentTreeItemChanged(QTreeWidgetItem*, QTreeWidgetItem*);

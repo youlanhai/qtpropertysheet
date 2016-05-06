@@ -1,4 +1,4 @@
-#include "qttreepropertybrowser.h"
+﻿#include "qttreepropertybrowser.h"
 #include "qtproperty.h"
 #include "qtpropertytreeview.h"
 #include "qtpropertytreedelegate.h"
@@ -78,6 +78,15 @@ bool QtTreePropertyBrowser::lastColumn(int column)
     return treeWidget_->header()->visualIndex(column) == treeWidget_->columnCount() - 1;
 }
 
+QColor QtTreePropertyBrowser::calculatedBackgroundColor(QtProperty *property)
+{
+    if(dynamic_cast<QtGroupProperty*>(property) != nullptr)
+    {
+        return QColor(200, 200, 200);
+    }
+    return QColor(255, 255, 255);
+}
+
 QWidget* QtTreePropertyBrowser::createEditor(QtProperty *property, QWidget *parent)
 {
     if(editorFactory_ != NULL)
@@ -135,6 +144,7 @@ void QtTreePropertyBrowser::addProperty(QtProperty *property, QTreeWidgetItem *p
         item = new QTreeWidgetItem();
         item->setText(0, property->getTitle());
         item->setData(0, PropertyDataIndex, QVariant::fromValue<quintptr>(reinterpret_cast<quintptr>(property)));
+        item->setToolTip(0, property->getToolTip());
         item->setIcon(1, property->getValueIcon());
         item->setText(1, property->getValueString());
 
@@ -241,5 +251,24 @@ void QtTreePropertyBrowser::deleteTreeItem(QTreeWidgetItem *item)
     if(treeWidget_)
     {
         delete item;
+    }
+}
+
+bool QtTreePropertyBrowser::isExpanded(QtProperty *property)
+{
+    QTreeWidgetItem *treeItem = property2items_.value(property);
+    if(treeItem != NULL)
+    {
+        return treeItem->isExpanded();
+    }
+    return false;
+}
+
+void QtTreePropertyBrowser::setExpanded(QtProperty *property, bool expand)
+{
+    QTreeWidgetItem *treeItem = property2items_.value(property);
+    if(treeItem != NULL)
+    {
+        treeItem->setExpanded(expand);
     }
 }

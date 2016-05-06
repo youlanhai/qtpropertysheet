@@ -2,17 +2,12 @@
 #include "qtproperty.h"
 #include "qtpropertyeditor.h"
 
-template <typename T>
-static QtPropertyEditor* internalCreator(QtProperty *property)
-{
-    return new T(property);
-}
 
 QtPropertyEditorFactory::QtPropertyEditorFactory(QObject *parent)
     : QObject(parent)
 {
 #define REGISTER_CREATOR(TYPE, CLASS) \
-    registerCreator(TYPE, internalCreator<CLASS>)
+    registerCreator<CLASS>(TYPE)
 
     REGISTER_CREATOR(QtProperty::TYPE_INT, QtIntSpinBoxEditor);
     REGISTER_CREATOR(QtProperty::TYPE_DOUBLE, QtDoubleSpinBoxEditor);

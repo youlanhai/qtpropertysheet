@@ -44,7 +44,7 @@ void QtPropertyTreeView::drawRow(QPainter *painter, const QStyleOptionViewItem &
     }
     else
     {
-        const QColor c = QColor(255, 255, 255) ;//editorPrivate_->calculatedBackgroundColor(editorPrivate_->indexToBrowserItem(index));
+        const QColor c = editorPrivate_->calculatedBackgroundColor(editorPrivate_->indexToProperty(index));
         if (c.isValid())
         {
             painter->fillRect(option.rect, c);
