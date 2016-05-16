@@ -1,4 +1,4 @@
-#include "mainwindow.h"
+﻿#include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "qttreepropertybrowser.h"
 #include "qtproperty.h"
@@ -77,6 +77,15 @@ MainWindow::MainWindow(QWidget *parent) :
         property8->setAttribute(QtAttributeName::FileDialogFilter, QString("Images(*.png *.jpg)"));
         property8->setAttribute(QtAttributeName::FileRelativePath, QDir::currentPath());
         group->addChild(property8);
+
+        QtProperty *property9 = manager->createProperty(QtProperty::TYPE_ENUM_PAIR);
+        property9->setName("sex");
+        QStringList titles;
+        titles << "unkown" << "man" << "woman";
+        property9->setAttribute(QtAttributeName::EnumName, titles);
+        property9->setAttribute(QtAttributeName::EnumValues, titles);
+        property9->setValue("unkown");
+        group->addChild(property9);
 
         root->addChild(group);
     }

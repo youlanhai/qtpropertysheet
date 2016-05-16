@@ -1,4 +1,4 @@
-#ifndef QTATTRIBUTENAME_H
+﻿#ifndef QTATTRIBUTENAME_H
 #define QTATTRIBUTENAME_H
 
 #include <QString>
@@ -8,6 +8,7 @@ namespace QtAttributeName
     extern const QString MinValue;
     extern const QString MaxValue;
     extern const QString EnumName;
+    extern const QString EnumValues;
     extern const QString FlagName;
     extern const QString Decimals;
     extern const QString ReadOnly;

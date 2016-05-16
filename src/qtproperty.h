@@ -33,6 +33,7 @@ public:
         TYPE_FILE,
         TYPE_DYNAMIC_LIST,
         TYPE_DYNAMIC_ITEM,
+        TYPE_ENUM_PAIR,
         TYPE_USER = 256,
     };
 

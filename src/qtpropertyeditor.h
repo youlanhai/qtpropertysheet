@@ -1,8 +1,10 @@
-#ifndef QTPROPERTYEDITOR_H
+﻿#ifndef QTPROPERTYEDITOR_H
 #define QTPROPERTYEDITOR_H
 
 #include <QObject>
 #include <QColor>
+#include <QList>
+#include <QVariant>
 
 class QtProperty;
 class QWidget;
@@ -110,7 +112,24 @@ private:
     QComboBox*          editor_;
 };
 
-class QStandardItem;
+class QtEnumPairEditor : public QtPropertyEditor
+{
+    Q_OBJECT
+public:
+    explicit QtEnumPairEditor(QtProperty *property);
+    virtual QWidget* createEditor(QWidget *parent, QtPropertyEditorFactory *factory);
+
+public slots:
+    virtual void onPropertyValueChange(QtProperty *property);
+    virtual void slotEditorValueChange(int index);
+    void slotSetAttribute(QtProperty *property, const QString &name);
+
+private:
+    int                 index_;
+    QVariantList        enumValues_;
+    QComboBox*          editor_;
+};
+
 class QtFlagEditor : public QtPropertyEditor
 {
     Q_OBJECT

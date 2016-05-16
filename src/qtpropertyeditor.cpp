@@ -1,4 +1,4 @@
-#include "qtpropertyeditor.h"
+﻿#include "qtpropertyeditor.h"
 #include "qtproperty.h"
 #include "qtpropertybrowserutils.h"
 #include "qxtcheckcombobox.h"
@@ -325,6 +325,82 @@ void QtEnumEditor::slotSetAttribute(QtProperty * property, const QString &name)
     }
 }
 
+/********************************************************************/
+QtEnumPairEditor::QtEnumPairEditor(QtProperty *property)
+    : QtPropertyEditor(property)
+    , editor_(NULL)
+{
+    enumValues_ = property_->getAttribute(QtAttributeName::EnumValues).toList();
+    index_ = enumValues_.indexOf(property_->getValue());
+
+    connect(property_, SIGNAL(signalAttributeChange(QtProperty*,QString)), this, SLOT(slotSetAttribute(QtProperty*,QString)));
+}
+
+QWidget* QtEnumPairEditor::createEditor(QWidget *parent, QtPropertyEditorFactory * /*factory*/)
+{
+    if(editor_ == NULL)
+    {
+        editor_ = new QComboBox(parent);
+        editor_->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
+        editor_->setMinimumContentsLength(1);
+        editor_->view()->setTextElideMode(Qt::ElideRight);
+
+        slotSetAttribute(property_, QtAttributeName::EnumName);
+
+        editor_->setCurrentIndex(index_);
+
+        connect(editor_, SIGNAL(currentIndexChanged(int)), this, SLOT(slotEditorValueChange(int)));
+        connect(editor_, SIGNAL(destroyed(QObject*)), this, SLOT(slotEditorDestory(QObject*)));
+    }
+    return editor_;
+}
+
+void QtEnumPairEditor::onPropertyValueChange(QtProperty *property)
+{
+    index_ = enumValues_.indexOf(property->getValue());
+    if(editor_ != NULL)
+    {
+        editor_->blockSignals(true);
+        editor_->setCurrentIndex(index_);
+        editor_->blockSignals(false);
+    }
+}
+
+void QtEnumPairEditor::slotEditorValueChange(int index)
+{
+    if(index != index_)
+    {
+        index_ = index;
+        if(index_ >= 0 && index_ < enumValues_.size())
+        {
+            property_->setValue(enumValues_[index_]);
+        }
+    }
+}
+
+void QtEnumPairEditor::slotSetAttribute(QtProperty * property, const QString &name)
+{
+    if(name == QtAttributeName::EnumName)
+    {
+        editor_->clear();
+
+        QStringList enumNames = property->getAttribute(QtAttributeName::EnumName).toStringList();
+        editor_->addItems(enumNames);
+    }
+    else if(name == QtAttributeName::EnumValues)
+    {
+        enumValues_ = property->getAttribute(QtAttributeName::EnumValues).toList();
+
+        int index = std::max(0, enumValues_.indexOf(property->getValue()));
+        if(index != index_)
+        {
+            if(editor_ != NULL)
+            {
+                editor_->setCurrentIndex(index);
+            }
+        }
+    }
+}
 /********************************************************************/
 QtFlagEditor::QtFlagEditor(QtProperty *property)
     : QtPropertyEditor(property)

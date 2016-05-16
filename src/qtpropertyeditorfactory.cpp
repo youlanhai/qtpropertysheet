@@ -1,4 +1,4 @@
-#include "qtpropertyeditorfactory.h"
+﻿#include "qtpropertyeditorfactory.h"
 #include "qtproperty.h"
 #include "qtpropertyeditor.h"
 
@@ -18,6 +18,7 @@ QtPropertyEditorFactory::QtPropertyEditorFactory(QObject *parent)
     REGISTER_CREATOR(QtProperty::TYPE_FLAG, QtFlagEditor);
     REGISTER_CREATOR(QtProperty::TYPE_FILE, QtFileEditor);
     REGISTER_CREATOR(QtProperty::TYPE_DYNAMIC_ITEM, QtDynamicItemEditor);
+    REGISTER_CREATOR(QtProperty::TYPE_ENUM_PAIR, QtEnumPairEditor);
 
 #undef QtSpinBoxEditor
 }
