@@ -80,7 +80,7 @@ bool QtTreePropertyBrowser::lastColumn(int column)
 
 QColor QtTreePropertyBrowser::calculatedBackgroundColor(QtProperty *property)
 {
-    if(dynamic_cast<QtGroupProperty*>(property) != nullptr)
+    if(dynamic_cast<QtGroupProperty*>(property) != 0)
     {
         return QColor(200, 200, 200);
     }

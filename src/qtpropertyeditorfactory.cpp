@@ -9,23 +9,23 @@ QtPropertyEditorFactory::QtPropertyEditorFactory(QObject *parent)
 #define REGISTER_CREATOR(TYPE, CLASS) \
     registerCreator<CLASS>(TYPE)
 
-    REGISTER_CREATOR(QtProperty::TYPE_INT, QtIntSpinBoxEditor);
-    REGISTER_CREATOR(QtProperty::TYPE_DOUBLE, QtDoubleSpinBoxEditor);
-    REGISTER_CREATOR(QtProperty::TYPE_STRING, QtStringEditor);
-    REGISTER_CREATOR(QtProperty::TYPE_ENUM, QtEnumEditor);
-    REGISTER_CREATOR(QtProperty::TYPE_BOOL, QtBoolEditor);
-    REGISTER_CREATOR(QtProperty::TYPE_COLOR, QtColorEditor);
-    REGISTER_CREATOR(QtProperty::TYPE_FLAG, QtFlagEditor);
-    REGISTER_CREATOR(QtProperty::TYPE_FILE, QtFileEditor);
-    REGISTER_CREATOR(QtProperty::TYPE_DYNAMIC_ITEM, QtDynamicItemEditor);
-    REGISTER_CREATOR(QtProperty::TYPE_ENUM_PAIR, QtEnumPairEditor);
+    REGISTER_CREATOR(QtPropertyType::INT, QtIntSpinBoxEditor);
+    REGISTER_CREATOR(QtPropertyType::DOUBLE, QtDoubleSpinBoxEditor);
+    REGISTER_CREATOR(QtPropertyType::STRING, QtStringEditor);
+    REGISTER_CREATOR(QtPropertyType::ENUM, QtEnumEditor);
+    REGISTER_CREATOR(QtPropertyType::BOOL, QtBoolEditor);
+    REGISTER_CREATOR(QtPropertyType::COLOR, QtColorEditor);
+    REGISTER_CREATOR(QtPropertyType::FLAG, QtFlagEditor);
+    REGISTER_CREATOR(QtPropertyType::FILE, QtFileEditor);
+    REGISTER_CREATOR(QtPropertyType::DYNAMIC_ITEM, QtDynamicItemEditor);
+    REGISTER_CREATOR(QtPropertyType::ENUM_PAIR, QtEnumPairEditor);
 
 #undef QtSpinBoxEditor
 }
 
 QWidget* QtPropertyEditorFactory::createEditor(QtProperty *property, QWidget *parent)
 {
-    QtPropertyEditor *propertyEditor = createPropertyEditor(property);
+    QtPropertyEditor *propertyEditor = createPropertyEditor(property, property->getType());
     if(propertyEditor != NULL)
     {
         return propertyEditor->createEditor(parent, this);
@@ -33,9 +33,9 @@ QWidget* QtPropertyEditorFactory::createEditor(QtProperty *property, QWidget *pa
     return NULL;
 }
 
-QtPropertyEditor* QtPropertyEditorFactory::createPropertyEditor(QtProperty *property, int type)
+QtPropertyEditor* QtPropertyEditorFactory::createPropertyEditor(QtProperty *property, QtPropertyType::Type type)
 {
-    if(type == QtProperty::TYPE_NONE)
+    if(type == QtPropertyType::NONE)
     {
         type = property->getType();
     }
@@ -48,7 +48,7 @@ QtPropertyEditor* QtPropertyEditorFactory::createPropertyEditor(QtProperty *prop
     return NULL;
 }
 
-void QtPropertyEditorFactory::registerCreator(int type, QtPropertyEditorCreator method)
+void QtPropertyEditorFactory::registerCreator(QtPropertyType::Type type, QtPropertyEditorCreator method)
 {
     creators_[type] = method;
 }

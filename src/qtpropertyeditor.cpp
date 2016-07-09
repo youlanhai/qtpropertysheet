@@ -789,10 +789,10 @@ QWidget* QtDynamicItemEditor::createEditor(QWidget *parent, QtPropertyEditorFact
     layout->setSpacing(0);
 
 
-    int type = property_->getAttribute("valueType").toInt();
+    QtPropertyType::Type type = property_->getAttribute("valueType").toString();
     if(type == 0)
     {
-        type = QtProperty::TYPE_INT;
+        type = QtPropertyType::INT;
     }
 
     impl_ = factory->createPropertyEditor(property_, type);

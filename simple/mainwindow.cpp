@@ -23,47 +23,47 @@ MainWindow::MainWindow(QWidget *parent) :
     browser->init(ui->centralWidget);
     browser->setEditorFactory(new QtPropertyEditorFactory(this));
 
-    QtProperty *root = manager->createProperty(QtProperty::TYPE_GROUP);
+    QtProperty *root = manager->createProperty(QtPropertyType::GROUP);
     root->setName("root");
     root->setSelfVisible(false);
     root_ = root;
 
     {
-        QtProperty *group = manager->createProperty(QtProperty::TYPE_GROUP);
+        QtProperty *group = manager->createProperty(QtPropertyType::GROUP);
         group->setTitle("information");
 
-        QtProperty *property = manager->createProperty(QtProperty::TYPE_STRING);
+        QtProperty *property = manager->createProperty(QtPropertyType::STRING);
         property->setName("name");
         property->setValue(QString("no name"));
         group->addChild(property);
 
-        QtProperty *property2 = manager->createProperty(QtProperty::TYPE_INT);
+        QtProperty *property2 = manager->createProperty(QtPropertyType::INT);
         property2->setName("age");
         group->addChild(property2);
 
-        QtProperty *property3 = manager->createProperty(QtProperty::TYPE_DOUBLE);
+        QtProperty *property3 = manager->createProperty(QtPropertyType::DOUBLE);
         property3->setName("weight");
         property3->setValue(60.5);
         group->addChild(property3);
 
-        QtProperty *property4 = manager->createProperty(QtProperty::TYPE_ENUM);
+        QtProperty *property4 = manager->createProperty(QtPropertyType::ENUM);
         property4->setName("country");
         QStringList countries;
         countries << "China" << "America" << "England";
         property4->setAttribute("enumNames", countries);
         group->addChild(property4);
 
-        QtProperty *property5 = manager->createProperty(QtProperty::TYPE_BOOL);
+        QtProperty *property5 = manager->createProperty(QtPropertyType::BOOL);
         property5->setName("married");
         property5->setValue(true);
         group->addChild(property5);
 
-        QtProperty *property6 = manager->createProperty(QtProperty::TYPE_COLOR);
+        QtProperty *property6 = manager->createProperty(QtPropertyType::COLOR);
         property6->setName("color");
         property6->setValue(QColor(255, 0, 0));
         group->addChild(property6);
 
-        QtProperty *property7 = manager->createProperty(QtProperty::TYPE_FLAG);
+        QtProperty *property7 = manager->createProperty(QtPropertyType::FLAG);
         property7->setName("hobby");
         property7->setValue(1);
         QStringList hobby;
@@ -71,14 +71,14 @@ MainWindow::MainWindow(QWidget *parent) :
         property7->setAttribute("flagNames", hobby);
         group->addChild(property7);
 
-        QtProperty *property8 = manager->createProperty(QtProperty::TYPE_FILE);
+        QtProperty *property8 = manager->createProperty(QtPropertyType::FILE);
         property8->setName("head icon");
         property8->setValue(QString("no-image"));
         property8->setAttribute(QtAttributeName::FileDialogFilter, QString("Images(*.png *.jpg)"));
         property8->setAttribute(QtAttributeName::FileRelativePath, QDir::currentPath());
         group->addChild(property8);
 
-        QtProperty *property9 = manager->createProperty(QtProperty::TYPE_ENUM_PAIR);
+        QtProperty *property9 = manager->createProperty(QtPropertyType::ENUM_PAIR);
         property9->setName("sex");
         QStringList titles;
         titles << "unkown" << "man" << "woman";
@@ -90,36 +90,36 @@ MainWindow::MainWindow(QWidget *parent) :
         root->addChild(group);
     }
     {
-        QtProperty *hideRect = manager->createProperty(QtProperty::TYPE_BOOL);
+        QtProperty *hideRect = manager->createProperty(QtPropertyType::BOOL);
         hideRect->setName("show geometry");
         hideRect->setValue(true);
         root->addChild(hideRect);
 
-        QtProperty *rect = manager->createProperty(QtProperty::TYPE_LIST);
+        QtProperty *rect = manager->createProperty(QtPropertyType::LIST);
         rect->setName("geometry");
 
-        QtProperty *x = manager->createProperty(QtProperty::TYPE_DOUBLE);
+        QtProperty *x = manager->createProperty(QtPropertyType::DOUBLE);
         x->setName("x");
         rect->addChild(x);
 
-        QtProperty *y = manager->createProperty(QtProperty::TYPE_DOUBLE);
+        QtProperty *y = manager->createProperty(QtPropertyType::DOUBLE);
         y->setName("y");
         rect->addChild(y);
 
-        QtProperty *width = manager->createProperty(QtProperty::TYPE_DOUBLE);
+        QtProperty *width = manager->createProperty(QtPropertyType::DOUBLE);
         width->setName("width");
         rect->addChild(width);
 
-        QtProperty *height = manager->createProperty(QtProperty::TYPE_DOUBLE);
+        QtProperty *height = manager->createProperty(QtPropertyType::DOUBLE);
         height->setName("height");
         rect->addChild(height);
 
         root->addChild(rect);
     }
     {
-        QtProperty *prop = manager->createProperty(QtProperty::TYPE_DYNAMIC_LIST);
+        QtProperty *prop = manager->createProperty(QtPropertyType::DYNAMIC_LIST);
         prop->setName("dynamic list");
-        prop->setAttribute("valueType", QtProperty::TYPE_FILE);
+        prop->setAttribute("valueType", QtPropertyType::FILE);
 
         QVariantList values;
         values.push_back(QString("name"));

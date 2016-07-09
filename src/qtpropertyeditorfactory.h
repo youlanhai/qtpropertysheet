@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QMap>
+#include "qtpropertytype.h"
 
 class QWidget;
 class QtProperty;
@@ -16,25 +17,25 @@ class QtPropertyEditorFactory : public QObject
 public:
     explicit QtPropertyEditorFactory(QObject *parent);
 
-    QtPropertyEditor* createPropertyEditor(QtProperty *property, int type = 0);
+    QtPropertyEditor* createPropertyEditor(QtProperty *property, QtPropertyType::Type type);
 
     QWidget* createEditor(QtProperty *property, QWidget *parent);
 
-    void registerCreator(int type, QtPropertyEditorCreator method);
+    void registerCreator(QtPropertyType::Type type, QtPropertyEditorCreator method);
 
     template <typename T>
-    void registerCreator(int type);
+    void registerCreator(QtPropertyType::Type type);
 
 private:
     template <typename T>
     static QtPropertyEditor* internalCreator(QtProperty *property);
 
-    typedef QMap<int, QtPropertyEditorCreator> CreatorMap;
+    typedef QMap<QtPropertyType::Type, QtPropertyEditorCreator> CreatorMap;
     CreatorMap      creators_;
 };
 
 template <typename T>
-void QtPropertyEditorFactory::registerCreator(int type)
+void QtPropertyEditorFactory::registerCreator(QtPropertyType::Type type)
 {
     this->registerCreator(type, this->internalCreator<T>);
 }

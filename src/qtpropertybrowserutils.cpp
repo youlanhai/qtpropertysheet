@@ -320,7 +320,7 @@ QtBoolEdit::QtBoolEdit(QWidget *parent) :
         lt->setContentsMargins(0, 0, 4, 0);
     lt->addWidget(checkBox_);
     setLayout(lt);
-    connect(checkBox_, SIGNAL(toggled(bool)), this, SIGNAL(toggled(bool)));
+    connect(checkBox_, SIGNAL(toggled(bool)), this, SLOT(slotToggle(bool)));
     setFocusProxy(checkBox_);
     checkBox_->setText(tr("True"));
 }
@@ -373,6 +373,12 @@ void QtBoolEdit::mousePressEvent(QMouseEvent *event)
     } else {
         QWidget::mousePressEvent(event);
     }
+}
+
+void QtBoolEdit::slotToggle(bool checked)
+{
+    checkBox_->setText(isChecked() ? tr("True") : tr("False"));
+    emit toggled(checked);
 }
 
 void QtBoolEdit::paintEvent(QPaintEvent *)

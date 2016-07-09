@@ -128,6 +128,9 @@ public:
 Q_SIGNALS:
     void toggled(bool);
 
+public Q_SLOTS:
+    void slotToggle(bool checked);
+
 protected:
     void mousePressEvent(QMouseEvent * event);
     void paintEvent(QPaintEvent *);
