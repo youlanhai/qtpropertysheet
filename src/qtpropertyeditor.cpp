@@ -788,20 +788,17 @@ QWidget* QtDynamicItemEditor::createEditor(QWidget *parent, QtPropertyEditorFact
     QtPropertyBrowserUtils::setupTreeViewEditorMargin(layout);
     layout->setSpacing(0);
 
-
-    QtPropertyType::Type type = property_->getAttribute("valueType").toString();
-    if(type == 0)
+    QtDynamicItemProperty *property = dynamic_cast<QtDynamicItemProperty*>(property_);
+    if(property != NULL && property->getImpl() != NULL)
     {
-        type = QtPropertyType::INT;
-    }
-
-    impl_ = factory->createPropertyEditor(property_, type);
-    QWidget *subEditor = impl_->createEditor(editor_, factory);
-    if(subEditor != NULL)
-    {
-        layout->addWidget(subEditor);
-        editor_->setFocusProxy(subEditor);
-        editor_->setFocusPolicy(subEditor->focusPolicy());
+        impl_ = factory->createPropertyEditor(property->getImpl());
+        QWidget *subEditor = impl_->createEditor(editor_, factory);
+        if(subEditor != NULL)
+        {
+            layout->addWidget(subEditor);
+            editor_->setFocusProxy(subEditor);
+            editor_->setFocusPolicy(subEditor->focusPolicy());
+        }
     }
 
     QToolButton *btnMoveUp = new QToolButton();

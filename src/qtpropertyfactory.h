@@ -2,45 +2,60 @@
 #define QTPROPERTYMANAGER_H
 
 #include <QObject>
-#include <QMap>
+#include <QHash>
 #include "qtpropertytype.h"
 
 class QtProperty;
 class QtPropertyFactory;
 
-typedef QtProperty*(*QtPropertyCreator)(QtPropertyType::Type type, QtPropertyFactory *factory);
+class QtPropertyCreator
+{
+public:
+    virtual ~QtPropertyCreator(){}
+    virtual QtProperty* create() = 0;
+};
 
 class QtPropertyFactory : public QObject
 {
     Q_OBJECT
 public:
     explicit QtPropertyFactory(QObject *parent = 0);
+    virtual ~QtPropertyFactory();
 
     QtProperty* createProperty(QtPropertyType::Type type);
 
-    void registerCreator(QtPropertyType::Type type, QtPropertyCreator method);
+    void registerCreator(QtPropertyType::Type type, QtPropertyCreator *method);
 
     template<typename T>
-    void registerCreator(QtPropertyType::Type type);
+    void registerSimpleCreator(QtPropertyType::Type type);
 
 private:
-    template<typename T>
-    static QtProperty* internalCreator(QtPropertyType::Type type, QtPropertyFactory *factory);
-
-    typedef QMap<QtPropertyType::Type, QtPropertyCreator> CreatorMap;
+    typedef QHash<QtPropertyType::Type, QtPropertyCreator*> CreatorMap;
     CreatorMap      propertyCreator_;
 };
 
-template<typename T>
-void QtPropertyFactory::registerCreator(QtPropertyType::Type type)
-{
-    return this->registerCreator(type, this->internalCreator<T>);
-}
 
 template<typename T>
-/*static*/ QtProperty* QtPropertyFactory::internalCreator(QtPropertyType::Type type, QtPropertyFactory *factory)
+class QtSimplePropertyCreator : public QtPropertyCreator
 {
-    return new T(type, factory);
+    QtPropertyType::Type type_;
+    QtPropertyFactory *factory_;
+public:
+    QtSimplePropertyCreator(QtPropertyType::Type type, QtPropertyFactory *factory)
+        : type_(type)
+        , factory_(factory)
+    {}
+
+    virtual QtProperty* create()
+    {
+        return new T(type_, factory_);
+    }
+};
+
+template<typename T>
+void QtPropertyFactory::registerSimpleCreator(QtPropertyType::Type type)
+{
+    registerCreator(type, new QtSimplePropertyCreator<T>(type, this));
 }
 
 #endif // QTPROPERTYMANAGER_H
