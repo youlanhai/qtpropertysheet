@@ -1,4 +1,4 @@
-#include "qtpropertytype.h"
+﻿#include "qtpropertytype.h"
 
 namespace QtPropertyType
 {
@@ -6,7 +6,7 @@ namespace QtPropertyType
 	const Type NONE = "none";
 	const Type BOOL = "bool";
 	const Type INT = "int";
-	const Type DOUBLE = "double";
+    const Type FLOAT = "float";
 	const Type STRING = "string";
 	const Type GROUP = "group";
 	const Type LIST = "list";

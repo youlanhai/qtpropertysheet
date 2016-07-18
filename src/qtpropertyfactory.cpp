@@ -1,4 +1,4 @@
-#include "qtpropertyfactory.h"
+﻿#include "qtpropertyfactory.h"
 #include "qtproperty.h"
 
 
@@ -14,7 +14,7 @@ QtPropertyFactory::QtPropertyFactory(QObject *parent)
     REGISTER_PROPERTY(QtPropertyType::ENUM, QtEnumProperty);
     REGISTER_PROPERTY(QtPropertyType::FLAG, QtFlagProperty);
     REGISTER_PROPERTY(QtPropertyType::BOOL, QtBoolProperty);
-    REGISTER_PROPERTY(QtPropertyType::DOUBLE, QtDoubleProperty);
+    REGISTER_PROPERTY(QtPropertyType::FLOAT, QtDoubleProperty);
     REGISTER_PROPERTY(QtPropertyType::COLOR, QtColorProperty);
     REGISTER_PROPERTY(QtPropertyType::DYNAMIC_LIST, QtDynamicListProperty);
     REGISTER_PROPERTY(QtPropertyType::DYNAMIC_ITEM, QtDynamicItemProperty);

@@ -579,7 +579,11 @@ QtProperty* QtDynamicListProperty::appendItem()
     QVariant valueDefault = getAttribute("valueDefault");
     prop->setValue(valueDefault);
 
-    prop->getImpl()->getAttributes() = getAttribute("valueAttributes").toMap();
+    QVariantMap attr = getAttribute("valueAttributes").toMap();
+    for(QVariantMap::iterator it = attr.begin(); it != attr.end(); ++it)
+    {
+       prop->getImpl()->setAttribute(it.key(), it.value());
+    }
 
     connect(prop, SIGNAL(signalValueChange(QtProperty*)), this, SLOT(slotItemValueChange(QtProperty*)));
     connect(prop, SIGNAL(signalMoveUp(QtProperty*)), this, SLOT(slotItemMoveUp(QtProperty*)));

@@ -1,4 +1,4 @@
-#ifndef QTPROPERTYTYPE_H
+﻿#ifndef QTPROPERTYTYPE_H
 #define QTPROPERTYTYPE_H
 
 #include <QString>
@@ -9,7 +9,7 @@ namespace QtPropertyType
     extern const Type NONE;
     extern const Type BOOL;
     extern const Type INT;
-    extern const Type DOUBLE;
+    extern const Type FLOAT;
     extern const Type STRING;
     extern const Type GROUP;
     extern const Type LIST;

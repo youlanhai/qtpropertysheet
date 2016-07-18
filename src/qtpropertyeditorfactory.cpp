@@ -10,7 +10,7 @@ QtPropertyEditorFactory::QtPropertyEditorFactory(QObject *parent)
     registerCreator<CLASS>(TYPE)
 
     REGISTER_CREATOR(QtPropertyType::INT, QtIntSpinBoxEditor);
-    REGISTER_CREATOR(QtPropertyType::DOUBLE, QtDoubleSpinBoxEditor);
+    REGISTER_CREATOR(QtPropertyType::FLOAT, QtDoubleSpinBoxEditor);
     REGISTER_CREATOR(QtPropertyType::STRING, QtStringEditor);
     REGISTER_CREATOR(QtPropertyType::ENUM, QtEnumEditor);
     REGISTER_CREATOR(QtPropertyType::BOOL, QtBoolEditor);
