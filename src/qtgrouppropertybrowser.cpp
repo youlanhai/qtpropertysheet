@@ -46,10 +46,8 @@ private:
     QtProperty* property_;
     QLabel*     label_;
     QWidget*    editor_; // can be null
-    QLabel*     widgetLabel_;
     QGroupBox*  groupBox_;
     QGridLayout* layout_;
-    QFrame*     line_;
     QtGroupItem* parent_;
     QList<QtGroupItem*> children_;
 };
@@ -60,7 +58,6 @@ QtGroupItem::QtGroupItem()
     , label_(NULL)
     , groupBox_(NULL)
     , layout_(NULL)
-    , line_(NULL)
     , parent_(NULL)
 {
 
@@ -72,7 +69,6 @@ QtGroupItem::QtGroupItem(QtProperty *prop, QtGroupItem *parent, QtGroupPropertyB
     , label_(NULL)
     , groupBox_(NULL)
     , layout_(NULL)
-    , line_(NULL)
     , parent_(parent)
 {
     layout_ = parent->layout_;
@@ -91,6 +87,7 @@ QtGroupItem::QtGroupItem(QtProperty *prop, QtGroupItem *parent, QtGroupPropertyB
         int row = layout_->rowCount();
 
         label_ = new QLabel(property_->getTitle());
+        label_->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
         layout_->addWidget(label_, row, 0, 1, 2);
 
         editor_ = browser->createEditor(prop, NULL);
@@ -109,6 +106,19 @@ QtGroupItem::~QtGroupItem()
     {
         item->parent_ = NULL;
         delete item;
+    }
+
+    if(label_)
+    {
+        delete label_;
+    }
+    if(groupBox_)
+    {
+        delete groupBox_;
+    }
+    if(editor_)
+    {
+        delete editor_;
     }
 }
 
@@ -377,6 +387,7 @@ void QtGroupPropertyBrowser::slotPropertyPropertyChange(QtProperty *property)
 
 void QtGroupPropertyBrowser::slotTreeViewDestroy(QObject *p)
 {
+    removeAllProperties();
 }
 
 void QtGroupPropertyBrowser::deleteTreeItem(QtGroupItem *item)

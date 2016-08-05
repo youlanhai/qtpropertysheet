@@ -10,6 +10,7 @@
 #include <QTreeWidget>
 #include <QHBoxLayout>
 #include <QDir>
+#include <QScrollArea>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -20,8 +21,18 @@ MainWindow::MainWindow(QWidget *parent) :
 
     QtPropertyFactory *manager = new QtPropertyFactory(this);
 
+    QHBoxLayout *layout = new QHBoxLayout(ui->centralWidget);
+    ui->centralWidget->setLayout(layout);
+
+    QScrollArea *scrollArea = new QScrollArea(ui->centralWidget);
+    scrollArea->setWidgetResizable(true);
+    layout->addWidget(scrollArea);
+
+    QWidget *widget = new QWidget();
+    scrollArea->setWidget(widget);
+
     QtGroupPropertyBrowser *browser = new QtGroupPropertyBrowser(this);
-    browser->init(ui->centralWidget);
+    browser->init(widget);
     browser->setEditorFactory(new QtPropertyEditorFactory(this));
 
     QtProperty *root = manager->createProperty(QtPropertyType::GROUP);
