@@ -11,7 +11,8 @@ SOURCES += \
     $$PWD/qxtcheckcombobox.cpp \
     $$PWD/qtattributename.cpp \
     $$PWD/qtpropertyfactory.cpp \
-    $$PWD/qtpropertytype.cpp
+    $$PWD/qtpropertytype.cpp \
+    $$PWD/qtgrouppropertybrowser.cpp
 
 HEADERS  += \
     $$PWD/qtproperty.h \
@@ -26,4 +27,5 @@ HEADERS  += \
     $$PWD/qxtcheckcombobox.h \
     $$PWD/qtattributename.h \
     $$PWD/qtpropertyfactory.h \
-    $$PWD/qtpropertytype.h
+    $$PWD/qtpropertytype.h \
+    $$PWD/qtgrouppropertybrowser.h

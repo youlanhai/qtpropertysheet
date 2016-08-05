@@ -105,7 +105,7 @@ public:
 public slots:
     virtual void onPropertyValueChange(QtProperty *property);
     virtual void slotEditorValueChange(int index);
-    void slotSetAttribute(QtProperty *property, const QString &name);
+    virtual void slotSetAttribute(QtProperty *property, const QString &name);
 
 private:
     int                 value_;
@@ -122,9 +122,9 @@ public:
 public slots:
     virtual void onPropertyValueChange(QtProperty *property);
     virtual void slotEditorValueChange(int index);
-    void slotSetAttribute(QtProperty *property, const QString &name);
+    virtual void slotSetAttribute(QtProperty *property, const QString &name);
 
-private:
+protected:
     int                 index_;
     QVariantList        enumValues_;
     QComboBox*          editor_;

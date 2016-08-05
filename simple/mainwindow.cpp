@@ -5,6 +5,7 @@
 #include "qtpropertyfactory.h"
 #include "qtpropertyeditorfactory.h"
 #include "qtattributename.h"
+#include "qtgrouppropertybrowser.h"
 
 #include <QTreeWidget>
 #include <QHBoxLayout>
@@ -19,7 +20,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     QtPropertyFactory *manager = new QtPropertyFactory(this);
 
-    QtTreePropertyBrowser *browser = new QtTreePropertyBrowser(this);
+    QtGroupPropertyBrowser *browser = new QtGroupPropertyBrowser(this);
     browser->init(ui->centralWidget);
     browser->setEditorFactory(new QtPropertyEditorFactory(this));
 
@@ -41,7 +42,7 @@ MainWindow::MainWindow(QWidget *parent) :
         property2->setName("age");
         group->addChild(property2);
 
-        QtProperty *property3 = manager->createProperty(QtPropertyType::DOUBLE);
+        QtProperty *property3 = manager->createProperty(QtPropertyType::FLOAT);
         property3->setName("weight");
         property3->setValue(60.5);
         group->addChild(property3);
@@ -98,19 +99,19 @@ MainWindow::MainWindow(QWidget *parent) :
         QtProperty *rect = manager->createProperty(QtPropertyType::LIST);
         rect->setName("geometry");
 
-        QtProperty *x = manager->createProperty(QtPropertyType::DOUBLE);
+        QtProperty *x = manager->createProperty(QtPropertyType::FLOAT);
         x->setName("x");
         rect->addChild(x);
 
-        QtProperty *y = manager->createProperty(QtPropertyType::DOUBLE);
+        QtProperty *y = manager->createProperty(QtPropertyType::FLOAT);
         y->setName("y");
         rect->addChild(y);
 
-        QtProperty *width = manager->createProperty(QtPropertyType::DOUBLE);
+        QtProperty *width = manager->createProperty(QtPropertyType::FLOAT);
         width->setName("width");
         rect->addChild(width);
 
-        QtProperty *height = manager->createProperty(QtPropertyType::DOUBLE);
+        QtProperty *height = manager->createProperty(QtPropertyType::FLOAT);
         height->setName("height");
         rect->addChild(height);
 

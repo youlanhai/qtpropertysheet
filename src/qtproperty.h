@@ -59,6 +59,7 @@ public:
     void removeAllChildren(bool clean);
 
     QtPropertyList& getChildren(){ return children_; }
+    const QtPropertyList& getChildren() const { return children_; }
     int indexChild(const QtProperty *child) const;
     virtual QtProperty* findChild(const QString &name);
 
