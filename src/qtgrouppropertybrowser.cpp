@@ -16,6 +16,7 @@
 #include <QHeaderView>
 #include <QLineEdit>
 #include <QLabel>
+#include <QToolButton>
 
 namespace
 {
@@ -46,8 +47,14 @@ private:
     QtProperty* property_;
     QLabel*     label_;
     QWidget*    editor_; // can be null
-    QGroupBox*  groupBox_;
+
+    QWidget*    titleBar_;
+    QToolButton* titleButton_;
+    QToolButton* titleMenu_;
+
+    QWidget*    container_;
     QGridLayout* layout_;
+
     QtGroupItem* parent_;
     QList<QtGroupItem*> children_;
 };
@@ -56,7 +63,10 @@ QtGroupItem::QtGroupItem()
     : property_(NULL)
     , editor_(NULL)
     , label_(NULL)
-    , groupBox_(NULL)
+    , titleBar_(NULL)
+    , titleButton_(NULL)
+    , titleMenu_(NULL)
+    , container_(NULL)
     , layout_(NULL)
     , parent_(NULL)
 {
@@ -67,7 +77,10 @@ QtGroupItem::QtGroupItem(QtProperty *prop, QtGroupItem *parent, QtGroupPropertyB
     : property_(prop)
     , editor_(NULL)
     , label_(NULL)
-    , groupBox_(NULL)
+    , titleBar_(NULL)
+    , titleButton_(NULL)
+    , titleMenu_(NULL)
+    , container_(NULL)
     , layout_(NULL)
     , parent_(parent)
 {
@@ -76,11 +89,41 @@ QtGroupItem::QtGroupItem(QtProperty *prop, QtGroupItem *parent, QtGroupPropertyB
     QtPropertyList &list = property_->getChildren();
     if(!list.empty())
     {
-        groupBox_ = new QGroupBox(property_->getTitle());
-        layout_->addWidget(groupBox_, layout_->rowCount(), 0, 1, 2);
+        titleBar_ = new QWidget();
+        titleBar_->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum));
+        titleBar_->setMinimumHeight(50);
+        layout_->addWidget(titleBar_, layout_->rowCount(), 0, 1, 2);
+
+        QHBoxLayout *titleLayout = new QHBoxLayout();
+        titleLayout->setSpacing(0);
+        titleLayout->setMargin(0);
+        titleBar_->setLayout(titleLayout);
+
+        titleButton_ = new QToolButton();
+        titleButton_->setText(property_->getTitle());
+        titleButton_->setCheckable(true);
+        titleButton_->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed));
+        titleButton_->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+        titleButton_->setArrowType(Qt::DownArrow);
+        titleButton_->setIconSize(QSize(3, 16));
+        titleLayout->addWidget(titleButton_);
+
+        titleMenu_ = new QToolButton();
+        titleMenu_->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
+        titleMenu_->setText("menu");
+        titleLayout->addWidget(titleMenu_);
+
+        QFrame *frame2 = new QFrame();
+        frame2->setFrameShape(QFrame::Panel);
+        frame2->setFrameShadow(QFrame::Raised);
+        container_ = frame2; //new QWidget();
+        container_->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::MinimumExpanding));
+        layout_->addWidget(container_, layout_->rowCount(), 0, 1, 2);
 
         layout_ = new QGridLayout();
-        groupBox_->setLayout(layout_);
+        layout_->setSpacing(4);
+        layout_->setMargin(4);
+        container_->setLayout(layout_);
     }
     else
     {
@@ -88,12 +131,12 @@ QtGroupItem::QtGroupItem(QtProperty *prop, QtGroupItem *parent, QtGroupPropertyB
 
         label_ = new QLabel(property_->getTitle());
         label_->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
-        layout_->addWidget(label_, row, 0, 1, 2);
+        layout_->addWidget(label_, row, 0);
 
         editor_ = browser->createEditor(prop, NULL);
         if(editor_)
         {
-            layout_->addWidget(editor_, row, 1, 1, 2);
+            layout_->addWidget(editor_, row, 1);
         }
     }
 }
@@ -112,9 +155,9 @@ QtGroupItem::~QtGroupItem()
     {
         delete label_;
     }
-    if(groupBox_)
+    if(container_)
     {
-        delete groupBox_;
+        delete container_;
     }
     if(editor_)
     {
@@ -123,19 +166,7 @@ QtGroupItem::~QtGroupItem()
 }
 
 void QtGroupItem::update()
-{
-    if(label_)
-    {
-        label_->setText(property_->getTitle());
-        label_->setToolTip(property_->getToolTip());
-    }
-    if(groupBox_)
-    {
-        groupBox_->setTitle(property_->getTitle());
-        groupBox_->setToolTip(property_->getToolTip());
-        groupBox_->setVisible(property_->isVisible());
-    }
-}
+{}
 
 void QtGroupItem::addChild(QtGroupItem *child)
 {
@@ -158,10 +189,10 @@ void QtGroupItem::removeFromParent()
 
 void QtGroupItem::setTitle(const QString &title)
 {
-    if(groupBox_)
-    {
-        groupBox_->setTitle(title);
-    }
+//    if(groupBox_)
+//    {
+//        groupBox_->setTitle(title);
+//    }
     if(label_)
     {
         label_->setText(title);
@@ -170,9 +201,9 @@ void QtGroupItem::setTitle(const QString &title)
 
 void QtGroupItem::setVisible(bool visible)
 {
-    if(groupBox_)
+    if(container_)
     {
-        groupBox_->setVisible(visible);
+        container_->setVisible(visible);
     }
     if(label_)
     {
@@ -206,10 +237,13 @@ QtGroupPropertyBrowser::~QtGroupPropertyBrowser()
 bool QtGroupPropertyBrowser::init(QWidget *parent)
 {
     QVBoxLayout *parentLayout = new QVBoxLayout();
+    parentLayout->setMargin(4);
+    parentLayout->setSpacing(0);
     parent->setLayout(parentLayout);
 
     QGridLayout *mainLayout = new QGridLayout();
     mainLayout->setMargin(0);
+    mainLayout->setSpacing(2);
 
     QWidget *mainView_ = new QWidget(parent);
     mainView_->setLayout(mainLayout);
