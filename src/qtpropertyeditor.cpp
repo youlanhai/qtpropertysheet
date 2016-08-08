@@ -65,7 +65,6 @@ QWidget* QtIntSpinBoxEditor::createEditor(QWidget *parent, QtPropertyEditorFacto
         editor_->setValue(value_);
 
         connect(editor_, SIGNAL(valueChanged(int)), this, SLOT(slotEditorValueChange(int)));
-        connect(editor_, SIGNAL(destroyed(QObject*)), this, SLOT(slotEditorDestory(QObject*)));
     }
     return editor_;
 }
@@ -143,7 +142,6 @@ QWidget* QtDoubleSpinBoxEditor::createEditor(QWidget *parent, QtPropertyEditorFa
         editor_->setValue(value_);
 
         connect(editor_, SIGNAL(valueChanged(double)), this, SLOT(slotEditorValueChange(double)));
-        connect(editor_, SIGNAL(destroyed(QObject*)), this, SLOT(slotEditorDestory(QObject*)));
     }
     return editor_;
 }
@@ -222,7 +220,6 @@ QWidget* QtStringEditor::createEditor(QWidget *parent, QtPropertyEditorFactory *
         slotSetAttribute(property_, QtAttributeName::ReadOnly);
 
         connect(editor_, SIGNAL(editingFinished()), this, SLOT(slotEditFinished()));
-        connect(editor_, SIGNAL(destroyed(QObject*)), this, SLOT(slotEditorDestory(QObject*)));
     }
     return editor_;
 }
@@ -291,7 +288,6 @@ QWidget* QtEnumEditor::createEditor(QWidget *parent, QtPropertyEditorFactory * /
         editor_->setCurrentIndex(value_);
 
         connect(editor_, SIGNAL(currentIndexChanged(int)), this, SLOT(slotEditorValueChange(int)));
-        connect(editor_, SIGNAL(destroyed(QObject*)), this, SLOT(slotEditorDestory(QObject*)));
     }
     return editor_;
 }
@@ -352,7 +348,6 @@ QWidget* QtEnumPairEditor::createEditor(QWidget *parent, QtPropertyEditorFactory
         editor_->setCurrentIndex(index_);
 
         connect(editor_, SIGNAL(currentIndexChanged(int)), this, SLOT(slotEditorValueChange(int)));
-        connect(editor_, SIGNAL(destroyed(QObject*)), this, SLOT(slotEditorDestory(QObject*)));
     }
     return editor_;
 }
@@ -425,7 +420,6 @@ QWidget* QtFlagEditor::createEditor(QWidget *parent, QtPropertyEditorFactory * /
         slotSetAttribute(property_, QtAttributeName::FlagName);
         setValueToEditor(value_);
 
-        connect(editor_, SIGNAL(destroyed(QObject*)), this, SLOT(slotEditorDestory(QObject*)));
         connect(editor_, SIGNAL(checkedItemsChanged(QStringList)), this, SLOT(checkedItemsChanged(QStringList)));
     }
     return editor_;
@@ -497,7 +491,6 @@ QWidget* QtBoolEditor::createEditor(QWidget *parent, QtPropertyEditorFactory * /
         editor_->setChecked(value_);
 
         connect(editor_, SIGNAL(toggled(bool)), this, SLOT(slotEditorValueChange(bool)));
-        connect(editor_, SIGNAL(destroyed(QObject*)), this, SLOT(slotEditorDestory(QObject*)));
     }
     return editor_;
 }
@@ -538,7 +531,6 @@ QWidget* QtColorEditor::createEditor(QWidget *parent, QtPropertyEditorFactory * 
         editor_->setValue(value_);
 
         connect(editor_, SIGNAL(valueChanged(QColor)), this, SLOT(slotEditorValueChange(QColor)));
-        connect(editor_, SIGNAL(destroyed(QObject*)), this, SLOT(slotEditorDestory(QObject*)));
     }
     return editor_;
 }
@@ -610,7 +602,6 @@ QWidget* QtFileEditor::createEditor(QWidget *parent, QtPropertyEditorFactory * /
     slotSetAttribute(property_, QtAttributeName::FileRelativePath);
     slotSetAttribute(property_, QtAttributeName::ReadOnly);
 
-    connect(editor_, SIGNAL(destroyed(QObject*)), this, SLOT(slotEditorDestory(QObject*)));
     return editor_;
 }
 
@@ -826,7 +817,6 @@ QWidget* QtDynamicItemEditor::createEditor(QWidget *parent, QtPropertyEditorFact
     connect(btnMoveDown, SIGNAL(clicked()), this, SLOT(onBtnMoveDown()));
     connect(btnDel, SIGNAL(clicked()), this, SLOT(onBtnDelete()));
 
-    connect(editor_, SIGNAL(destroyed(QObject*)), this, SLOT(slotEditorDestory(QObject*)));
     return editor_;
 }
 

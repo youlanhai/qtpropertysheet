@@ -29,7 +29,12 @@ QWidget* QtPropertyEditorFactory::createEditor(QtProperty *property, QWidget *pa
     QtPropertyEditor *propertyEditor = createPropertyEditor(property, property->getType());
     if(propertyEditor != NULL)
     {
-        return propertyEditor->createEditor(parent, this);
+        QWidget *widget = propertyEditor->createEditor(parent, this);
+        if(widget != NULL)
+        {
+             connect(widget, SIGNAL(destroyed(QObject*)), propertyEditor, SLOT(slotEditorDestory(QObject*)));
+        }
+        return widget;
     }
     return NULL;
 }
