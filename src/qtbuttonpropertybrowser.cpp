@@ -14,6 +14,7 @@ QtButtonItem::QtButtonItem()
     : property_(NULL)
     , label_(NULL)
     , editor_(NULL)
+    , valueLabel_(NULL)
     , titleButton_(NULL)
     , titleMenu_(NULL)
     , container_(NULL)
@@ -28,6 +29,7 @@ QtButtonItem::QtButtonItem(QtProperty *prop, QtButtonItem *parent, QtButtonPrope
     : property_(prop)
     , label_(NULL)
     , editor_(NULL)
+    , valueLabel_(NULL)
     , titleButton_(NULL)
     , titleMenu_(NULL)
     , container_(NULL)
@@ -43,7 +45,6 @@ QtButtonItem::QtButtonItem(QtProperty *prop, QtButtonItem *parent, QtButtonPrope
 
         titleButton_ = new QToolButton();
         titleButton_->setText(property_->getTitle());
-        titleButton_->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred));
         titleButton_->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
         titleButton_->setArrowType(Qt::UpArrow);
         titleButton_->setIconSize(QSize(16, 16));
@@ -56,6 +57,7 @@ QtButtonItem::QtButtonItem(QtProperty *prop, QtButtonItem *parent, QtButtonPrope
             font.setBold(true);
             font.setPointSize(16);
             titleButton_->setFont(font);
+            titleButton_->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred));
 
             titleMenu_ = new QToolButton();
             titleMenu_->setText("...");
@@ -67,6 +69,9 @@ QtButtonItem::QtButtonItem(QtProperty *prop, QtButtonItem *parent, QtButtonPrope
             QFont font = titleButton_->font();
             font.setBold(true);
             titleButton_->setFont(font);
+
+            valueLabel_ = new QLabel(property_->getValueString());
+            layout_->addWidget(valueLabel_, row, 1);
         }
 
         QFrame *frame2 = new QFrame();
@@ -94,6 +99,16 @@ QtButtonItem::QtButtonItem(QtProperty *prop, QtButtonItem *parent, QtButtonPrope
         {
             layout_->addWidget(editor_, row, 1);
         }
+        else
+        {
+            valueLabel_ = new QLabel(property_->getValueString());
+            layout_->addWidget(valueLabel_, row, 1);
+        }
+    }
+
+    if(valueLabel_ != nullptr)
+    {
+        connect(property_, SIGNAL(signalValueChange(QtProperty*)), this, SLOT(onPropertyValueChange(QtProperty*)));
     }
 }
 
@@ -182,6 +197,10 @@ void QtButtonItem::setVisible(bool visible)
     {
         editor_->setVisible(visible);
     }
+    if(valueLabel_)
+    {
+        valueLabel_->setVisible(visible);
+    }
 }
 
 void QtButtonItem::setExpanded(bool expand)
@@ -213,6 +232,10 @@ void QtButtonItem::onBtnMenu()
     emit property_->signalPopupMenu(property_);
 }
 
+void QtButtonItem::onPropertyValueChange(QtProperty *property)
+{
+    valueLabel_->setText(property_->getValueString());
+}
 
 QtButtonPropertyBrowser::QtButtonPropertyBrowser(QObject *parent)
     : QObject(parent)

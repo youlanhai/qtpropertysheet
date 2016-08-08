@@ -44,11 +44,13 @@ public:
 protected slots:
     void onBtnExpand();
     void onBtnMenu();
+    void onPropertyValueChange(QtProperty *property);
 
 protected:
     QtProperty* property_;
     QLabel*     label_;
     QWidget*    editor_; // can be null
+    QLabel*     valueLabel_;
 
     QToolButton* titleButton_;
     QToolButton* titleMenu_;
