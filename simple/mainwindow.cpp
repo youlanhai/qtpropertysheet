@@ -19,6 +19,10 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    popupMenu_ = new QMenu();
+    popupMenu_->addAction(tr("Expand"));
+    popupMenu_->addAction(tr("Remove"));
+
     QtPropertyFactory *manager = new QtPropertyFactory(this);
 
     QHBoxLayout *layout = new QHBoxLayout(ui->centralWidget);
@@ -31,7 +35,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QWidget *widget = new QWidget();
     scrollArea->setWidget(widget);
 
-    QtGroupPropertyBrowser *browser = new QtGroupPropertyBrowser(this);
+    QtButtonPropertyBrowser *browser = new QtButtonPropertyBrowser(this);
     browser->init(widget);
     browser->setEditorFactory(new QtPropertyEditorFactory(this));
 
@@ -43,6 +47,8 @@ MainWindow::MainWindow(QWidget *parent) :
     {
         QtProperty *group = manager->createProperty(QtPropertyType::GROUP);
         group->setTitle("information");
+        group->setMenuVisible(true);
+        connect(group, SIGNAL(signalPopupMenu(QtProperty*)), this, SLOT(onPopupMenu(QtProperty*)));
 
         QtProperty *property = manager->createProperty(QtPropertyType::STRING);
         property->setName("name");
@@ -197,4 +203,9 @@ void MainWindow::onValueChanged(QtProperty *property)
             geometry->setVisible(property->getValue().toBool());
         }
     }
+}
+
+void MainWindow::onPopupMenu(QtProperty *property)
+{
+    popupMenu_->popup(QCursor::pos());
 }

@@ -14,26 +14,26 @@ class QToolButton;
 
 class QtProperty;
 class QtPropertyEditorFactory;
-class QtGroupPropertyBrowser;
+class QtButtonPropertyBrowser;
 
 
-class QtGroupItem : public QObject
+class QtButtonItem : public QObject
 {
     Q_OBJECT
 public:
-    QtGroupItem();
-    QtGroupItem(QtProperty *prop, QtGroupItem *parent, QtGroupPropertyBrowser *browser);
-    virtual ~QtGroupItem();
+    QtButtonItem();
+    QtButtonItem(QtProperty *prop, QtButtonItem *parent, QtButtonPropertyBrowser *browser);
+    virtual ~QtButtonItem();
 
     void update();
-    void addChild(QtGroupItem *child);
-    void removeChild(QtGroupItem *child);
+    void addChild(QtButtonItem *child);
+    void removeChild(QtButtonItem *child);
     void removeFromParent();
 
     void setTitle(const QString &title);
     void setVisible(bool visible);
 
-    QtGroupItem* parent(){ return parent_; }
+    QtButtonItem* parent(){ return parent_; }
     QtProperty* property(){ return property_; }
 
     void setLayout(QGridLayout *layout){ layout_ = layout; }
@@ -56,28 +56,28 @@ protected:
     QWidget*     container_;
     QGridLayout* layout_;
 
-    QtGroupItem* parent_;
-    QList<QtGroupItem*> children_;
+    QtButtonItem* parent_;
+    QList<QtButtonItem*> children_;
 
     bool        bExpand_;
 };
 
 
-class QtGroupPropertyBrowser : public QObject
+class QtButtonPropertyBrowser : public QObject
 {
     Q_OBJECT
 public:
-    typedef QMap<QtProperty*, QtGroupItem*> Property2ItemMap;
+    typedef QMap<QtProperty*, QtButtonItem*> Property2ItemMap;
 
-    explicit QtGroupPropertyBrowser(QObject *parent = 0);
-    ~QtGroupPropertyBrowser();
+    explicit QtButtonPropertyBrowser(QObject *parent = 0);
+    ~QtButtonPropertyBrowser();
 
     bool init(QWidget *parent);
 
     void setEditorFactory(QtPropertyEditorFactory *factory);
     QWidget* createEditor(QtProperty *property, QWidget *parent);
 
-    QtProperty* itemToProperty(QtGroupItem* item);
+    QtProperty* itemToProperty(QtButtonItem* item);
 
     void addProperty(QtProperty *property);
     void removeProperty(QtProperty *property);
@@ -96,12 +96,12 @@ public slots:
     void slotViewDestroy(QObject *p);
 
 private:
-    void addProperty(QtProperty *property, QtGroupItem *parentItem);
-    void deleteItem(QtGroupItem *item);
+    void addProperty(QtProperty *property, QtButtonItem *parentItem);
+    void deleteItem(QtButtonItem *item);
 
     QtPropertyEditorFactory*    editorFactory_;
 
-    QtGroupItem*                rootItem_;
+    QtButtonItem*                rootItem_;
     QWidget*                    mainView_;
 
     Property2ItemMap            property2items_;

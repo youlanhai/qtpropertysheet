@@ -1,4 +1,4 @@
-#ifndef MAINWINDOW_H
+﻿#ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
 #include <QMainWindow>
@@ -19,10 +19,12 @@ public:
 
 private slots:
     void onValueChanged(QtProperty *property);
+    void onPopupMenu(QtProperty *property);
 
 private:
     Ui::MainWindow*     ui;
     QtProperty*         root_;
+    QMenu*              popupMenu_;
 };
 
 #endif // MAINWINDOW_H

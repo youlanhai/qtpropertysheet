@@ -10,7 +10,7 @@
 #include <QLabel>
 #include <QToolButton>
 
-QtGroupItem::QtGroupItem()
+QtButtonItem::QtButtonItem()
     : property_(NULL)
     , label_(NULL)
     , editor_(NULL)
@@ -24,7 +24,7 @@ QtGroupItem::QtGroupItem()
 
 }
 
-QtGroupItem::QtGroupItem(QtProperty *prop, QtGroupItem *parent, QtGroupPropertyBrowser *browser)
+QtButtonItem::QtButtonItem(QtProperty *prop, QtButtonItem *parent, QtButtonPropertyBrowser *browser)
     : property_(prop)
     , label_(NULL)
     , editor_(NULL)
@@ -97,11 +97,11 @@ QtGroupItem::QtGroupItem(QtProperty *prop, QtGroupItem *parent, QtGroupPropertyB
     }
 }
 
-QtGroupItem::~QtGroupItem()
+QtButtonItem::~QtButtonItem()
 {
     removeFromParent();
 
-    foreach(QtGroupItem *item, children_)
+    foreach(QtButtonItem *item, children_)
     {
         item->parent_ = NULL;
         delete item;
@@ -129,20 +129,20 @@ QtGroupItem::~QtGroupItem()
     }
 }
 
-void QtGroupItem::update()
+void QtButtonItem::update()
 {}
 
-void QtGroupItem::addChild(QtGroupItem *child)
+void QtButtonItem::addChild(QtButtonItem *child)
 {
     children_.push_back(child);
 }
 
-void QtGroupItem::removeChild(QtGroupItem *child)
+void QtButtonItem::removeChild(QtButtonItem *child)
 {
     children_.removeOne(child);
 }
 
-void QtGroupItem::removeFromParent()
+void QtButtonItem::removeFromParent()
 {
     if(parent_)
     {
@@ -151,7 +151,7 @@ void QtGroupItem::removeFromParent()
     }
 }
 
-void QtGroupItem::setTitle(const QString &title)
+void QtButtonItem::setTitle(const QString &title)
 {
     if(titleButton_)
     {
@@ -163,7 +163,7 @@ void QtGroupItem::setTitle(const QString &title)
     }
 }
 
-void QtGroupItem::setVisible(bool visible)
+void QtButtonItem::setVisible(bool visible)
 {
     if(titleButton_)
     {
@@ -184,7 +184,7 @@ void QtGroupItem::setVisible(bool visible)
     }
 }
 
-void QtGroupItem::setExpanded(bool expand)
+void QtButtonItem::setExpanded(bool expand)
 {
     if(bExpand_ == expand)
     {
@@ -203,18 +203,18 @@ void QtGroupItem::setExpanded(bool expand)
     }
 }
 
-void QtGroupItem::onBtnExpand()
+void QtButtonItem::onBtnExpand()
 {
     setExpanded(!bExpand_);
 }
 
-void QtGroupItem::onBtnMenu()
+void QtButtonItem::onBtnMenu()
 {
     emit property_->signalPopupMenu(property_);
 }
 
 
-QtGroupPropertyBrowser::QtGroupPropertyBrowser(QObject *parent)
+QtButtonPropertyBrowser::QtButtonPropertyBrowser(QObject *parent)
     : QObject(parent)
     , editorFactory_(NULL)
     , rootItem_(NULL)
@@ -223,7 +223,7 @@ QtGroupPropertyBrowser::QtGroupPropertyBrowser(QObject *parent)
 
 }
 
-QtGroupPropertyBrowser::~QtGroupPropertyBrowser()
+QtButtonPropertyBrowser::~QtButtonPropertyBrowser()
 {
     removeAllProperties();
 
@@ -233,7 +233,7 @@ QtGroupPropertyBrowser::~QtGroupPropertyBrowser()
     }
 }
 
-bool QtGroupPropertyBrowser::init(QWidget *parent)
+bool QtButtonPropertyBrowser::init(QWidget *parent)
 {
     QVBoxLayout *parentLayout = new QVBoxLayout();
     parentLayout->setMargin(4);
@@ -252,19 +252,19 @@ bool QtGroupPropertyBrowser::init(QWidget *parent)
     QLayoutItem *item = new QSpacerItem(0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding);
     parentLayout->addItem(item);
 
-    rootItem_ = new QtGroupItem();
+    rootItem_ = new QtButtonItem();
     rootItem_->setLayout(mainLayout);
 
     connect(mainView_, SIGNAL(destroyed(QObject*)), this, SLOT(slotViewDestroy(QObject*)));
     return true;
 }
 
-void QtGroupPropertyBrowser::setEditorFactory(QtPropertyEditorFactory *factory)
+void QtButtonPropertyBrowser::setEditorFactory(QtPropertyEditorFactory *factory)
 {
     editorFactory_ = factory;
 }
 
-QWidget* QtGroupPropertyBrowser::createEditor(QtProperty *property, QWidget *parent)
+QWidget* QtButtonPropertyBrowser::createEditor(QtProperty *property, QWidget *parent)
 {
     if(editorFactory_ != NULL)
     {
@@ -273,12 +273,12 @@ QWidget* QtGroupPropertyBrowser::createEditor(QtProperty *property, QWidget *par
     return NULL;
 }
 
-QtProperty* QtGroupPropertyBrowser::itemToProperty(QtGroupItem* item)
+QtProperty* QtButtonPropertyBrowser::itemToProperty(QtButtonItem* item)
 {
     return item->property();
 }
 
-void QtGroupPropertyBrowser::addProperty(QtProperty *property)
+void QtButtonPropertyBrowser::addProperty(QtProperty *property)
 {
     if(property2items_.contains(property))
     {
@@ -288,14 +288,14 @@ void QtGroupPropertyBrowser::addProperty(QtProperty *property)
     addProperty(property, rootItem_);
 }
 
-void QtGroupPropertyBrowser::addProperty(QtProperty *property, QtGroupItem *parentItem)
+void QtButtonPropertyBrowser::addProperty(QtProperty *property, QtButtonItem *parentItem)
 {
     assert(parentItem != NULL);
 
-    QtGroupItem *item = NULL;
+    QtButtonItem *item = NULL;
     if(property->isSelfVisible())
     {
-        item = new QtGroupItem(property, parentItem, this);
+        item = new QtButtonItem(property, parentItem, this);
         parentItem->addChild(item);
         parentItem = item;
     }
@@ -313,12 +313,12 @@ void QtGroupPropertyBrowser::addProperty(QtProperty *property, QtGroupItem *pare
     }
 }
 
-void QtGroupPropertyBrowser::removeProperty(QtProperty *property)
+void QtButtonPropertyBrowser::removeProperty(QtProperty *property)
 {
     Property2ItemMap::iterator it = property2items_.find(property);
     if(it != property2items_.end())
     {
-        QtGroupItem *item = it.value();
+        QtButtonItem *item = it.value();
         if(item != NULL)
         {
             item->removeFromParent();
@@ -333,7 +333,7 @@ void QtGroupPropertyBrowser::removeProperty(QtProperty *property)
             removeProperty(child);
         }
 
-        // then remove this QtGroupItem
+        // then remove this QtButtonItem
         if(item != NULL)
         {
             deleteItem(item);
@@ -341,7 +341,7 @@ void QtGroupPropertyBrowser::removeProperty(QtProperty *property)
     }
 }
 
-void QtGroupPropertyBrowser::removeAllProperties()
+void QtButtonPropertyBrowser::removeAllProperties()
 {
     QList<QtProperty*> properties = property2items_.keys();
     foreach(QtProperty *property, properties)
@@ -351,20 +351,20 @@ void QtGroupPropertyBrowser::removeAllProperties()
     property2items_.clear();
 }
 
-void QtGroupPropertyBrowser::slotPropertyInsert(QtProperty *property, QtProperty *parent)
+void QtButtonPropertyBrowser::slotPropertyInsert(QtProperty *property, QtProperty *parent)
 {
-    QtGroupItem *parentItem = property2items_.value(parent);
+    QtButtonItem *parentItem = property2items_.value(parent);
     addProperty(property, parentItem);
 }
 
-void QtGroupPropertyBrowser::slotPropertyRemove(QtProperty *property, QtProperty * /*parent*/)
+void QtButtonPropertyBrowser::slotPropertyRemove(QtProperty *property, QtProperty * /*parent*/)
 {
     removeProperty(property);
 }
 
-void QtGroupPropertyBrowser::slotPropertyValueChange(QtProperty *property)
+void QtButtonPropertyBrowser::slotPropertyValueChange(QtProperty *property)
 {
-//    QtGroupItem *item = property2items_.value(property);
+//    QtButtonItem *item = property2items_.value(property);
 //    if(item != NULL)
 //    {
 //        item->setText(1, property->getValueString());
@@ -372,9 +372,9 @@ void QtGroupPropertyBrowser::slotPropertyValueChange(QtProperty *property)
 //    }
 }
 
-void QtGroupPropertyBrowser::slotPropertyPropertyChange(QtProperty *property)
+void QtButtonPropertyBrowser::slotPropertyPropertyChange(QtProperty *property)
 {
-    QtGroupItem *item = property2items_.value(property);
+    QtButtonItem *item = property2items_.value(property);
     if(item != NULL)
     {
         item->setTitle(property->getTitle());
@@ -382,19 +382,19 @@ void QtGroupPropertyBrowser::slotPropertyPropertyChange(QtProperty *property)
     }
 }
 
-void QtGroupPropertyBrowser::slotViewDestroy(QObject *p)
+void QtButtonPropertyBrowser::slotViewDestroy(QObject *p)
 {
     removeAllProperties();
 }
 
-void QtGroupPropertyBrowser::deleteItem(QtGroupItem *item)
+void QtButtonPropertyBrowser::deleteItem(QtButtonItem *item)
 {
     delete item;
 }
 
-bool QtGroupPropertyBrowser::isExpanded(QtProperty *property)
+bool QtButtonPropertyBrowser::isExpanded(QtProperty *property)
 {
-    QtGroupItem *item = property2items_.value(property);
+    QtButtonItem *item = property2items_.value(property);
     if(item != NULL)
     {
         return item->isExpanded();
@@ -402,9 +402,9 @@ bool QtGroupPropertyBrowser::isExpanded(QtProperty *property)
     return false;
 }
 
-void QtGroupPropertyBrowser::setExpanded(QtProperty *property, bool expand)
+void QtButtonPropertyBrowser::setExpanded(QtProperty *property, bool expand)
 {
-    QtGroupItem *item = property2items_.value(property);
+    QtButtonItem *item = property2items_.value(property);
     if(item != NULL)
     {
         item->setExpanded(expand);
