@@ -12,7 +12,7 @@ SOURCES += \
     $$PWD/qtattributename.cpp \
     $$PWD/qtpropertyfactory.cpp \
     $$PWD/qtpropertytype.cpp \
-    $$PWD/qtgrouppropertybrowser.cpp
+    $$PWD/qtbuttonpropertybrowser.cpp
 
 HEADERS  += \
     $$PWD/qtproperty.h \
@@ -28,4 +28,4 @@ HEADERS  += \
     $$PWD/qtattributename.h \
     $$PWD/qtpropertyfactory.h \
     $$PWD/qtpropertytype.h \
-    $$PWD/qtgrouppropertybrowser.h
+    $$PWD/qtbuttonpropertybrowser.h

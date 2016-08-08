@@ -1,4 +1,4 @@
-﻿#include "qtgrouppropertybrowser.h"
+﻿#include "qtbuttonpropertybrowser.h"
 #include "qtproperty.h"
 #include "qtpropertyeditorfactory.h"
 #include "qtpropertybrowserutils.h"

@@ -1,5 +1,5 @@
-﻿#ifndef QT_GROUP_PROPERTY_BROWSER_H
-#define QT_GROUP_PROPERTY_BROWSER_H
+﻿#ifndef QT_BUTTON_PROPERTY_BROWSER_H
+#define QT_BUTTON_PROPERTY_BROWSER_H
 
 #include <QObject>
 #include <QIcon>
@@ -119,4 +119,4 @@ private:
     Property2ItemMap            property2items_;
 };
 
-#endif // QT_GROUP_PROPERTY_BROWSER_H
+#endif // QT_BUTTON_PROPERTY_BROWSER_H

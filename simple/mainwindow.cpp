@@ -5,7 +5,7 @@
 #include "qtpropertyfactory.h"
 #include "qtpropertyeditorfactory.h"
 #include "qtattributename.h"
-#include "qtgrouppropertybrowser.h"
+#include "qtbuttonpropertybrowser.h"
 
 #include <QTreeWidget>
 #include <QHBoxLayout>
