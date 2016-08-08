@@ -948,7 +948,7 @@ void QtFloatListEditor::slotEditorValueChange(double value)
     QVariantList values;
     foreach(float val, values_)
     {
-        values.push_back(QVariant(val));
+        values.push_back(QVariant((double)val));
     }
 
     property_->setValue(QVariant(values));

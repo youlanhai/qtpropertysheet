@@ -236,7 +236,13 @@ void QtButtonItem::onBtnMenu()
 
 void QtButtonItem::onPropertyValueChange(QtProperty *property)
 {
-    valueLabel_->setText(property_->getValueString());
+    QString text = property_->getValueString();
+    if(text.size() > 20)
+    {
+        text.remove(20, text.size() - 20);
+        text += "...";
+    }
+    valueLabel_->setText(text);
 }
 
 QtButtonPropertyBrowser::QtButtonPropertyBrowser(QObject *parent)

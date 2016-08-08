@@ -2,6 +2,7 @@
 #include "qtproperty.h"
 #include "qtpropertyeditor.h"
 
+#include <QWidget>
 
 QtPropertyEditorFactory::QtPropertyEditorFactory(QObject *parent)
     : QObject(parent)
@@ -32,7 +33,7 @@ QWidget* QtPropertyEditorFactory::createEditor(QtProperty *property, QWidget *pa
         QWidget *widget = propertyEditor->createEditor(parent, this);
         if(widget != NULL)
         {
-             connect(widget, SIGNAL(destroyed(QObject*)), propertyEditor, SLOT(slotEditorDestory(QObject*)));
+             QObject::connect(widget, SIGNAL(destroyed(QObject*)), propertyEditor, SLOT(slotEditorDestory(QObject*)));
         }
         return widget;
     }
