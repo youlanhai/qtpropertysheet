@@ -38,22 +38,22 @@ public:
 
     void setLayout(QGridLayout *layout){ layout_ = layout; }
 
-    void setExpand(bool expand);
-    bool isExpand() const;
+    void setExpanded(bool expand);
+    bool isExpanded() const{ return bExpand_; }
 
 protected slots:
     void onBtnExpand();
+    void onBtnMenu();
 
 protected:
     QtProperty* property_;
     QLabel*     label_;
     QWidget*    editor_; // can be null
 
-    QWidget*    titleBar_;
     QToolButton* titleButton_;
     QToolButton* titleMenu_;
 
-    QWidget*    container_;
+    QWidget*     container_;
     QGridLayout* layout_;
 
     QtGroupItem* parent_;
@@ -75,18 +75,9 @@ public:
     bool init(QWidget *parent);
 
     void setEditorFactory(QtPropertyEditorFactory *factory);
-
-    bool markPropertiesWithoutValue(){ return true; }
-    bool lastColumn(int column);
-    QColor calculatedBackgroundColor(QtProperty *property);
-
     QWidget* createEditor(QtProperty *property, QWidget *parent);
 
-    QtGroupItem* indexToItem(const QModelIndex &index);
-    QtProperty* indexToProperty(const QModelIndex &index);
     QtProperty* itemToProperty(QtGroupItem* item);
-
-    QtGroupItem* getEditedItem();
 
     void addProperty(QtProperty *property);
     void removeProperty(QtProperty *property);
@@ -97,21 +88,18 @@ public:
     void setExpanded(QtProperty *property, bool expand);
 
 public slots:
-    void slotCurrentTreeItemChanged(QtGroupItem*, QtGroupItem*);
-
     void slotPropertyInsert(QtProperty *property, QtProperty *parent);
     void slotPropertyRemove(QtProperty *property, QtProperty *parent);
     void slotPropertyValueChange(QtProperty *property);
     void slotPropertyPropertyChange(QtProperty *property);
 
-    void slotTreeViewDestroy(QObject *p);
+    void slotViewDestroy(QObject *p);
 
 private:
     void addProperty(QtProperty *property, QtGroupItem *parentItem);
-    void deleteTreeItem(QtGroupItem *item);
+    void deleteItem(QtGroupItem *item);
 
     QtPropertyEditorFactory*    editorFactory_;
-    QIcon                       expandIcon_;
 
     QtGroupItem*                rootItem_;
     QWidget*                    mainView_;

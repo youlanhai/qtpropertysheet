@@ -4,31 +4,16 @@
 #include "qtpropertybrowserutils.h"
 
 #include <cassert>
-#include <QTreeWidget>
 #include <QApplication>
-#include <QItemDelegate>
 #include <QHBoxLayout>
-#include <QGroupBox>
 #include <QGridLayout>
-#include <QPainter>
-#include <QKeyEvent>
-#include <QMouseEvent>
-#include <QHeaderView>
-#include <QLineEdit>
 #include <QLabel>
 #include <QToolButton>
 
-namespace
-{
-const int PropertyDataIndex = Qt::UserRole + 1;
-}
-
-
 QtGroupItem::QtGroupItem()
     : property_(NULL)
-    , editor_(NULL)
     , label_(NULL)
-    , titleBar_(NULL)
+    , editor_(NULL)
     , titleButton_(NULL)
     , titleMenu_(NULL)
     , container_(NULL)
@@ -41,9 +26,8 @@ QtGroupItem::QtGroupItem()
 
 QtGroupItem::QtGroupItem(QtProperty *prop, QtGroupItem *parent, QtGroupPropertyBrowser *browser)
     : property_(prop)
-    , editor_(NULL)
     , label_(NULL)
-    , titleBar_(NULL)
+    , editor_(NULL)
     , titleButton_(NULL)
     , titleMenu_(NULL)
     , container_(NULL)
@@ -53,27 +37,37 @@ QtGroupItem::QtGroupItem(QtProperty *prop, QtGroupItem *parent, QtGroupPropertyB
 {
     layout_ = parent->layout_;
 
-    QtPropertyList &list = property_->getChildren();
-    if(!list.empty())
+    if(!property_->getChildren().empty())
     {
         int row = layout_->rowCount();
 
         titleButton_ = new QToolButton();
-        QFont font = titleButton_->font();
-        font.setBold(true);
-        font.setPointSize(16);
-        titleButton_->setFont(font);
         titleButton_->setText(property_->getTitle());
         titleButton_->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred));
         titleButton_->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
         titleButton_->setArrowType(Qt::UpArrow);
-        titleButton_->setIconSize(QSize(24, 24));
+        titleButton_->setIconSize(QSize(16, 16));
         layout_->addWidget(titleButton_, row, 0);
         connect(titleButton_, SIGNAL(clicked(bool)), this, SLOT(onBtnExpand()));
 
-        titleMenu_ = new QToolButton();
-        titleMenu_->setText("...");
-        layout_->addWidget(titleMenu_, row, 1, Qt::AlignRight);
+        if(property_->isMenuVisible())
+        {
+            QFont font = titleButton_->font();
+            font.setBold(true);
+            font.setPointSize(16);
+            titleButton_->setFont(font);
+
+            titleMenu_ = new QToolButton();
+            titleMenu_->setText("...");
+            layout_->addWidget(titleMenu_, row, 1, Qt::AlignRight);
+            connect(titleMenu_, SIGNAL(clicked(bool)), this, SLOT(onBtnMenu()));
+        }
+        else
+        {
+            QFont font = titleButton_->font();
+            font.setBold(true);
+            titleButton_->setFont(font);
+        }
 
         QFrame *frame2 = new QFrame();
         frame2->setFrameShape(QFrame::Panel);
@@ -113,6 +107,14 @@ QtGroupItem::~QtGroupItem()
         delete item;
     }
 
+    if(titleButton_)
+    {
+        delete titleButton_;
+    }
+    if(titleMenu_)
+    {
+        delete titleMenu_;
+    }
     if(label_)
     {
         delete label_;
@@ -151,10 +153,10 @@ void QtGroupItem::removeFromParent()
 
 void QtGroupItem::setTitle(const QString &title)
 {
-//    if(groupBox_)
-//    {
-//        groupBox_->setTitle(title);
-//    }
+    if(titleButton_)
+    {
+        titleButton_->setText(title);
+    }
     if(label_)
     {
         label_->setText(title);
@@ -182,7 +184,7 @@ void QtGroupItem::setVisible(bool visible)
     }
 }
 
-void QtGroupItem::setExpand(bool expand)
+void QtGroupItem::setExpanded(bool expand)
 {
     if(bExpand_ == expand)
     {
@@ -201,14 +203,14 @@ void QtGroupItem::setExpand(bool expand)
     }
 }
 
-bool QtGroupItem::isExpand() const
-{
-    return bExpand_;
-}
-
 void QtGroupItem::onBtnExpand()
 {
-    setExpand(!bExpand_);
+    setExpanded(!bExpand_);
+}
+
+void QtGroupItem::onBtnMenu()
+{
+    emit property_->signalPopupMenu(property_);
 }
 
 
@@ -253,9 +255,7 @@ bool QtGroupPropertyBrowser::init(QWidget *parent)
     rootItem_ = new QtGroupItem();
     rootItem_->setLayout(mainLayout);
 
-    expandIcon_ = QtPropertyBrowserUtils::drawIndicatorIcon(mainView_->palette(), mainView_->style());
-
-    connect(mainView_, SIGNAL(destroyed(QObject*)), this, SLOT(slotTreeViewDestroy(QObject*)));
+    connect(mainView_, SIGNAL(destroyed(QObject*)), this, SLOT(slotViewDestroy(QObject*)));
     return true;
 }
 
@@ -264,46 +264,12 @@ void QtGroupPropertyBrowser::setEditorFactory(QtPropertyEditorFactory *factory)
     editorFactory_ = factory;
 }
 
-bool QtGroupPropertyBrowser::lastColumn(int column)
-{
-    return false;
-}
-
-QColor QtGroupPropertyBrowser::calculatedBackgroundColor(QtProperty *property)
-{
-    if(dynamic_cast<QtGroupProperty*>(property) != 0)
-    {
-        return QColor(200, 200, 200);
-    }
-    return QColor(255, 255, 255);
-}
-
 QWidget* QtGroupPropertyBrowser::createEditor(QtProperty *property, QWidget *parent)
 {
     if(editorFactory_ != NULL)
     {
         return editorFactory_->createEditor(property, parent);
     }
-    return NULL;
-}
-
-QtGroupItem* QtGroupPropertyBrowser::getEditedItem()
-{
-    return NULL;
-}
-
-QtGroupItem* QtGroupPropertyBrowser::indexToItem(const QModelIndex &index)
-{
-    return NULL;
-}
-
-void QtGroupPropertyBrowser::slotCurrentTreeItemChanged(QtGroupItem*, QtGroupItem*)
-{
-
-}
-
-QtProperty* QtGroupPropertyBrowser::indexToProperty(const QModelIndex &index)
-{
     return NULL;
 }
 
@@ -370,7 +336,7 @@ void QtGroupPropertyBrowser::removeProperty(QtProperty *property)
         // then remove this QtGroupItem
         if(item != NULL)
         {
-            deleteTreeItem(item);
+            deleteItem(item);
         }
     }
 }
@@ -416,31 +382,31 @@ void QtGroupPropertyBrowser::slotPropertyPropertyChange(QtProperty *property)
     }
 }
 
-void QtGroupPropertyBrowser::slotTreeViewDestroy(QObject *p)
+void QtGroupPropertyBrowser::slotViewDestroy(QObject *p)
 {
     removeAllProperties();
 }
 
-void QtGroupPropertyBrowser::deleteTreeItem(QtGroupItem *item)
+void QtGroupPropertyBrowser::deleteItem(QtGroupItem *item)
 {
     delete item;
 }
 
 bool QtGroupPropertyBrowser::isExpanded(QtProperty *property)
 {
-//    QtGroupItem *treeItem = property2items_.value(property);
-//    if(treeItem != NULL)
-//    {
-//        return treeItem->isExpanded();
-//    }
+    QtGroupItem *item = property2items_.value(property);
+    if(item != NULL)
+    {
+        return item->isExpanded();
+    }
     return false;
 }
 
 void QtGroupPropertyBrowser::setExpanded(QtProperty *property, bool expand)
 {
-//    QtGroupItem *treeItem = property2items_.value(property);
-//    if(treeItem != NULL)
-//    {
-//        treeItem->setExpanded(expand);
-//    }
+    QtGroupItem *item = property2items_.value(property);
+    if(item != NULL)
+    {
+        item->setExpanded(expand);
+    }
 }

@@ -74,6 +74,9 @@ public:
     void setSelfVisible(bool visible){ selfVisible_ = visible; }
     bool isSelfVisible() const { return selfVisible_; }
 
+    void setMenuVisible(bool visible){ menuVisible_ = visible; }
+    bool isMenuVisible() const { return menuVisible_; }
+
 signals:
     void signalValueChange(QtProperty *property);
     void signalPropertyInserted(QtProperty *property, QtProperty *parent);
@@ -81,6 +84,7 @@ signals:
     void signalPropertyReordered(QtProperty *property);
     void signalAttributeChange(QtProperty *property, const QString &name);
     void signalPropertyChange(QtProperty *property);
+    void signalPopupMenu(QtProperty *property);
 
 protected:
     virtual void onChildAdd(QtProperty *child);
@@ -101,6 +105,7 @@ protected:
 
     bool                visible_;
     bool                selfVisible_;
+    bool                menuVisible_;
 };
 
 /********************************************************************/

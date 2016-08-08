@@ -15,6 +15,7 @@ QtProperty::QtProperty(Type type, QtPropertyFactory *factory)
     , parent_(NULL)
     , visible_(true)
     , selfVisible_(true)
+    , menuVisible_(false)
 {
 
 }
