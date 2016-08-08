@@ -105,6 +105,13 @@ MainWindow::MainWindow(QWidget *parent) :
         property9->setValue("unkown");
         group->addChild(property9);
 
+        QtProperty *property10 = manager->createProperty(QtPropertyType::FLOAT_LIST);
+        property10->setName("position");
+        property10->setAttribute(QtAttributeName::Size, 3);
+        property10->setAttribute(QtAttributeName::MinValue, -1000.0f);
+        property10->setAttribute(QtAttributeName::MaxValue, 1000.0f);
+        group->addChild(property10);
+
         root->addChild(group);
     }
     {

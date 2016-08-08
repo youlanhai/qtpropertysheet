@@ -18,5 +18,6 @@ namespace QtPropertyType
 	const Type DYNAMIC_LIST = "dynamicList";
 	const Type DYNAMIC_ITEM = "dynamicItem";
 	const Type ENUM_PAIR = "enumPair";
+    const Type FLOAT_LIST = "floatList";
 
 }

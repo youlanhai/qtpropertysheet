@@ -5,6 +5,7 @@
 #include <QColor>
 #include <QList>
 #include <QVariant>
+#include <QVector>
 
 class QtProperty;
 class QWidget;
@@ -235,6 +236,27 @@ public slots:
 private:
     QWidget* 		editor_;
     QtPropertyEditor* impl_;
+};
+
+class QtFloatListEditor : public QtPropertyEditor
+{
+    Q_OBJECT
+public:
+    explicit QtFloatListEditor(QtProperty *property);
+    virtual QWidget* createEditor(QWidget *parent, QtPropertyEditorFactory *factory);
+
+public slots:
+    virtual void onPropertyValueChange(QtProperty *property);
+    void slotEditorValueChange(double value);
+    void slotSetAttribute(QtProperty *property, const QString &name);
+
+private:
+    void setEditorAttribute(QDoubleSpinBox *editor, QtProperty *property, const QString &name);
+    void variantList2Vector(const QList<QVariant> &input, QVector<float> &output);
+
+    int                 size_;
+    QVector<float>      values_;
+    QVector<QDoubleSpinBox*> editors_;
 };
 
 #endif // QTPROPERTYEDITOR_H

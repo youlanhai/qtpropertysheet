@@ -5,6 +5,7 @@
 
 namespace QtAttributeName
 {
+    extern const QString Size;
     extern const QString MinValue;
     extern const QString MaxValue;
     extern const QString EnumName;

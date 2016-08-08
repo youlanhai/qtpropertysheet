@@ -71,7 +71,8 @@ QtButtonItem::QtButtonItem(QtProperty *prop, QtButtonItem *parent, QtButtonPrope
             titleButton_->setFont(font);
 
             valueLabel_ = new QLabel(property_->getValueString());
-            layout_->addWidget(valueLabel_, row, 1);
+            valueLabel_->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+            layout_->addWidget(valueLabel_, row, 1, Qt::AlignLeft);
         }
 
         QFrame *frame2 = new QFrame();
@@ -102,7 +103,8 @@ QtButtonItem::QtButtonItem(QtProperty *prop, QtButtonItem *parent, QtButtonPrope
         else
         {
             valueLabel_ = new QLabel(property_->getValueString());
-            layout_->addWidget(valueLabel_, row, 1);
+            valueLabel_->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+            layout_->addWidget(valueLabel_, row, 1, Qt::AlignLeft);
         }
     }
 

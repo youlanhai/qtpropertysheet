@@ -21,6 +21,7 @@ namespace QtPropertyType
     extern const Type DYNAMIC_LIST;
     extern const Type DYNAMIC_ITEM;
     extern const Type ENUM_PAIR;
+    extern const Type FLOAT_LIST;
 }
 
 #endif // QTPROPERTYTYPE_H

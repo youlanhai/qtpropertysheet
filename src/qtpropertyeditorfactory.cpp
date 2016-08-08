@@ -19,6 +19,7 @@ QtPropertyEditorFactory::QtPropertyEditorFactory(QObject *parent)
     REGISTER_CREATOR(QtPropertyType::FILE, QtFileEditor);
     REGISTER_CREATOR(QtPropertyType::DYNAMIC_ITEM, QtDynamicItemEditor);
     REGISTER_CREATOR(QtPropertyType::ENUM_PAIR, QtEnumPairEditor);
+    REGISTER_CREATOR(QtPropertyType::FLOAT_LIST, QtFloatListEditor);
 
 #undef QtSpinBoxEditor
 }
