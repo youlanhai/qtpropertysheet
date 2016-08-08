@@ -10,12 +10,58 @@ class QLabel;
 class QFrame;
 class QGroupBox;
 class QGridLayout;
+class QToolButton;
 
 class QtProperty;
 class QtPropertyEditorFactory;
 class QtGroupPropertyBrowser;
 
-class QtGroupItem;
+
+class QtGroupItem : public QObject
+{
+    Q_OBJECT
+public:
+    QtGroupItem();
+    QtGroupItem(QtProperty *prop, QtGroupItem *parent, QtGroupPropertyBrowser *browser);
+    virtual ~QtGroupItem();
+
+    void update();
+    void addChild(QtGroupItem *child);
+    void removeChild(QtGroupItem *child);
+    void removeFromParent();
+
+    void setTitle(const QString &title);
+    void setVisible(bool visible);
+
+    QtGroupItem* parent(){ return parent_; }
+    QtProperty* property(){ return property_; }
+
+    void setLayout(QGridLayout *layout){ layout_ = layout; }
+
+    void setExpand(bool expand);
+    bool isExpand() const;
+
+protected slots:
+    void onBtnExpand();
+
+protected:
+    QtProperty* property_;
+    QLabel*     label_;
+    QWidget*    editor_; // can be null
+
+    QWidget*    titleBar_;
+    QToolButton* titleButton_;
+    QToolButton* titleMenu_;
+
+    QWidget*    container_;
+    QGridLayout* layout_;
+
+    QtGroupItem* parent_;
+    QList<QtGroupItem*> children_;
+
+    bool        bExpand_;
+};
+
 
 class QtGroupPropertyBrowser : public QObject
 {

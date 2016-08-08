@@ -23,41 +23,6 @@ namespace
 const int PropertyDataIndex = Qt::UserRole + 1;
 }
 
-class QtGroupItem
-{
-public:
-    QtGroupItem();
-    QtGroupItem(QtProperty *prop, QtGroupItem *parent, QtGroupPropertyBrowser *browser);
-    virtual ~QtGroupItem();
-
-    void update();
-    void addChild(QtGroupItem *child);
-    void removeChild(QtGroupItem *child);
-    void removeFromParent();
-
-    void setTitle(const QString &title);
-    void setVisible(bool visible);
-
-    QtGroupItem* parent(){ return parent_; }
-    QtProperty* property(){ return property_; }
-
-    void setLayout(QGridLayout *layout){ layout_ = layout; }
-
-private:
-    QtProperty* property_;
-    QLabel*     label_;
-    QWidget*    editor_; // can be null
-
-    QWidget*    titleBar_;
-    QToolButton* titleButton_;
-    QToolButton* titleMenu_;
-
-    QWidget*    container_;
-    QGridLayout* layout_;
-
-    QtGroupItem* parent_;
-    QList<QtGroupItem*> children_;
-};
 
 QtGroupItem::QtGroupItem()
     : property_(NULL)
@@ -69,6 +34,7 @@ QtGroupItem::QtGroupItem()
     , container_(NULL)
     , layout_(NULL)
     , parent_(NULL)
+    , bExpand_(true)
 {
 
 }
@@ -83,35 +49,31 @@ QtGroupItem::QtGroupItem(QtProperty *prop, QtGroupItem *parent, QtGroupPropertyB
     , container_(NULL)
     , layout_(NULL)
     , parent_(parent)
+    , bExpand_(true)
 {
     layout_ = parent->layout_;
 
     QtPropertyList &list = property_->getChildren();
     if(!list.empty())
     {
-        titleBar_ = new QWidget();
-        titleBar_->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum));
-        titleBar_->setMinimumHeight(50);
-        layout_->addWidget(titleBar_, layout_->rowCount(), 0, 1, 2);
-
-        QHBoxLayout *titleLayout = new QHBoxLayout();
-        titleLayout->setSpacing(0);
-        titleLayout->setMargin(0);
-        titleBar_->setLayout(titleLayout);
+        int row = layout_->rowCount();
 
         titleButton_ = new QToolButton();
+        QFont font = titleButton_->font();
+        font.setBold(true);
+        font.setPointSize(16);
+        titleButton_->setFont(font);
         titleButton_->setText(property_->getTitle());
-        titleButton_->setCheckable(true);
-        titleButton_->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed));
+        titleButton_->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred));
         titleButton_->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-        titleButton_->setArrowType(Qt::DownArrow);
-        titleButton_->setIconSize(QSize(3, 16));
-        titleLayout->addWidget(titleButton_);
+        titleButton_->setArrowType(Qt::UpArrow);
+        titleButton_->setIconSize(QSize(24, 24));
+        layout_->addWidget(titleButton_, row, 0);
+        connect(titleButton_, SIGNAL(clicked(bool)), this, SLOT(onBtnExpand()));
 
         titleMenu_ = new QToolButton();
-        titleMenu_->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
-        titleMenu_->setText("menu");
-        titleLayout->addWidget(titleMenu_);
+        titleMenu_->setText("...");
+        layout_->addWidget(titleMenu_, row, 1, Qt::AlignRight);
 
         QFrame *frame2 = new QFrame();
         frame2->setFrameShape(QFrame::Panel);
@@ -122,7 +84,7 @@ QtGroupItem::QtGroupItem(QtProperty *prop, QtGroupItem *parent, QtGroupPropertyB
 
         layout_ = new QGridLayout();
         layout_->setSpacing(4);
-        layout_->setMargin(4);
+        layout_->setMargin(8);
         container_->setLayout(layout_);
     }
     else
@@ -201,9 +163,14 @@ void QtGroupItem::setTitle(const QString &title)
 
 void QtGroupItem::setVisible(bool visible)
 {
+    if(titleButton_)
+    {
+        titleButton_->setVisible(visible);
+        titleMenu_->setVisible(visible);
+    }
     if(container_)
     {
-        container_->setVisible(visible);
+        container_->setVisible(visible && bExpand_);
     }
     if(label_)
     {
@@ -214,6 +181,36 @@ void QtGroupItem::setVisible(bool visible)
         editor_->setVisible(visible);
     }
 }
+
+void QtGroupItem::setExpand(bool expand)
+{
+    if(bExpand_ == expand)
+    {
+        return;
+    }
+    bExpand_ = expand;
+
+    if(titleButton_)
+    {
+        titleButton_->setArrowType(expand ? Qt::UpArrow : Qt::DownArrow);
+    }
+
+    if(container_)
+    {
+        container_->setVisible(expand);
+    }
+}
+
+bool QtGroupItem::isExpand() const
+{
+    return bExpand_;
+}
+
+void QtGroupItem::onBtnExpand()
+{
+    setExpand(!bExpand_);
+}
+
 
 QtGroupPropertyBrowser::QtGroupPropertyBrowser(QObject *parent)
     : QObject(parent)
@@ -243,7 +240,7 @@ bool QtGroupPropertyBrowser::init(QWidget *parent)
 
     QGridLayout *mainLayout = new QGridLayout();
     mainLayout->setMargin(0);
-    mainLayout->setSpacing(2);
+    mainLayout->setSpacing(4);
 
     QWidget *mainView_ = new QWidget(parent);
     mainView_->setLayout(mainLayout);
