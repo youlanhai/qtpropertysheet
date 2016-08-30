@@ -18,6 +18,7 @@ QtPropertyFactory::QtPropertyFactory(QObject *parent)
     REGISTER_PROPERTY(QtPropertyType::COLOR, QtColorProperty);
     REGISTER_PROPERTY(QtPropertyType::DYNAMIC_LIST, QtDynamicListProperty);
     REGISTER_PROPERTY(QtPropertyType::DYNAMIC_ITEM, QtDynamicItemProperty);
+    REGISTER_PROPERTY(QtPropertyType::FLOAT_LIST, QtFloatListProperty);
 
 #undef REGISTER_PROPERTY
 }

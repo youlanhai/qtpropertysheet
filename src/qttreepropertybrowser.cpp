@@ -80,11 +80,17 @@ bool QtTreePropertyBrowser::lastColumn(int column)
 
 QColor QtTreePropertyBrowser::calculatedBackgroundColor(QtProperty *property)
 {
+    if(property->getParent() != NULL)
+    {
+        int index = property->getParent()->indexChild(property);
+        return QColor(index % 2 ? Qt::blue : Qt::white);
+    }
+
     if(dynamic_cast<QtGroupProperty*>(property) != 0)
     {
-        return QColor(200, 200, 200);
+        return QColor(Qt::gray);
     }
-    return QColor(255, 255, 255);
+    return QColor(Qt::white);
 }
 
 QWidget* QtTreePropertyBrowser::createEditor(QtProperty *property, QWidget *parent)

@@ -649,3 +649,42 @@ void QtDynamicItemProperty::onImplValueChange(QtProperty *property)
 {
     emit signalValueChange(this);
 }
+
+/********************************************************************/
+QtFloatListProperty::QtFloatListProperty(Type type, QtPropertyFactory *factory)
+    : QtProperty(type, factory)
+{
+
+}
+
+QtFloatListProperty::~QtFloatListProperty()
+{
+
+}
+
+QString QtFloatListProperty::getValueString() const
+{
+    int size = getAttribute(QtAttributeName::Size).toInt();
+
+    QString ret;
+    ret += "[";
+
+    QVariantList lst = value_.toList();
+    for(int i = 0; i < size; ++i)
+    {
+        if(i != 0)
+        {
+            ret += ", ";
+        }
+
+        double v = 0.0;
+        if(i < lst.size())
+        {
+            v = lst[i].toDouble();
+        }
+        ret += QString::number(v);
+    }
+
+    ret += "]";
+    return ret;
+}

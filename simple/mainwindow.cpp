@@ -11,6 +11,7 @@
 #include <QHBoxLayout>
 #include <QDir>
 #include <QScrollArea>
+#include <QSplitter>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -19,25 +20,79 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    createProperties();
+
     popupMenu_ = new QMenu();
     popupMenu_->addAction(tr("Expand"));
     popupMenu_->addAction(tr("Remove"));
 
-    QtPropertyFactory *manager = new QtPropertyFactory(this);
 
     QHBoxLayout *layout = new QHBoxLayout(ui->centralWidget);
     ui->centralWidget->setLayout(layout);
 
-    QScrollArea *scrollArea = new QScrollArea(ui->centralWidget);
-    scrollArea->setWidgetResizable(true);
-    layout->addWidget(scrollArea);
+    QSplitter *splitter = new QSplitter(Qt::Horizontal, this);
+    layout->addWidget(splitter);
 
-    QWidget *widget = new QWidget();
-    scrollArea->setWidget(widget);
+    QtPropertyEditorFactory *editorFactory = new QtPropertyEditorFactory(this);
 
-    QtButtonPropertyBrowser *browser = new QtButtonPropertyBrowser(this);
-    browser->init(widget);
-    browser->setEditorFactory(new QtPropertyEditorFactory(this));
+    {
+        QScrollArea *scrollArea = new QScrollArea(ui->centralWidget);
+        scrollArea->setWidgetResizable(true);
+        splitter->addWidget(scrollArea);
+
+        QWidget *widget = new QWidget();
+        scrollArea->setWidget(widget);
+
+        QtButtonPropertyBrowser *browser = new QtButtonPropertyBrowser(this);
+        browser->init(widget);
+        browser->setEditorFactory(editorFactory);
+
+        browser->addProperty(root_);
+    }
+    {
+        QWidget *treeWidget = new QWidget(this);
+        splitter->addWidget(treeWidget);
+
+        QtTreePropertyBrowser *treeBrowser = new QtTreePropertyBrowser(this);
+        treeBrowser->setEditorFactory(editorFactory);
+        treeBrowser->init(treeWidget);
+        treeBrowser->addProperty(root_);
+    }
+
+    // test set property value
+
+    //1. set child value by name.
+    root_->setChildValue("name", "Jack");
+
+    //2. find property, then set value directly.
+    QtProperty *addressProperty = root_->findChild("age");
+    if(addressProperty != NULL)
+    {
+        addressProperty->setValue(18);
+    }
+
+    //3. set list value
+    QVariantList values;
+    values.push_back(QVariant(8.0f));
+    values.push_back(QVariant(9.0f));
+    values.push_back(QVariant(200.0f));
+    values.push_back(QVariant(100.0f));
+    root_->setChildValue("geometry", values);
+
+
+#if 0
+    // test remove and add
+    browser->removeProperty(root_);
+    browser->addProperty(root_);
+#endif
+
+    //test delete
+    // delete root
+}
+
+void MainWindow::createProperties()
+{
+    QtPropertyFactory *manager = new QtPropertyFactory(this);
 
     QtProperty *root = manager->createProperty(QtPropertyType::GROUP);
     root->setName("root");
@@ -154,39 +209,6 @@ MainWindow::MainWindow(QWidget *parent) :
     }
 
     connect(root, SIGNAL(signalValueChange(QtProperty*)), this, SLOT(onValueChanged(QtProperty*)));
-    browser->addProperty(root);
-
-
-    // test set property value
-
-    //1. set child value by name.
-    root->setChildValue("name", "Jack");
-
-    //2. find property, then set value directly.
-    QtProperty *addressProperty = root->findChild("age");
-    if(addressProperty != NULL)
-    {
-        addressProperty->setValue(18);
-    }
-
-    //3. set list value
-    QVariantList values;
-    values.push_back(QVariant(8.0f));
-    values.push_back(QVariant(9.0f));
-    values.push_back(QVariant(200.0f));
-    values.push_back(QVariant(100.0f));
-    root->setChildValue("geometry", values);
-
-
-#if 0
-    // test remove and add
-    browser->removeProperty(root);
-    browser->addProperty(root);
-#endif
-
-    //test delete
-    // delete root
-
 }
 
 MainWindow::~MainWindow()

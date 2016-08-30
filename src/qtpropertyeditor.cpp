@@ -779,8 +779,9 @@ QWidget* QtDynamicItemEditor::createEditor(QWidget *parent, QtPropertyEditorFact
     editor_ = new QWidget(parent);
 
     QHBoxLayout *layout = new QHBoxLayout(editor_);
-    QtPropertyBrowserUtils::setupTreeViewEditorMargin(layout);
-    layout->setSpacing(0);
+    layout->setMargin(0);
+    layout->setSpacing(1);
+    editor_->setLayout(layout);
 
     QtDynamicItemProperty *property = dynamic_cast<QtDynamicItemProperty*>(property_);
     if(property != NULL && property->getImpl() != NULL)
@@ -884,12 +885,14 @@ QWidget* QtFloatListEditor::createEditor(QWidget *parent, QtPropertyEditorFactor
     layout->setMargin(0);
     editor->setLayout(layout);
 
+    QVector<float> values;
+    variantList2Vector(property_->getValue().toList(), values);
+
     for(int i = 0; i < size_; ++i)
     {
         QDoubleSpinBox *edt = new QDoubleSpinBox(editor);
         edt->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
         edt->setMinimumWidth(10);
-        connect(edt, SIGNAL(valueChanged(double)), this, SLOT(slotEditorValueChange(double)));
         layout->addWidget(edt);
         editors_.push_back(edt);
 
@@ -897,6 +900,9 @@ QWidget* QtFloatListEditor::createEditor(QWidget *parent, QtPropertyEditorFactor
         setEditorAttribute(edt, property_, QtAttributeName::MaxValue);
         setEditorAttribute(edt, property_, QtAttributeName::Decimals);
         setEditorAttribute(edt, property_, QtAttributeName::ReadOnly);
+
+        edt->setValue(values[i]);
+        connect(edt, SIGNAL(valueChanged(double)), this, SLOT(slotEditorValueChange(double)));
     }
 
     return editor;

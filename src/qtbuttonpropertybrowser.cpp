@@ -57,7 +57,7 @@ QtButtonItem::QtButtonItem(QtProperty *prop, QtButtonItem *parent, QtButtonPrope
             font.setBold(true);
             font.setPointSize(16);
             titleButton_->setFont(font);
-            titleButton_->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred));
+            titleButton_->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred));
 
             titleMenu_ = new QToolButton();
             titleMenu_->setText("...");
@@ -185,6 +185,9 @@ void QtButtonItem::setVisible(bool visible)
     if(titleButton_)
     {
         titleButton_->setVisible(visible);
+    }
+    if(titleMenu_)
+    {
         titleMenu_->setVisible(visible);
     }
     if(container_)

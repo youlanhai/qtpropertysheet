@@ -1,4 +1,4 @@
-#include "qtpropertytreeview.h"
+﻿#include "qtpropertytreeview.h"
 #include "qttreepropertybrowser.h"
 #include "qtproperty.h"
 
@@ -36,6 +36,7 @@ void QtPropertyTreeView::drawRow(QPainter *painter, const QStyleOptionViewItem &
         }
     }
 
+#if 0
     if (!hasValue && editorPrivate_->markPropertiesWithoutValue())
     {
         const QColor c = option.palette.color(QPalette::Dark);
@@ -51,6 +52,7 @@ void QtPropertyTreeView::drawRow(QPainter *painter, const QStyleOptionViewItem &
             opt.palette.setColor(QPalette::AlternateBase, c.lighter(112));
         }
     }
+#endif
 
     QTreeWidget::drawRow(painter, opt, index);
     QColor color = static_cast<QRgb>(QApplication::style()->styleHint(QStyle::SH_Table_GridLineColor, &opt));

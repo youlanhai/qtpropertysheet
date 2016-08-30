@@ -1,4 +1,4 @@
-/****************************************************************************
+﻿/****************************************************************************
 **
 ** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
 ** Contact: http://www.qt-project.org/legal
@@ -314,12 +314,10 @@ QtBoolEdit::QtBoolEdit(QWidget *parent) :
     textVisible_(true)
 {
     QHBoxLayout *lt = new QHBoxLayout;
-    if (QApplication::layoutDirection() == Qt::LeftToRight)
-        lt->setContentsMargins(4, 0, 0, 0);
-    else
-        lt->setContentsMargins(0, 0, 4, 0);
     lt->addWidget(checkBox_);
+    lt->setContentsMargins(8, 1, 0, 1);
     setLayout(lt);
+
     connect(checkBox_, SIGNAL(toggled(bool)), this, SLOT(slotToggle(bool)));
     setFocusProxy(checkBox_);
     checkBox_->setText(tr("True"));
@@ -595,7 +593,8 @@ void QtColorEditWidget::buttonClicked()
     bool ok = false;
     QRgb oldRgba = color_.rgba();
     QRgb newRgba = QColorDialog::getRgba(oldRgba, &ok, this);
-    if (ok && newRgba != oldRgba) {
+    if (ok && newRgba != oldRgba)
+    {
         setValue(QColor::fromRgba(newRgba));
         emit valueChanged(color_);
     }

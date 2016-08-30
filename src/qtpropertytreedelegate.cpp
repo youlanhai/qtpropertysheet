@@ -1,4 +1,4 @@
-#include "qtpropertytreedelegate.h"
+﻿#include "qtpropertytreedelegate.h"
 #include "qtproperty.h"
 #include "qtpropertytreeview.h"
 #include "qttreepropertybrowser.h"
@@ -104,39 +104,32 @@ void QtPropertyTreeDelegate::updateEditorGeometry(QWidget *editor,
 void QtPropertyTreeDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
             const QModelIndex &index) const
 {
-    bool hasValue = true;
+    QtProperty *property = editorPrivate_->indexToProperty(index);
+
+    bool hasValue = false;
     if (editorPrivate_)
     {
-        QtProperty *property = editorPrivate_->indexToProperty(index);
-        if (property)
+        if(property)
         {
             hasValue = property->hasValue();
         }
     }
-    QStyleOptionViewItemV3 opt = option;
+
+    QStyleOptionViewItem opt = option;
     if ((editorPrivate_ && index.column() == 0) || !hasValue)
     {
-        QtProperty *property = editorPrivate_->indexToProperty(index);
         if (property && property->isModified())
         {
             opt.font.setBold(true);
             opt.fontMetrics = QFontMetrics(opt.font);
         }
     }
-    QColor c;
+
     if (!hasValue && editorPrivate_->markPropertiesWithoutValue())
     {
-        c = opt.palette.color(QPalette::Dark);
         opt.palette.setColor(QPalette::Text, opt.palette.color(QPalette::BrightText));
     }
-    else
-    {
-        c = editorPrivate_->calculatedBackgroundColor(editorPrivate_->indexToProperty(index));
-        if (c.isValid() && (opt.features & QStyleOptionViewItemV2::Alternate))
-            c = c.lighter(112);
-    }
-    if (c.isValid())
-        painter->fillRect(option.rect, c);
+
     opt.state &= ~QStyle::State_HasFocus;
     if (index.column() == 1)
     {

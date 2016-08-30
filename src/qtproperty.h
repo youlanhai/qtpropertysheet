@@ -286,4 +286,15 @@ protected:
     QtProperty*     impl_;
 };
 
+/********************************************************************/
+class QtFloatListProperty : public QtProperty
+{
+    Q_OBJECT
+public:
+    QtFloatListProperty(Type type, QtPropertyFactory *factory);
+    ~QtFloatListProperty();
+
+    virtual QString getValueString() const;
+};
+
 #endif // QTPROPERTY_H

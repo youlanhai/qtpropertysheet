@@ -22,6 +22,8 @@ private slots:
     void onPopupMenu(QtProperty *property);
 
 private:
+    void createProperties();
+
     Ui::MainWindow*     ui;
     QtProperty*         root_;
     QMenu*              popupMenu_;
