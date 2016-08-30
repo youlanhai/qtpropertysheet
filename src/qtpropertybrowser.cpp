@@ -1,7 +1,12 @@
-#include "qtpropertybrowser.h"
+﻿#include "qtpropertybrowser.h"
 
-QtPropertyBrowser::QtPropertyBrowser()
+QtPropertyBrowser::QtPropertyBrowser(QObject *parent)
+    : QObject(parent)
 {
 
 }
 
+QtPropertyBrowser::~QtPropertyBrowser()
+{
+
+}

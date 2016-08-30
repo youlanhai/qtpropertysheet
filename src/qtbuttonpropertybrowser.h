@@ -1,93 +1,39 @@
 ﻿#ifndef QT_BUTTON_PROPERTY_BROWSER_H
 #define QT_BUTTON_PROPERTY_BROWSER_H
 
-#include <QObject>
-#include <QIcon>
+#include "qtpropertybrowser.h"
 #include <QMap>
 
 class QWidget;
-class QLabel;
-class QFrame;
-class QGroupBox;
-class QGridLayout;
-class QToolButton;
 
 class QtProperty;
 class QtPropertyEditorFactory;
-class QtButtonPropertyBrowser;
+class QtButtonPropertyItem;
 
 
-class QtButtonItem : public QObject
+
+class QtButtonPropertyBrowser : public QtPropertyBrowser
 {
     Q_OBJECT
 public:
-    QtButtonItem();
-    QtButtonItem(QtProperty *prop, QtButtonItem *parent, QtButtonPropertyBrowser *browser);
-    virtual ~QtButtonItem();
-
-    void update();
-    void addChild(QtButtonItem *child);
-    void removeChild(QtButtonItem *child);
-    void removeFromParent();
-
-    void setTitle(const QString &title);
-    void setVisible(bool visible);
-
-    QtButtonItem* parent(){ return parent_; }
-    QtProperty* property(){ return property_; }
-
-    void setLayout(QGridLayout *layout){ layout_ = layout; }
-
-    void setExpanded(bool expand);
-    bool isExpanded() const{ return bExpand_; }
-
-protected slots:
-    void onBtnExpand();
-    void onBtnMenu();
-    void onPropertyValueChange(QtProperty *property);
-
-protected:
-    QtProperty* property_;
-    QLabel*     label_;
-    QWidget*    editor_; // can be null
-    QLabel*     valueLabel_;
-
-    QToolButton* titleButton_;
-    QToolButton* titleMenu_;
-
-    QWidget*     container_;
-    QGridLayout* layout_;
-
-    QtButtonItem* parent_;
-    QList<QtButtonItem*> children_;
-
-    bool        bExpand_;
-};
-
-
-class QtButtonPropertyBrowser : public QObject
-{
-    Q_OBJECT
-public:
-    typedef QMap<QtProperty*, QtButtonItem*> Property2ItemMap;
+    typedef QMap<QtProperty*, QtButtonPropertyItem*> Property2ItemMap;
 
     explicit QtButtonPropertyBrowser(QObject *parent = 0);
     ~QtButtonPropertyBrowser();
 
-    bool init(QWidget *parent);
+    virtual bool init(QWidget *parent, QtPropertyEditorFactory *factory);
 
-    void setEditorFactory(QtPropertyEditorFactory *factory);
-    QWidget* createEditor(QtProperty *property, QWidget *parent);
+    virtual QWidget* createEditor(QtProperty *property, QWidget *parent);
 
-    QtProperty* itemToProperty(QtButtonItem* item);
+    QtProperty* itemToProperty(QtButtonPropertyItem* item);
 
-    void addProperty(QtProperty *property);
-    void removeProperty(QtProperty *property);
-    void removeAllProperties();
+    virtual void addProperty(QtProperty *property);
+    virtual void removeProperty(QtProperty *property);
+    virtual void removeAllProperties();
     Property2ItemMap& getProperties(){ return property2items_; }
 
-    bool isExpanded(QtProperty *property);
-    void setExpanded(QtProperty *property, bool expand);
+    virtual bool isExpanded(QtProperty *property);
+    virtual void setExpanded(QtProperty *property, bool expand);
 
 public slots:
     void slotPropertyInsert(QtProperty *property, QtProperty *parent);
@@ -98,12 +44,12 @@ public slots:
     void slotViewDestroy(QObject *p);
 
 private:
-    void addProperty(QtProperty *property, QtButtonItem *parentItem);
-    void deleteItem(QtButtonItem *item);
+    void addProperty(QtProperty *property, QtButtonPropertyItem *parentItem);
+    void deleteItem(QtButtonPropertyItem *item);
 
     QtPropertyEditorFactory*    editorFactory_;
 
-    QtButtonItem*                rootItem_;
+    QtButtonPropertyItem*       rootItem_;
     QWidget*                    mainView_;
 
     Property2ItemMap            property2items_;

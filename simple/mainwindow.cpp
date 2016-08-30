@@ -44,8 +44,7 @@ MainWindow::MainWindow(QWidget *parent) :
         scrollArea->setWidget(widget);
 
         QtButtonPropertyBrowser *browser = new QtButtonPropertyBrowser(this);
-        browser->init(widget);
-        browser->setEditorFactory(editorFactory);
+        browser->init(widget, editorFactory);
 
         browser->addProperty(root_);
     }
@@ -54,8 +53,7 @@ MainWindow::MainWindow(QWidget *parent) :
         splitter->addWidget(treeWidget);
 
         QtTreePropertyBrowser *treeBrowser = new QtTreePropertyBrowser(this);
-        treeBrowser->setEditorFactory(editorFactory);
-        treeBrowser->init(treeWidget);
+        treeBrowser->init(treeWidget, editorFactory);
         treeBrowser->addProperty(root_);
     }
 

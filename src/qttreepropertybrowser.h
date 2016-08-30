@@ -1,7 +1,7 @@
-#ifndef QTTREEPROPERTYBROWSER_H
+﻿#ifndef QTTREEPROPERTYBROWSER_H
 #define QTTREEPROPERTYBROWSER_H
 
-#include <QObject>
+#include "qtpropertybrowser.h"
 #include <QIcon>
 #include <QMap>
 
@@ -15,16 +15,14 @@ class QtPropertyEditorFactory;
 
 typedef QMap<QtProperty*, QTreeWidgetItem*> Property2ItemMap;
 
-class QtTreePropertyBrowser : public QObject
+class QtTreePropertyBrowser : public QtPropertyBrowser
 {
     Q_OBJECT
 public:
     explicit QtTreePropertyBrowser(QObject *parent = 0);
     ~QtTreePropertyBrowser();
 
-    bool init(QWidget *parent);
-
-    void setEditorFactory(QtPropertyEditorFactory *factory);
+    virtual bool init(QWidget *parent, QtPropertyEditorFactory *factory);
 
     bool markPropertiesWithoutValue(){ return true; }
     bool lastColumn(int column);
@@ -39,13 +37,13 @@ public:
     QTreeWidgetItem* getEditedItem();
     QtPropertyTreeView* getTreeWidget(){ return treeWidget_; }
 
-    void addProperty(QtProperty *property);
-    void removeProperty(QtProperty *property);
-    void removeAllProperties();
+    virtual void addProperty(QtProperty *property);
+    virtual void removeProperty(QtProperty *property);
+    virtual void removeAllProperties();
     Property2ItemMap& getProperties(){ return property2items_; }
 
-    bool isExpanded(QtProperty *property);
-    void setExpanded(QtProperty *property, bool expand);
+    virtual bool isExpanded(QtProperty *property);
+    virtual void setExpanded(QtProperty *property, bool expand);
 
 public slots:
     void slotCurrentTreeItemChanged(QTreeWidgetItem*, QTreeWidgetItem*);

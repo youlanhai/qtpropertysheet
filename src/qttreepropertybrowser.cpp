@@ -22,7 +22,7 @@ const int PropertyDataIndex = Qt::UserRole + 1;
 }
 
 QtTreePropertyBrowser::QtTreePropertyBrowser(QObject *parent)
-    : QObject(parent)
+    : QtPropertyBrowser(parent)
     , editorFactory_(NULL)
     , treeWidget_(NULL)
     , delegate_(NULL)
@@ -35,8 +35,10 @@ QtTreePropertyBrowser::~QtTreePropertyBrowser()
     removeAllProperties();
 }
 
-bool QtTreePropertyBrowser::init(QWidget *parent)
+bool QtTreePropertyBrowser::init(QWidget *parent, QtPropertyEditorFactory *factory)
 {
+    editorFactory_ = factory;
+
     QHBoxLayout *layout = new QHBoxLayout(parent);
     layout->setMargin(0);
 
@@ -66,11 +68,6 @@ bool QtTreePropertyBrowser::init(QWidget *parent)
     connect(treeWidget_, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(slotCurrentTreeItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)));
     connect(treeWidget_, SIGNAL(destroyed(QObject*)), this, SLOT(slotTreeViewDestroy(QObject*)));
     return true;
-}
-
-void QtTreePropertyBrowser::setEditorFactory(QtPropertyEditorFactory *factory)
-{
-    editorFactory_ = factory;
 }
 
 bool QtTreePropertyBrowser::lastColumn(int column)
