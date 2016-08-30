@@ -168,7 +168,7 @@ class QtGroupProperty : public QtContainerProperty
 public:
     QtGroupProperty(Type type, QtPropertyFactory *factory);
 
-    //virtual bool hasValue() const { return false; }
+    virtual bool hasValue() const { return false; }
     virtual void setValue(const QVariant &value);
 
     virtual QtProperty* findChild(const QString &name);

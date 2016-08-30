@@ -36,13 +36,13 @@ void QtPropertyTreeView::drawRow(QPainter *painter, const QStyleOptionViewItem &
         }
     }
 
-#if 0
     if (!hasValue && editorPrivate_->markPropertiesWithoutValue())
     {
         const QColor c = option.palette.color(QPalette::Dark);
         painter->fillRect(option.rect, c);
         opt.palette.setColor(QPalette::AlternateBase, c);
     }
+#if 0
     else
     {
         const QColor c = editorPrivate_->calculatedBackgroundColor(editorPrivate_->indexToProperty(index));

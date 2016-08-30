@@ -150,11 +150,7 @@ void QtTreePropertyBrowser::addProperty(QtProperty *property, QTreeWidgetItem *p
         item->setToolTip(0, property->getToolTip());
         item->setIcon(1, property->getValueIcon());
         item->setText(1, property->getValueString());
-
-        if(property->hasValue())
-        {
-            item->setFlags(item->flags() | Qt::ItemIsEditable);
-        }
+        item->setFlags(item->flags() | Qt::ItemIsEditable);
 
         if(parentItem != NULL)
         {
