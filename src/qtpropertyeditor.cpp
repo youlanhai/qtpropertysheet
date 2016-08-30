@@ -891,8 +891,9 @@ QWidget* QtFloatListEditor::createEditor(QWidget *parent, QtPropertyEditorFactor
     for(int i = 0; i < size_; ++i)
     {
         QDoubleSpinBox *edt = new QDoubleSpinBox(editor);
-        edt->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+        edt->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
         edt->setMinimumWidth(10);
+        edt->setButtonSymbols(QDoubleSpinBox::NoButtons);
         layout->addWidget(edt);
         editors_.push_back(edt);
 
@@ -905,6 +906,10 @@ QWidget* QtFloatListEditor::createEditor(QWidget *parent, QtPropertyEditorFactor
         connect(edt, SIGNAL(valueChanged(double)), this, SLOT(slotEditorValueChange(double)));
     }
 
+    if(!editors_.empty())
+    {
+        editors_.first()->setFocus();
+    }
     return editor;
 }
 
