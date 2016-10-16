@@ -99,6 +99,7 @@ void MainWindow::createProperties()
 
     {
         QtProperty *group = manager->createProperty(QtPropertyType::GROUP);
+        group->setBackgroundColor(Qt::darkGray);
         group->setTitle("information");
         group->setMenuVisible(true);
         connect(group, SIGNAL(signalPopupMenu(QtProperty*)), this, SLOT(onPopupMenu(QtProperty*)));
