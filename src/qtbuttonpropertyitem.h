@@ -1,6 +1,7 @@
 ﻿#ifndef QTBUTTONPROPERTYITEM_H
 #define QTBUTTONPROPERTYITEM_H
 
+#include "qtpropertyconfig.h"
 #include <QObject>
 #include <QList>
 
@@ -13,7 +14,7 @@ class QtProperty;
 class QtButtonPropertyItem;
 class QtPropertyEditorFactory;
 
-class QtButtonPropertyItem : public QObject
+class QTPROPERTYSHEET_DLL QtButtonPropertyItem : public QObject
 {
     Q_OBJECT
 public:

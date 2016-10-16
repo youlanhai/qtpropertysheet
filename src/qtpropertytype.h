@@ -1,27 +1,28 @@
 ﻿#ifndef QTPROPERTYTYPE_H
 #define QTPROPERTYTYPE_H
 
+#include "qtpropertyconfig.h"
 #include <QString>
 
 namespace QtPropertyType
 {
 	typedef QString Type;
-    extern const Type NONE;
-    extern const Type BOOL;
-    extern const Type INT;
-    extern const Type FLOAT;
-    extern const Type STRING;
-    extern const Type GROUP;
-    extern const Type LIST;
-    extern const Type DICT;
-    extern const Type ENUM;
-    extern const Type FLAG;
-    extern const Type COLOR;
-    extern const Type FILE;
-    extern const Type DYNAMIC_LIST;
-    extern const Type DYNAMIC_ITEM;
-    extern const Type ENUM_PAIR;
-    extern const Type FLOAT_LIST;
+    QTPROPERTYSHEET_DLL extern const Type NONE;
+    QTPROPERTYSHEET_DLL extern const Type BOOL;
+    QTPROPERTYSHEET_DLL extern const Type INT;
+    QTPROPERTYSHEET_DLL extern const Type FLOAT;
+    QTPROPERTYSHEET_DLL extern const Type STRING;
+    QTPROPERTYSHEET_DLL extern const Type GROUP;
+    QTPROPERTYSHEET_DLL extern const Type LIST;
+    QTPROPERTYSHEET_DLL extern const Type DICT;
+    QTPROPERTYSHEET_DLL extern const Type ENUM;
+    QTPROPERTYSHEET_DLL extern const Type FLAG;
+    QTPROPERTYSHEET_DLL extern const Type COLOR;
+    QTPROPERTYSHEET_DLL extern const Type FILE;
+    QTPROPERTYSHEET_DLL extern const Type DYNAMIC_LIST;
+    QTPROPERTYSHEET_DLL extern const Type DYNAMIC_ITEM;
+    QTPROPERTYSHEET_DLL extern const Type ENUM_PAIR;
+    QTPROPERTYSHEET_DLL extern const Type FLOAT_LIST;
 }
 
 #endif // QTPROPERTYTYPE_H

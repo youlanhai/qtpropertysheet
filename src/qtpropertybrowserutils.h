@@ -53,6 +53,7 @@
 #ifndef QTPROPERTYBROWSERUTILS_H
 #define QTPROPERTYBROWSERUTILS_H
 
+#include "qtpropertyconfig.h"
 #include <QMap>
 #include <QIcon>
 #include <QWidget>
@@ -109,7 +110,7 @@ public:
     static void setupTreeViewEditorMargin(QLayout *lt);
 };
 
-class QtBoolEdit : public QWidget {
+class QTPROPERTYSHEET_DLL QtBoolEdit : public QWidget {
     Q_OBJECT
 public:
     QtBoolEdit(QWidget *parent = 0);
@@ -140,7 +141,7 @@ private:
     bool textVisible_;
 };
 
-class QtKeySequenceEdit : public QWidget
+class QTPROPERTYSHEET_DLL QtKeySequenceEdit : public QWidget
 {
     Q_OBJECT
 public:
@@ -170,7 +171,7 @@ private:
     QLineEdit *lineEdit_;
 };
 
-class QtColorEditWidget : public QWidget
+class QTPROPERTYSHEET_DLL QtColorEditWidget : public QWidget
 {
     Q_OBJECT
 

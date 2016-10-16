@@ -11,7 +11,7 @@ class QtPropertyEditor;
 
 typedef QtPropertyEditor* (*QtPropertyEditorCreator)(QtProperty *property);
 
-class QtPropertyEditorFactory : public QObject
+class QTPROPERTYSHEET_DLL QtPropertyEditorFactory : public QObject
 {
     Q_OBJECT
 public:

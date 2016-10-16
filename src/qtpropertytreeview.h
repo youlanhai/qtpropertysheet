@@ -1,11 +1,12 @@
 #ifndef QTPROPERTYTREEVIEW_H
 #define QTPROPERTYTREEVIEW_H
 
+#include "qtpropertyconfig.h"
 #include <QTreeWidget>
 
 class QtTreePropertyBrowser;
 
-class QtPropertyTreeView : public QTreeWidget
+class QTPROPERTYSHEET_DLL QtPropertyTreeView : public QTreeWidget
 {
     Q_OBJECT
 public:

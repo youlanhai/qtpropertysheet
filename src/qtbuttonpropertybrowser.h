@@ -12,7 +12,7 @@ class QtButtonPropertyItem;
 
 
 
-class QtButtonPropertyBrowser : public QtPropertyBrowser
+class QTPROPERTYSHEET_DLL QtButtonPropertyBrowser : public QtPropertyBrowser
 {
     Q_OBJECT
 public:

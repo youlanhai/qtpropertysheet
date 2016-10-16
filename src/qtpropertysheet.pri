@@ -30,4 +30,5 @@ HEADERS  += \
     $$PWD/qtpropertyfactory.h \
     $$PWD/qtpropertytype.h \
     $$PWD/qtbuttonpropertybrowser.h \
-    $$PWD/qtbuttonpropertyitem.h
+    $$PWD/qtbuttonpropertyitem.h \
+    $$PWD/qtpropertyconfig.h

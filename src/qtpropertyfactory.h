@@ -15,7 +15,7 @@ public:
     virtual QtProperty* create() = 0;
 };
 
-class QtPropertyFactory : public QObject
+class QTPROPERTYSHEET_DLL QtPropertyFactory : public QObject
 {
     Q_OBJECT
 public:
@@ -36,7 +36,7 @@ private:
 
 
 template<typename T>
-class QtSimplePropertyCreator : public QtPropertyCreator
+class QTPROPERTYSHEET_DLL QtSimplePropertyCreator : public QtPropertyCreator
 {
     QtPropertyType::Type type_;
     QtPropertyFactory *factory_;
