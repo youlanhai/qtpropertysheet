@@ -34,6 +34,9 @@ public:
     void setToolTip(const QString &tip){ tips_ = tip; }
     const QString& getToolTip() const {return tips_; }
 
+    void setBackgroundColor(const QColor &cr){ bgColor_ = cr; }
+    const QColor& getBackgroundColor() const { return bgColor_; }
+
     virtual void setValue(const QVariant &value);
     virtual const QVariant& getValue() const { return value_; }
 
@@ -97,6 +100,7 @@ protected:
     QString             title_;
     QString             tips_;
     QVariant            value_;
+    QColor              bgColor_;
 
     QtProperty*         parent_;
     QtPropertyList      children_;

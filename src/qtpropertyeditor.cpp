@@ -659,9 +659,10 @@ void QtFileEditor::setValue(const QString &value)
 {
     value_ = value;
 
-    input_->blockSignals(true);
-    input_->setText(value);
-    input_->blockSignals(false);
+    if(input_)
+    {
+        input_->setText(value);
+    }
 }
 
 void QtFileEditor::onFileSeleted(const QString &fullPath)

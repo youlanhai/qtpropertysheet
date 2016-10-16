@@ -148,8 +148,6 @@ void QtTreePropertyBrowser::addProperty(QtProperty *property, QTreeWidgetItem *p
         item->setText(0, property->getTitle());
         item->setData(0, PropertyDataIndex, QVariant::fromValue<quintptr>(reinterpret_cast<quintptr>(property)));
         item->setToolTip(0, property->getToolTip());
-        item->setIcon(1, property->getValueIcon());
-        item->setText(1, property->getValueString());
         item->setFlags(item->flags() | Qt::ItemIsEditable);
 
         if(parentItem != NULL)
@@ -160,6 +158,17 @@ void QtTreePropertyBrowser::addProperty(QtProperty *property, QTreeWidgetItem *p
         {
             treeWidget_->addTopLevelItem(item);
         }
+
+        if(property->hasValue())
+        {
+            item->setIcon(1, property->getValueIcon());
+            item->setText(1, property->getValueString());
+        }
+        else
+        {
+            item->setFirstColumnSpanned(true);
+        }
+
         parentItem = item;
     }
     property2items_[property] = item;
