@@ -15,7 +15,7 @@ class QtPropertyEditorFactory;
 
 typedef QMap<QtProperty*, QTreeWidgetItem*> Property2ItemMap;
 
-class QtTreePropertyBrowser : public QtPropertyBrowser
+class QTPROPERTYSHEET_DLL QtTreePropertyBrowser : public QtPropertyBrowser
 {
     Q_OBJECT
 public:

@@ -1,6 +1,7 @@
 ﻿#ifndef QTPROPERTYEDITOR_H
 #define QTPROPERTYEDITOR_H
 
+#include "qtpropertyconfig.h"
 #include <QObject>
 #include <QColor>
 #include <QList>
@@ -23,7 +24,7 @@ class QxtCheckComboBox;
 class QtPropertyEditorFactory;
 
 // QtPropertyEditor will be destroied when QtEditor destroied.
-class QtPropertyEditor : public QObject
+class QTPROPERTYSHEET_DLL QtPropertyEditor : public QObject
 {
     Q_OBJECT
 public:
@@ -43,7 +44,7 @@ protected:
 };
 
 
-class QtIntSpinBoxEditor : public QtPropertyEditor
+class QTPROPERTYSHEET_DLL QtIntSpinBoxEditor : public QtPropertyEditor
 {
     Q_OBJECT
 public:
@@ -61,7 +62,7 @@ private:
 
 };
 
-class QtDoubleSpinBoxEditor : public QtPropertyEditor
+class QTPROPERTYSHEET_DLL QtDoubleSpinBoxEditor : public QtPropertyEditor
 {
     Q_OBJECT
 public:
@@ -79,7 +80,7 @@ private:
 
 };
 
-class QtStringEditor : public QtPropertyEditor
+class QTPROPERTYSHEET_DLL QtStringEditor : public QtPropertyEditor
 {
     Q_OBJECT
 public:
@@ -96,7 +97,7 @@ private:
     QLineEdit*          editor_;
 };
 
-class QtEnumEditor : public QtPropertyEditor
+class QTPROPERTYSHEET_DLL QtEnumEditor : public QtPropertyEditor
 {
     Q_OBJECT
 public:
@@ -113,7 +114,7 @@ private:
     QComboBox*          editor_;
 };
 
-class QtEnumPairEditor : public QtPropertyEditor
+class QTPROPERTYSHEET_DLL QtEnumPairEditor : public QtPropertyEditor
 {
     Q_OBJECT
 public:
@@ -131,7 +132,7 @@ protected:
     QComboBox*          editor_;
 };
 
-class QtFlagEditor : public QtPropertyEditor
+class QTPROPERTYSHEET_DLL QtFlagEditor : public QtPropertyEditor
 {
     Q_OBJECT
 public:
@@ -151,7 +152,7 @@ private:
     QStringList         flagNames_;
 };
 
-class QtBoolEditor : public QtPropertyEditor
+class QTPROPERTYSHEET_DLL QtBoolEditor : public QtPropertyEditor
 {
     Q_OBJECT
 public:
@@ -167,7 +168,7 @@ protected:
     QtBoolEdit*         editor_;
 };
 
-class QtColorEditor : public QtPropertyEditor
+class QTPROPERTYSHEET_DLL QtColorEditor : public QtPropertyEditor
 {
     Q_OBJECT
 public:
@@ -183,7 +184,7 @@ protected:
     QtColorEditWidget*  editor_;
 };
 
-class QtFileEditor : public QtPropertyEditor
+class QTPROPERTYSHEET_DLL QtFileEditor : public QtPropertyEditor
 {
     Q_OBJECT
 public:
@@ -219,7 +220,7 @@ protected:
     QString         relativePath_;
 };
 
-class QtDynamicItemEditor : public QtPropertyEditor
+class QTPROPERTYSHEET_DLL QtDynamicItemEditor : public QtPropertyEditor
 {
     Q_OBJECT
 public:
@@ -238,7 +239,7 @@ private:
     QtPropertyEditor* impl_;
 };
 
-class QtFloatListEditor : public QtPropertyEditor
+class QTPROPERTYSHEET_DLL QtFloatListEditor : public QtPropertyEditor
 {
     Q_OBJECT
 public:

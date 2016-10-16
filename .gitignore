@@ -14,3 +14,5 @@
 
 *.pro.user
 .DS_Store
+/bin/
+

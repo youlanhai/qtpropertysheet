@@ -1,13 +1,14 @@
 #ifndef QTPROPERTYTREEEDITORDELEGATE_H
 #define QTPROPERTYTREEEDITORDELEGATE_H
 
+#include "qtpropertyconfig.h"
 #include <QItemDelegate>
 
 class QtProperty;
 class QTreeWidgetItem;
 class QtTreePropertyBrowser;
 
-class QtPropertyTreeDelegate : public QItemDelegate
+class QTPROPERTYSHEET_DLL QtPropertyTreeDelegate : public QItemDelegate
 {
     Q_OBJECT
 public:

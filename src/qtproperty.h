@@ -1,6 +1,7 @@
 ﻿#ifndef QTPROPERTY_H
 #define QTPROPERTY_H
 
+#include "qtpropertyconfig.h"
 #include <QObject>
 #include <QVector>
 #include <QVariant>
@@ -13,7 +14,7 @@ class QtPropertyFactory;
 typedef QVector<QtProperty*>    QtPropertyList;
 typedef QMap<QString, QVariant> QtPropertyAttributes;
 
-class QtProperty : public QObject
+class QTPROPERTYSHEET_DLL QtProperty : public QObject
 {
     Q_OBJECT
 public:
@@ -113,7 +114,7 @@ protected:
 };
 
 /********************************************************************/
-class QtContainerProperty : public QtProperty
+class QTPROPERTYSHEET_DLL QtContainerProperty : public QtProperty
 {
     Q_OBJECT
 public:
@@ -129,7 +130,7 @@ protected:
 
 
 /********************************************************************/
-class QtListProperty : public QtContainerProperty
+class QTPROPERTYSHEET_DLL QtListProperty : public QtContainerProperty
 {
     Q_OBJECT
 public:
@@ -144,7 +145,7 @@ protected slots:
 
 
 /********************************************************************/
-class QtDictProperty : public QtContainerProperty
+class QTPROPERTYSHEET_DLL QtDictProperty : public QtContainerProperty
 {
     Q_OBJECT
 public:
@@ -166,7 +167,7 @@ protected slots:
  * NOTICE: QtGroupProperty can only be root or child of another QtGroupProperty,
  * Adding QtGroupProperty as child of any other property, will cause unexpected problem.
  */
-class QtGroupProperty : public QtContainerProperty
+class QTPROPERTYSHEET_DLL QtGroupProperty : public QtContainerProperty
 {
     Q_OBJECT
 public:
@@ -185,7 +186,7 @@ protected slots:
 
 
 /********************************************************************/
-class QtEnumProperty : public QtProperty
+class QTPROPERTYSHEET_DLL QtEnumProperty : public QtProperty
 {
     Q_OBJECT
 public:
@@ -194,7 +195,7 @@ public:
 };
 
 /********************************************************************/
-class QtFlagProperty : public QtProperty
+class QTPROPERTYSHEET_DLL QtFlagProperty : public QtProperty
 {
     Q_OBJECT
 public:
@@ -203,7 +204,7 @@ public:
 };
 
 /********************************************************************/
-class QtBoolProperty : public QtProperty
+class QTPROPERTYSHEET_DLL QtBoolProperty : public QtProperty
 {
     Q_OBJECT
 public:
@@ -213,7 +214,7 @@ public:
 };
 
 /********************************************************************/
-class QtDoubleProperty : public QtProperty
+class QTPROPERTYSHEET_DLL QtDoubleProperty : public QtProperty
 {
     Q_OBJECT
 public:
@@ -222,7 +223,7 @@ public:
 };
 
 /********************************************************************/
-class QtColorProperty : public QtProperty
+class QTPROPERTYSHEET_DLL QtColorProperty : public QtProperty
 {
     Q_OBJECT
 public:
@@ -232,7 +233,7 @@ public:
     virtual QIcon getValueIcon() const;
 };
 /********************************************************************/
-class QtDynamicListProperty : public QtProperty
+class QTPROPERTYSHEET_DLL QtDynamicListProperty : public QtProperty
 {
     Q_OBJECT
 public:
@@ -262,7 +263,7 @@ protected:
     QVariantList    valueList_;
 };
 
-class QtDynamicItemProperty : public QtProperty
+class QTPROPERTYSHEET_DLL QtDynamicItemProperty : public QtProperty
 {
     Q_OBJECT
 public:
@@ -291,7 +292,7 @@ protected:
 };
 
 /********************************************************************/
-class QtFloatListProperty : public QtProperty
+class QTPROPERTYSHEET_DLL QtFloatListProperty : public QtProperty
 {
     Q_OBJECT
 public:

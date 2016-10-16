@@ -1,6 +1,7 @@
 ﻿#ifndef QT_PROPERTY_BROWSER_H
 #define QT_PROPERTY_BROWSER_H
 
+#include "qtpropertyconfig.h"
 #include <QObject>
 
 class QWidget;
@@ -8,7 +9,7 @@ class QtProperty;
 class QtPropertyEditorFactory;
 
 
-class QtPropertyBrowser : public QObject
+class QTPROPERTYSHEET_DLL QtPropertyBrowser : public QObject
 {
     Q_OBJECT
 public:
